@@ -14,7 +14,9 @@ public static class DI_Manager {
     }
 
     private static void RegisterMappers(IServiceCollection services) {
-        services.AddScoped<Controllers.api.RedArbor.Mappers.EmployeeItemResponseDtoMapper>();
+        services.AddScoped<Controllers.api.Auth.Mappers.AuthResponseMapper>();
+        services.AddScoped<Controllers.api.Users.Mappers.UserResponseMapper>();
+        services.AddScoped<Controllers.api.Campings.Mappers.CampingResponseMapper>();
     }
 
 

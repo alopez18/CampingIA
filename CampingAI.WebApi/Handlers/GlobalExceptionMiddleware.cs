@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using FluentValidation;
 
 namespace CampingAI.WebApi.Handlers;
 public class GlobalExceptionMiddleware {
@@ -13,6 +14,8 @@ public class GlobalExceptionMiddleware {
     public async Task InvokeAsync(HttpContext httpContext) {
         try {
             await _next(httpContext); // sigue con la pipeline
+        } catch (ValidationException validationEx) {
+            await HandleValidationExceptionAsync(httpContext, validationEx);
         } catch (KeyNotFoundException notFoundEx) {
             await HandleNotFoundExceptionAsync(httpContext, notFoundEx);
         } catch (Domain.Exceptions.DomainException domainEx) {
@@ -33,6 +36,18 @@ public class GlobalExceptionMiddleware {
         return context.Response.WriteAsJsonAsync(response);
     }
 
+
+    private Task HandleValidationExceptionAsync(HttpContext context, ValidationException exception) {
+        _logger.LogWarning(exception, "Validation error captured in global error handler.");
+
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = (int)HttpStatusCode.UnprocessableEntity;
+
+        var errores = exception.Errors.Select(e => e.ErrorMessage).ToList();
+        var response = new Controllers.api.Shared.ErrorResponse(errores, exception);
+
+        return context.Response.WriteAsJsonAsync(response);
+    }
 
     private Task HandleDomainExceptionAsync(HttpContext context, Domain.Exceptions.DomainException exception) {
         _logger.LogWarning(exception, "Domain error captured in global error handler.");

@@ -22,6 +22,11 @@
 		<ProjectReference Include="..\CampingAI.Domain\CampingAI.Domain.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Controllers\api\RedArbor\DTO\" />
+	  <Folder Include="Controllers\api\RedArbor\Mappers\" />
+	</ItemGroup>
+
 	
 
 </Project>

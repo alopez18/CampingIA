@@ -11,7 +11,7 @@ using System.Data;
 
 namespace CampingAI.Infra.Tests.Employees;
 public class EmployeesReadRepositoryTests {
-    private readonly ModelExtractor<Models.REDARBOR_DB.T_EMPLOYEES> _modelExtractor;
+    private readonly ModelExtractor<Models.CAMPING_AI_DB.T_EMPLOYEES> _modelExtractor;
     private readonly Mock<ISqlConnectionFactory> _sqlConnectionFactoryMock;
     private readonly EmployeesMapper _employeesMapper;
     private readonly Mock<ILogger<EmployeesReadRepository>> _loggerMock;
@@ -19,7 +19,7 @@ public class EmployeesReadRepositoryTests {
     private readonly EmployeesReadRepository _repository;
 
     public EmployeesReadRepositoryTests() {
-        _modelExtractor = new ModelExtractor<Models.REDARBOR_DB.T_EMPLOYEES>();
+        _modelExtractor = new ModelExtractor<Models.CAMPING_AI_DB.T_EMPLOYEES>();
         _sqlConnectionFactoryMock = new Mock<ISqlConnectionFactory>();
         _employeesMapper = new EmployeesMapper();
         _loggerMock = new Mock<ILogger<EmployeesReadRepository>>();
@@ -52,7 +52,7 @@ public class EmployeesReadRepositoryTests {
         // Mock connection
         var dbConnectionMock = new Mock<IDbConnection>();
         dbConnectionMock.SetupDapperAsync(c =>
-            c.QueryFirstOrDefaultAsync<Models.REDARBOR_DB.T_EMPLOYEES>(
+            c.QueryFirstOrDefaultAsync<Models.CAMPING_AI_DB.T_EMPLOYEES>(
                 It.IsAny<string>(),
                 It.IsAny<object>(),
                 null, null, null))
@@ -95,7 +95,7 @@ public class EmployeesReadRepositoryTests {
         var employee1Id = Guid.NewGuid();
         var employee2Id = Guid.NewGuid();
         // Arrange
-        var dbEmployees = new List<Models.REDARBOR_DB.T_EMPLOYEES>
+        var dbEmployees = new List<Models.CAMPING_AI_DB.T_EMPLOYEES>
         {
             SamplesGenerator.CreateSampleDbEmployee(employee1Id),
             SamplesGenerator.CreateSampleDbEmployee(employee2Id)
@@ -104,7 +104,7 @@ public class EmployeesReadRepositoryTests {
         // Mock connection
         var dbConnectionMock = new Mock<IDbConnection>();
         dbConnectionMock.SetupDapperAsync(c =>
-            c.QueryAsync<Models.REDARBOR_DB.T_EMPLOYEES>(
+            c.QueryAsync<Models.CAMPING_AI_DB.T_EMPLOYEES>(
                 It.IsAny<string>(),
                 null, null, null, null))
             .ReturnsAsync(dbEmployees);

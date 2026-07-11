@@ -1,6 +1,6 @@
 ﻿namespace CampingAI.Infra.Employees.Mappers {
-    public class EmployeesMapper : Domain.Abstractions.Mappers.CompleteMapper<Models.REDARBOR_DB.T_EMPLOYEES, Domain.Entities.Employee> {
-        public override Domain.Entities.Employee Map(Models.REDARBOR_DB.T_EMPLOYEES src) {
+    public class EmployeesMapper : Domain.Abstractions.Mappers.CompleteMapper<Models.CAMPING_AI_DB.T_EMPLOYEES, Domain.Entities.Employee> {
+        public override Domain.Entities.Employee Map(Models.CAMPING_AI_DB.T_EMPLOYEES src) {
             var dst = new Domain.Entities.Employee(src.EMP_IdEmployee,
                                                     src.EMP_Username,
                                                     src.EMP_Name,
@@ -19,8 +19,8 @@
             return dst;
         }
 
-        public override Models.REDARBOR_DB.T_EMPLOYEES ReverseMap(Domain.Entities.Employee src) {
-            var dst = new Models.REDARBOR_DB.T_EMPLOYEES {
+        public override Models.CAMPING_AI_DB.T_EMPLOYEES ReverseMap(Domain.Entities.Employee src) {
+            var dst = new Models.CAMPING_AI_DB.T_EMPLOYEES {
                 EMP_IdEmployee = src.Id,
                 EMP_Username = src.Username,
                 EMP_Name = src.Name,

@@ -1,10 +1,10 @@
 ﻿namespace CampingAI.Infra.Tests.Employees;
 public static class SamplesGenerator {
-    public static Models.REDARBOR_DB.T_EMPLOYEES CreateSampleDbEmployee(Guid employeeId) {
+    public static Models.CAMPING_AI_DB.T_EMPLOYEES CreateSampleDbEmployee(Guid employeeId) {
         var lastLoginBase = DateTime.Now.AddDays(-1);
         var createdOnBase = DateTime.Now.AddDays(-30);
         var updatedOnBase = DateTime.Now.AddDays(-1);
-        return new Models.REDARBOR_DB.T_EMPLOYEES {
+        return new Models.CAMPING_AI_DB.T_EMPLOYEES {
             EMP_IdEmployee = employeeId,
             EMP_Username = "testuser",
             EMP_Name = "Test Employee",

@@ -5,11 +5,11 @@ using System.Data;
 
 namespace CampingAI.Infra;
 public class UnitOfWork : Abstractions.IUnitOfWork {
-    private readonly Models.REDARBOR_DB.REDARBOR_TTContext _context;
+    private readonly Models.CAMPING_AI_DB.CAMPINGAI_TTContext _context;
     private readonly ILogger<UnitOfWork> _logger;
     private IDbContextTransaction? _transaction;
 
-    public UnitOfWork(Models.REDARBOR_DB.REDARBOR_TTContext context,
+    public UnitOfWork(Models.CAMPING_AI_DB.CAMPINGAI_TTContext context,
                       ILogger<UnitOfWork> logger) {
         _context = context;
         _logger = logger;

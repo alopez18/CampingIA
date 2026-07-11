@@ -33,7 +33,7 @@ Cada capa tiene su propio `Configuration/DI_Manager.cs` (o `Config/DI_Manager.cs
 - Construye el SQL con un `StringBuilder` y referencia los nombres de columna mediante `nameof(Models.REDARBOR_DB.T_EMPLOYEES.<Campo>)`; usa `ModelExtractor<TModel>` (`GetFieldNamesForSql()`, `GetTableNameForSql()`) para evitar strings de columna/tabla hardcodeados.
 - Los repositorios mapean los modelos de BD a entidades de dominio mediante un `EmployeesMapper` inyectado.
 - Envuelve las llamadas a BD en try/catch, registra con el `ILogger<T>` inyectado y relanza la excepción.
-- Los ids `Guid` se almacenan/consultan como strings (`id.ToString()`).
+- Los ids `Guid` se almacenan y consultan como `uniqueidentifier` en SQL Server y como `Guid` en los modelos POCO — Dapper hace la conversión de forma nativa. No uses `id.ToString()` ni `Guid.Parse()` para pasar parámetros a consultas Dapper.
 
 ## Convenciones de WebApi
 - Los controladores de API viven bajo `Controllers/api/...`, usan `[ApiController]`, `[Route("api/[controller]")]`, `[Authorize]` y declaran `[ProducesResponseType(...)]` para el éxito + `Shared.ErrorResponse` para los errores.

@@ -4,20 +4,20 @@ using Moq;
 
 namespace CampingAI.Infra.Tests.Employees;
 public class EmployeesWriteRepositoryTests {
-    private static Infra.Models.REDARBOR_DB.REDARBOR_TTContext CreateDbContext(string dbName) {
-        var options = new DbContextOptionsBuilder<Infra.Models.REDARBOR_DB.REDARBOR_TTContext>()
+    private static Infra.Models.CAMPING_AI_DB.CAMPINGAI_TTContext CreateDbContext(string dbName) {
+        var options = new DbContextOptionsBuilder<Infra.Models.CAMPING_AI_DB.CAMPINGAI_TTContext>()
             .UseInMemoryDatabase(databaseName: dbName)
             .EnableSensitiveDataLogging()
             .Options;
 
-        var ctx = new Infra.Models.REDARBOR_DB.REDARBOR_TTContext(options);
+        var ctx = new Infra.Models.CAMPING_AI_DB.CAMPINGAI_TTContext(options);
         return ctx;
     }
 
 
 
     private static (Infra.Employees.EmployeesWriteRepository sut,
-                    Infra.Models.REDARBOR_DB.REDARBOR_TTContext ctx,
+                    Infra.Models.CAMPING_AI_DB.CAMPINGAI_TTContext ctx,
                     Mock<ILogger<Infra.Employees.EmployeesWriteRepository>> loggerMock,
                     Infra.Employees.Mappers.EmployeesMapper mapper)
         BuildSut(string dbName) {
@@ -117,7 +117,7 @@ public class EmployeesWriteRepositoryTests {
         await sut.SaveAsync(entity);
 
         // Verificamos que el estado del entity en el ChangeTracker sea Modified
-        var entry = ctx.ChangeTracker.Entries<Models.REDARBOR_DB.T_EMPLOYEES>()
+        var entry = ctx.ChangeTracker.Entries<Models.CAMPING_AI_DB.T_EMPLOYEES>()
             .FirstOrDefault(e => e.Entity.EMP_IdEmployee == id);
 
         Assert.NotNull(entry);

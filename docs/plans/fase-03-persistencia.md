@@ -6,39 +6,70 @@
 `EmployeesReadRepository` / `EmployeesWriteRepository`, `SqlConnectionFactory`,
 `UnitOfWork`, `Models/REDARBOR_DB`, `ModelExtractor<T>` y `EmployeesMapper`.
 
+> **Nota:** Los `Guid` se almacenan como `uniqueidentifier` en SQL Server y como `Guid` en los POCOs.
+> Dapper convierte de forma nativa; no se usa `id.ToString()` ni `Guid.Parse()`.
+
 ## Tareas
 
 ### 1. Modelo de base de datos (SQL)
-- [ ] Crear/actualizar scripts para las tablas:
-  `Users`, `Campings`, `Categories`, `Services`, `Favorites`, `Reservations`,
-  `CampingCategories`, `CampingServices`.
-- [ ] Definir modelos POCO de BD en `CampingAI.Infra/Models` (uno por tabla).
+- [x] Crear/actualizar scripts para las tablas:
+  `T_USERS`, `T_CAMPINGS`, `T_RESERVATIONS`, `T_FACILITIES`, `T_CAMPING_FACILITIES`, `T_FAVORITES`
+  → `CampingAI.Infra/1.CreateCampingAITables.sql`
+- [x] Definir modelos POCO de BD en `CampingAI.Infra/Models/CampingAI_DB` (uno por tabla).
 
 ### 2. Infraestructura base
-- [ ] Confirmar `ISqlConnectionFactory` / `SqlConnectionFactory` (`using` por conexión).
-- [ ] Confirmar `IUnitOfWork` / `UnitOfWork` (`SaveChangesAsync`).
+- [x] Confirmar `ISqlConnectionFactory` / `SqlConnectionFactory` — ya existían ✅
+- [x] Confirmar `IUnitOfWork` / `UnitOfWork` — ya existían ✅
 
 ### 3. Mappers (Infra → Domain)
-- [ ] `UsersMapper`, `CampingsMapper`, `ReservationsMapper`, `FavoritesMapper`
-  heredando de `SimpleMapper`/`CompleteMapper`, con `Map(IEnumerable<>)`.
+- [x] `UsersMapper` (`CompleteMapper`) → `CampingAI.Infra/Users/Mappers/`
+- [x] `CampingsMapper` (`CompleteMapper`) → `CampingAI.Infra/Campings/Mappers/`
+- [x] `ReservationsMapper` (`CompleteMapper`) → `CampingAI.Infra/Reservations/Mappers/`
+- [x] `FacilitiesMapper` (`CompleteMapper`) → `CampingAI.Infra/Facilities/Mappers/`
+- [x] `FavoritesMapper` (`SimpleMapper`) → `CampingAI.Infra/Favorites/Mappers/`
 
 ### 4. Repositorios Dapper
-Implementar en `CampingAI.Infra/Repositories` las interfaces de la Fase 2:
-- [ ] Users (read/write)
-- [ ] Campings (read/write) — incluye joins a Categories/Services vía tablas puente.
-- [ ] Reservations (read/write)
-- [ ] Favorites (read/write)
-
-Cada repositorio:
-- [ ] SQL construido con `StringBuilder` + `nameof(Models.<Tabla>.<Campo>)`.
-- [ ] `ModelExtractor<T>` (`GetFieldNamesForSql()`, `GetTableNameForSql()`).
-- [ ] try/catch + `ILogger<T>` + relanzar.
-- [ ] `Guid` almacenado/consultado como `string` (`id.ToString()`).
-- [ ] Escrituras: `SaveAsync(...)` + `IUnitOfWork.SaveChangesAsync()`.
+- [x] `UsersReadRepository` / `UsersWriteRepository`
+- [x] `CampingsReadRepository` / `CampingsWriteRepository` — incluye carga de `FacilityIds` desde `T_CAMPING_FACILITIES`
+- [x] `ReservationsReadRepository` / `ReservationsWriteRepository`
+- [x] `FacilitiesReadRepository` / `FacilitiesWriteRepository`
+- [x] `CampingFacilitiesWriteRepository` — incluye `DeleteByCampingIdAsync`
+- [x] `FavoritesReadRepository` / `FavoritesWriteRepository`
 
 ### 5. DI
-- [ ] Registrar repos y mappers en `CampingAI.Infra/Configuration/DI_Manager.cs`.
+- [x] Registrar repos, mappers y extractors en `CampingAI.Infra/Configuration/DI_Manager.cs`
 
 ## Criterio de aceptación
-- Repos compilan y resuelven en DI.
-- Consulta/escritura básica contra SQL Server funciona (validar en Fase 13 con Infra.Tests).
+- [x] Repos compilan y resuelven en DI — `dotnet build` ✅ (2025-07-11)
+- [ ] Consulta/escritura básica contra SQL Server funciona (validar en Fase 13 con Infra.Tests).
+
+---
+
+## Registro de implementación
+
+### 2025-07-11 — Implementación completa (Copilot)
+
+**POCOs creados (`CampingAI.Infra/Models/CampingAI_DB/`):**
+- `T_USERS.cs`, `T_CAMPINGS.cs`, `T_RESERVATIONS.cs`
+- `T_FACILITIES.cs`, `T_CAMPING_FACILITIES.cs`, `T_FAVORITES.cs`
+
+**Script SQL:** `CampingAI.Infra/1.CreateCampingAITables.sql`
+
+**Mappers (`CompleteMapper` / `SimpleMapper`):**
+- `Users/Mappers/UsersMapper.cs`
+- `Campings/Mappers/CampingsMapper.cs`
+- `Reservations/Mappers/ReservationsMapper.cs`
+- `Facilities/Mappers/FacilitiesMapper.cs`
+- `Favorites/Mappers/FavoritesMapper.cs` (solo `Map`, sin `ReverseMap`)
+
+**Repositorios Dapper:**
+- `Users/UsersReadRepository.cs` / `UsersWriteRepository.cs`
+- `Campings/CampingsReadRepository.cs` / `CampingsWriteRepository.cs`
+- `Reservations/ReservationsReadRepository.cs` / `ReservationsWriteRepository.cs`
+- `Facilities/FacilitiesReadRepository.cs` / `FacilitiesWriteRepository.cs`
+- `Facilities/CampingFacilitiesWriteRepository.cs`
+- `Favorites/FavoritesReadRepository.cs` / `FavoritesWriteRepository.cs`
+
+**DI_Manager.cs** actualizado con todos los extractors, mappers y repos.
+
+**Resultado:** `dotnet build` ✅

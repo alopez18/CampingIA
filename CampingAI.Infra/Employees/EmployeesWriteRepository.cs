@@ -5,12 +5,12 @@ namespace CampingAI.Infra.Employees;
 public class EmployeesWriteRepository : Domain.Repositories.Employees.IEmployeesWriteRepository {
     #region Dependencies
     readonly Mappers.EmployeesMapper _employeesMapper;
-    readonly Models.REDARBOR_DB.REDARBOR_TTContext _dbContext;
+    readonly Models.CAMPING_AI_DB.CAMPINGAI_TTContext _dbContext;
     readonly ILogger<EmployeesWriteRepository> _logger;
     #endregion
 
 
-    public EmployeesWriteRepository(Models.REDARBOR_DB.REDARBOR_TTContext dbContext,
+    public EmployeesWriteRepository(Models.CAMPING_AI_DB.CAMPINGAI_TTContext dbContext,
                                     ILogger<EmployeesWriteRepository> logger,
                                     Mappers.EmployeesMapper employeesMapper) {
         _dbContext = dbContext;
@@ -19,7 +19,7 @@ public class EmployeesWriteRepository : Domain.Repositories.Employees.IEmployees
     }
 
     public async Task<Domain.Entities.Employee?> GetById(Guid id, bool onlyNotDeleted) {
-        Models.REDARBOR_DB.T_EMPLOYEES? employeeDbModel = null;
+        Models.CAMPING_AI_DB.T_EMPLOYEES? employeeDbModel = null;
         try {
             if (onlyNotDeleted) {
                 employeeDbModel = await _dbContext.T_EMPLOYEES.AsNoTracking().Where(m => m.EMP_IdEmployee == id && m.EMP_DeletedOn == null).FirstOrDefaultAsync();

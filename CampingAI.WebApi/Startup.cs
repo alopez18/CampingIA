@@ -27,25 +27,28 @@ public class Startup {
         });
 
 
-        var clientIdSection = builder.Configuration.GetRequiredSection("GoogleAuth:ClientId");
-        var clientSecretSection = builder.Configuration.GetRequiredSection("GoogleAuth:ClientSecret");
-        if (string.IsNullOrWhiteSpace(clientIdSection.Value) || string.IsNullOrWhiteSpace(clientSecretSection.Value)) {
-            throw new Exception("The client Id and the client secret of google auth value are required");
-        }
+        var clientId = builder.Configuration["GoogleAuth:ClientId"];
+        var clientSecret = builder.Configuration["GoogleAuth:ClientSecret"];
+        bool googleAuthEnabled = !string.IsNullOrWhiteSpace(clientId)
+            && !clientId.StartsWith("REPLACE_")
+            && !string.IsNullOrWhiteSpace(clientSecret)
+            && !clientSecret.StartsWith("REPLACE_");
 
-
-        builder.Services.AddAuthentication(options => {
+        var authBuilder = builder.Services.AddAuthentication(options => {
             options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = googleAuthEnabled
+                ? GoogleDefaults.AuthenticationScheme
+                : CookieAuthenticationDefaults.AuthenticationScheme;
         })
             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options => {
                 options.LoginPath = "/Account/Login";
                 options.LogoutPath = "/Account/Logout";
-            })
-            .AddGoogle(GoogleDefaults.AuthenticationScheme, options => {
+            });
 
-                options.ClientId = clientIdSection.Value;
-                options.ClientSecret = clientSecretSection.Value;
+        if (googleAuthEnabled) {
+            authBuilder.AddGoogle(GoogleDefaults.AuthenticationScheme, options => {
+                options.ClientId = clientId!;
+                options.ClientSecret = clientSecret!;
                 options.Scope.Add("openid");
                 options.Scope.Add("profile");
                 options.Scope.Add("email");
@@ -55,9 +58,12 @@ public class Startup {
                     var accessToken = context.AccessToken;
                     if (accessToken != null && context.Identity != null)
                         context.Identity.AddClaim(new System.Security.Claims.Claim("access_token", accessToken));
-                    return Task.CompletedTask; // Devolver una tarea completada
+                    return Task.CompletedTask;
                 };
-            })
+            });
+        }
+
+        authBuilder
             .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options => {
                 var jwtSettings = builder.Configuration.GetSection(Settings.JwtSettings.SECTION);
                 var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]

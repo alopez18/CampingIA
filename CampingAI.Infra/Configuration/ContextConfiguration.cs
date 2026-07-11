@@ -24,7 +24,7 @@ public static class ContextConfiguration
     {
         string? connectionString = config.GetConnectionString(CONNECTION_STRING_CAMPING_AI_CONFIG_NAME)
                                                            ?? throw new Exception($"No se ha encontrado la cadena de conexión con nombre {CONNECTION_STRING_CAMPING_AI_CONFIG_NAME}");
-        services.AddDbContext<Models.REDARBOR_DB.REDARBOR_TTContext>(options =>
+        services.AddDbContext<Models.CAMPING_AI_DB.CAMPINGAI_TTContext>(options =>
         {
             options.UseSqlServer(connectionString);
         });
