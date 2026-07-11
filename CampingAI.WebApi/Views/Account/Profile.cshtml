@@ -1,0 +1,64 @@
+﻿@{
+    ViewData["Title"] = "Perfil de Usuario";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <h2>Bienvenido, @ViewBag.UserInfo.Name!</h2>
+
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5>Información del Usuario</h5>
+                </div>
+                <div class="card-body">
+                    @if (!string.IsNullOrEmpty(ViewBag.UserInfo.Picture)) {
+                        <img src="@ViewBag.UserInfo.Picture" alt="Avatar" class="rounded-circle mb-3" width="100">
+                    }
+
+                    <p><strong>Nombre:</strong> @ViewBag.UserInfo.Name</p>
+                    <p><strong>Email:</strong> @ViewBag.UserInfo.Email</p>
+                    <p><strong>Google ID:</strong> @ViewBag.UserInfo.GoogleId</p>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5>ID Token de Google</h5>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>Token JWT:</label>
+                        <textarea class="form-control" rows="6" readonly>@ViewBag.IdToken</textarea>
+                    </div>
+                    <small class="form-text text-muted">
+                        Este es el token que debes usar en el header Authorization: Bearer para llamar a tu Web API
+                    </small>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                
+                    <a href="~/swagger" class="btn btn-success">
+                        Llamar a Web API
+                    </a>
+                
+
+                <a asp-action="Logout" class="btn btn-secondary ms-2">
+                    Cerrar Sesión
+                </a>
+            </div>
+
+            @if (ViewBag.ApiResult != null) {
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5>Resultado de la API</h5>
+                    </div>
+                    <div class="card-body">
+                        <pre>@ViewBag.ApiResult</pre>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

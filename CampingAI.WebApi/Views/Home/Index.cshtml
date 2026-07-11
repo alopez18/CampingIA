@@ -1,0 +1,22 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Aplicación con Google OAuth</h1>
+    <p>Ejemplo de integración con Google OAuth2 y Web API</p>
+
+    @if (User.Identity.IsAuthenticated) {
+        <p>¡Hola @User.Identity.Name!</p>
+        <a asp-controller="Account" asp-action="Profile" class="btn btn-primary">
+            Ver Perfil
+        </a>
+        <a href="~/swagger"  class="btn btn-primary">
+            Llamar a API
+        </a>
+    } else {
+        <a asp-controller="Account" asp-action="Login" class="btn btn-success">
+            Iniciar Sesión
+        </a>
+    }
+</div>

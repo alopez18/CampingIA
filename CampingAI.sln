@@ -1,0 +1,98 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.7.11925.98 stable
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CampingAI.WebApi", "CampingAI.WebApi\CampingAI.WebApi.csproj", "{01CAD6AA-5E61-46A6-9609-8864CE6DB0A3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "0. Tests", "0. Tests", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1. Domain", "1. Domain", "{B2591B37-B0BF-41B5-BA88-6C7C7C9A5656}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CampingAI.Domain", "CampingAI.Domain\CampingAI.Domain.csproj", "{6B00B1A4-8254-4E89-8D64-850F6DB748C8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2. Application", "2. Application", "{441C5218-60B5-418A-8A40-35421F14FBE0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3. Infrastructure", "3. Infrastructure", "{6B137A6E-13EA-4C11-B6FB-AB7224ED1B7D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CampingAI.Infra", "CampingAI.Infra\CampingAI.Infra.csproj", "{10F91158-3D2B-418E-B07C-E0882497CC2E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CampingAI.Application", "CampingAI.Application\CampingAI.Application.csproj", "{0D9E6453-27FD-46DD-91E4-29BE51ABB97F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CampingAI.Domain.Tests", "CampingAI.Domain.Tests\CampingAI.Domain.Tests.csproj", "{0AD719D0-D912-4083-9E37-D97F3EFCEDBD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CampingAI.Application.Tests", "CampingAI.Application.Tests\CampingAI.Application.Tests.csproj", "{A5FE3296-8E0E-4B28-89E1-8177E927EFC5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CampingAI.Infra.Tests", "CampingAI.Infra.Tests\CampingAI.Infra.Tests.csproj", "{DC72D733-AC7E-4099-AA50-9AC1AA1762B0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "0. Solution Files", "0. Solution Files", "{03AF9EE6-F15E-42F8-99B5-E6538EDBAE84}"
+	ProjectSection(SolutionItems) = preProject
+		..\0. CampingAI_MasterPlan.md = ..\0. CampingAI_MasterPlan.md
+		.github\copilot-instructions.md = .github\copilot-instructions.md
+		docs\plans\fase-01-configuracion-inicial.md = docs\plans\fase-01-configuracion-inicial.md
+		docs\plans\fase-02-dominio.md = docs\plans\fase-02-dominio.md
+		docs\plans\fase-03-persistencia.md = docs\plans\fase-03-persistencia.md
+		docs\plans\fase-04-gestion-usuarios.md = docs\plans\fase-04-gestion-usuarios.md
+		docs\plans\fase-05-gestion-campings.md = docs\plans\fase-05-gestion-campings.md
+		docs\plans\fase-06-busqueda-avanzada.md = docs\plans\fase-06-busqueda-avanzada.md
+		docs\plans\fase-07-favoritos.md = docs\plans\fase-07-favoritos.md
+		docs\plans\fase-08-reservas.md = docs\plans\fase-08-reservas.md
+		docs\plans\fase-09-app-ionic.md = docs\plans\fase-09-app-ionic.md
+		docs\plans\fase-10-mapa-interactivo.md = docs\plans\fase-10-mapa-interactivo.md
+		docs\plans\fase-11-inteligencia-artificial.md = docs\plans\fase-11-inteligencia-artificial.md
+		docs\plans\fase-12-rag.md = docs\plans\fase-12-rag.md
+		docs\plans\fase-13-testing.md = docs\plans\fase-13-testing.md
+		docs\plans\fase-14-dockerizacion.md = docs\plans\fase-14-dockerizacion.md
+		docs\plans\fase-15-documentacion-tfm.md = docs\plans\fase-15-documentacion-tfm.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{01CAD6AA-5E61-46A6-9609-8864CE6DB0A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01CAD6AA-5E61-46A6-9609-8864CE6DB0A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01CAD6AA-5E61-46A6-9609-8864CE6DB0A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01CAD6AA-5E61-46A6-9609-8864CE6DB0A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B00B1A4-8254-4E89-8D64-850F6DB748C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B00B1A4-8254-4E89-8D64-850F6DB748C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B00B1A4-8254-4E89-8D64-850F6DB748C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B00B1A4-8254-4E89-8D64-850F6DB748C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10F91158-3D2B-418E-B07C-E0882497CC2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10F91158-3D2B-418E-B07C-E0882497CC2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10F91158-3D2B-418E-B07C-E0882497CC2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10F91158-3D2B-418E-B07C-E0882497CC2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D9E6453-27FD-46DD-91E4-29BE51ABB97F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D9E6453-27FD-46DD-91E4-29BE51ABB97F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D9E6453-27FD-46DD-91E4-29BE51ABB97F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D9E6453-27FD-46DD-91E4-29BE51ABB97F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0AD719D0-D912-4083-9E37-D97F3EFCEDBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0AD719D0-D912-4083-9E37-D97F3EFCEDBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0AD719D0-D912-4083-9E37-D97F3EFCEDBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0AD719D0-D912-4083-9E37-D97F3EFCEDBD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5FE3296-8E0E-4B28-89E1-8177E927EFC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5FE3296-8E0E-4B28-89E1-8177E927EFC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5FE3296-8E0E-4B28-89E1-8177E927EFC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5FE3296-8E0E-4B28-89E1-8177E927EFC5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC72D733-AC7E-4099-AA50-9AC1AA1762B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC72D733-AC7E-4099-AA50-9AC1AA1762B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC72D733-AC7E-4099-AA50-9AC1AA1762B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC72D733-AC7E-4099-AA50-9AC1AA1762B0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6B00B1A4-8254-4E89-8D64-850F6DB748C8} = {B2591B37-B0BF-41B5-BA88-6C7C7C9A5656}
+		{10F91158-3D2B-418E-B07C-E0882497CC2E} = {6B137A6E-13EA-4C11-B6FB-AB7224ED1B7D}
+		{0D9E6453-27FD-46DD-91E4-29BE51ABB97F} = {441C5218-60B5-418A-8A40-35421F14FBE0}
+		{0AD719D0-D912-4083-9E37-D97F3EFCEDBD} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{A5FE3296-8E0E-4B28-89E1-8177E927EFC5} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{DC72D733-AC7E-4099-AA50-9AC1AA1762B0} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3FD119BA-E6FB-4D65-9418-BFEEF6B19D4E}
+	EndGlobalSection
+EndGlobal

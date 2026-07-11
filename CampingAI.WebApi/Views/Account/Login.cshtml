@@ -1,0 +1,15 @@
+﻿@{
+    ViewData["Title"] = "Iniciar Sesión";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Iniciar Sesión</h1>
+    <p>Inicia sesión con tu cuenta de Google para acceder a la aplicación.</p>
+
+    <form asp-action="GoogleLogin" method="post" class="mt-4">
+        <button type="submit" class="btn btn-danger btn-lg">
+            <i class="fab fa-google me-2"></i>
+            Iniciar sesión con Google
+        </button>
+    </form>
+</div>
