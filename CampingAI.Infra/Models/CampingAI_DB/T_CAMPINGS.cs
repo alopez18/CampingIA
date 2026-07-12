@@ -18,6 +18,8 @@ public partial class T_CAMPINGS
 
     public int CMP_CategoryId { get; set; }
 
+    public Guid? CMP_ProvinciaId { get; set; }
+
     public DateTime CMP_CreatedOn { get; set; }
 
     public DateTime CMP_UpdatedOn { get; set; }

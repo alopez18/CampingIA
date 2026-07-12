@@ -58,6 +58,13 @@ public class Reservation : Abstractions.Entities.Deleteable, Abstractions.Entiti
         StatusId = statusId;
     }
 
+    public void Cancel() {
+        if (StatusId == (int)Enums.ReservationStatus.Cancelled)
+            throw new Exceptions.DomainException("La reserva ya está cancelada.");
+        StatusId = (int)Enums.ReservationStatus.Cancelled;
+        Updated();
+    }
+
     public void Updated() {
         UpdatedOn = ValueObjects.DateFromPastVO.CreateNow();
     }

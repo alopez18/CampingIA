@@ -9,6 +9,7 @@ public class CampingResponseMapper : Domain.Abstractions.Mappers.SimpleMapper<Do
             src.PricePerNight.Value,
             src.OwnerId,
             src.CategoryId,
+            src.ProvinciaId,
             src.FacilityIds,
             src.CreatedOn.Value,
             src.UpdatedOn.Value);

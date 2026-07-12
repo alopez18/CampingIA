@@ -26,7 +26,8 @@ public class CreateCampingCommandHandler : Abstractions.Command.ICommandHandler<
                                                         command.Longitude,
                                                         command.PricePerNight,
                                                         command.OwnerId,
-                                                        command.CategoryId);
+                                                        command.CategoryId,
+                                                        command.ProvinciaId);
 
         if (command.FacilityIds is not null)
             camping.SetFacilities(command.FacilityIds);

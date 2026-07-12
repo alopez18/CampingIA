@@ -6,5 +6,6 @@ public record CreateCampingCommand(string Name,
                                    decimal PricePerNight,
                                    Guid OwnerId,
                                    int CategoryId,
+                                   Guid? ProvinciaId,
                                    IEnumerable<Guid>? FacilityIds) : Abstractions.Command.ICommand {
 }

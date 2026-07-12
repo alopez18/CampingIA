@@ -5,5 +5,6 @@ public record UpdateCampingRequest(string Name,
                                    decimal Longitude,
                                    decimal PricePerNight,
                                    int CategoryId,
+                                   Guid? ProvinciaId,
                                    IEnumerable<Guid>? FacilityIds) {
 }

@@ -26,7 +26,8 @@ public class UpdateCampingCommandHandler : Abstractions.Command.ICommandHandler<
         var camping = await _campingsReadRepository.GetByIdAsync(command.CampingId)
             ?? throw new KeyNotFoundException($"No existe ningún camping con el id '{command.CampingId}'.");
 
-        camping.UpdateDetails(command.Name, command.Description, command.PricePerNight, command.CategoryId);
+        camping.UpdateDetails(command.Name, command.Description, command.PricePerNight, command.CategoryId,
+                              command.ProvinciaId);
         camping.UpdateLocation(command.Latitude, command.Longitude);
 
         if (command.FacilityIds is not null)

@@ -32,6 +32,11 @@ public static class DI_Manager {
         services.AddScoped<IValidator<Commands.Camping.CreateCamping.CreateCampingCommand>, Commands.Camping.CreateCamping.CreateCampingCommandValidator>();
         services.AddScoped<IValidator<Commands.Camping.UpdateCamping.UpdateCampingCommand>, Commands.Camping.UpdateCamping.UpdateCampingCommandValidator>();
         services.AddScoped<IValidator<Commands.Camping.DeleteCamping.DeleteCampingCommand>, Commands.Camping.DeleteCamping.DeleteCampingCommandValidator>();
+        services.AddScoped<IValidator<Queries.Camping.SearchCampings.SearchCampingsQuery>, Queries.Camping.SearchCampings.SearchCampingsQueryValidator>();
+        services.AddScoped<IValidator<Commands.Favorite.AddFavorite.AddFavoriteCommand>, Commands.Favorite.AddFavorite.AddFavoriteCommandValidator>();
+        services.AddScoped<IValidator<Commands.Favorite.RemoveFavorite.RemoveFavoriteCommand>, Commands.Favorite.RemoveFavorite.RemoveFavoriteCommandValidator>();
+        services.AddScoped<IValidator<Commands.Reservation.CreateReservation.CreateReservationCommand>, Commands.Reservation.CreateReservation.CreateReservationCommandValidator>();
+        services.AddScoped<IValidator<Commands.Reservation.CancelReservation.CancelReservationCommand>, Commands.Reservation.CancelReservation.CancelReservationCommandValidator>();
     }
 
     private static void RegisterMappers(IServiceCollection services) {
@@ -45,6 +50,12 @@ public static class DI_Manager {
         services.AddScoped<IQueryHandler<Queries.User.GetUserById.GetUserByIdQuery, Domain.Entities.User>, Queries.User.GetUserById.GetUserByIdQueryHandler>();
         services.AddScoped<IQueryHandler<Queries.Camping.GetCampings.GetCampingsQuery, Queries.Camping.GetCampings.GetCampingsResult>, Queries.Camping.GetCampings.GetCampingsQueryHandler>();
         services.AddScoped<IQueryHandler<Queries.Camping.GetCampingById.GetCampingByIdQuery, Domain.Entities.Camping>, Queries.Camping.GetCampingById.GetCampingByIdQueryHandler>();
+        services.AddScoped<IQueryHandler<Queries.Camping.SearchCampings.SearchCampingsQuery, Queries.Camping.SearchCampings.SearchCampingsResult>, Queries.Camping.SearchCampings.SearchCampingsQueryHandler>();
+        services.AddScoped<IQueryHandler<Queries.Location.GetCountries.GetCountriesQuery, Queries.Location.GetCountries.GetCountriesResult>, Queries.Location.GetCountries.GetCountriesQueryHandler>();
+        services.AddScoped<IQueryHandler<Queries.Location.GetProvinces.GetProvincesQuery, Queries.Location.GetProvinces.GetProvincesResult>, Queries.Location.GetProvinces.GetProvincesQueryHandler>();
+        services.AddScoped<IQueryHandler<Queries.Favorite.GetFavorites.GetFavoritesQuery, IEnumerable<Domain.Entities.Favorite>>, Queries.Favorite.GetFavorites.GetFavoritesQueryHandler>();
+        services.AddScoped<IQueryHandler<Queries.Reservation.GetReservationById.GetReservationByIdQuery, Domain.Entities.Reservation>, Queries.Reservation.GetReservationById.GetReservationByIdQueryHandler>();
+        services.AddScoped<IQueryHandler<Queries.Reservation.GetUserReservations.GetUserReservationsQuery, IEnumerable<Domain.Entities.Reservation>>, Queries.Reservation.GetUserReservations.GetUserReservationsQueryHandler>();
     }
 
     private static void RegisterCommands(IServiceCollection services) {
@@ -57,6 +68,10 @@ public static class DI_Manager {
         services.AddScoped<ICommandHandler<Commands.Camping.CreateCamping.CreateCampingCommand, Domain.Entities.Camping>, Commands.Camping.CreateCamping.CreateCampingCommandHandler>();
         services.AddScoped<ICommandHandler<Commands.Camping.UpdateCamping.UpdateCampingCommand, Domain.Entities.Camping>, Commands.Camping.UpdateCamping.UpdateCampingCommandHandler>();
         services.AddScoped<ICommandHandler<Commands.Camping.DeleteCamping.DeleteCampingCommand>, Commands.Camping.DeleteCamping.DeleteCampingCommandHandler>();
+        services.AddScoped<ICommandHandler<Commands.Favorite.AddFavorite.AddFavoriteCommand, Domain.Entities.Favorite>, Commands.Favorite.AddFavorite.AddFavoriteCommandHandler>();
+        services.AddScoped<ICommandHandler<Commands.Favorite.RemoveFavorite.RemoveFavoriteCommand>, Commands.Favorite.RemoveFavorite.RemoveFavoriteCommandHandler>();
+        services.AddScoped<ICommandHandler<Commands.Reservation.CreateReservation.CreateReservationCommand, Domain.Entities.Reservation>, Commands.Reservation.CreateReservation.CreateReservationCommandHandler>();
+        services.AddScoped<ICommandHandler<Commands.Reservation.CancelReservation.CancelReservationCommand>, Commands.Reservation.CancelReservation.CancelReservationCommandHandler>();
     }
 
 

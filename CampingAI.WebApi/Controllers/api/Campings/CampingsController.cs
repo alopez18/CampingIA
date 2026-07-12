@@ -12,6 +12,7 @@ public class CampingsController : ControllerBase {
     readonly ILogger<CampingsController> _logger;
     readonly Application.Abstractions.Query.IQueryHandler<Application.Queries.Camping.GetCampings.GetCampingsQuery, Application.Queries.Camping.GetCampings.GetCampingsResult> _getCampingsQueryHandler;
     readonly Application.Abstractions.Query.IQueryHandler<Application.Queries.Camping.GetCampingById.GetCampingByIdQuery, Domain.Entities.Camping> _getCampingByIdQueryHandler;
+    readonly Application.Abstractions.Query.IQueryHandler<Application.Queries.Camping.SearchCampings.SearchCampingsQuery, Application.Queries.Camping.SearchCampings.SearchCampingsResult> _searchCampingsQueryHandler;
     readonly Application.Abstractions.Command.ICommandHandler<Application.Commands.Camping.CreateCamping.CreateCampingCommand, Domain.Entities.Camping> _createCampingCommandHandler;
     readonly Application.Abstractions.Command.ICommandHandler<Application.Commands.Camping.UpdateCamping.UpdateCampingCommand, Domain.Entities.Camping> _updateCampingCommandHandler;
     readonly Application.Abstractions.Command.ICommandHandler<Application.Commands.Camping.DeleteCamping.DeleteCampingCommand> _deleteCampingCommandHandler;
@@ -21,6 +22,7 @@ public class CampingsController : ControllerBase {
     public CampingsController(ILogger<CampingsController> logger,
                                Application.Abstractions.Query.IQueryHandler<Application.Queries.Camping.GetCampings.GetCampingsQuery, Application.Queries.Camping.GetCampings.GetCampingsResult> getCampingsQueryHandler,
                                Application.Abstractions.Query.IQueryHandler<Application.Queries.Camping.GetCampingById.GetCampingByIdQuery, Domain.Entities.Camping> getCampingByIdQueryHandler,
+                               Application.Abstractions.Query.IQueryHandler<Application.Queries.Camping.SearchCampings.SearchCampingsQuery, Application.Queries.Camping.SearchCampings.SearchCampingsResult> searchCampingsQueryHandler,
                                Application.Abstractions.Command.ICommandHandler<Application.Commands.Camping.CreateCamping.CreateCampingCommand, Domain.Entities.Camping> createCampingCommandHandler,
                                Application.Abstractions.Command.ICommandHandler<Application.Commands.Camping.UpdateCamping.UpdateCampingCommand, Domain.Entities.Camping> updateCampingCommandHandler,
                                Application.Abstractions.Command.ICommandHandler<Application.Commands.Camping.DeleteCamping.DeleteCampingCommand> deleteCampingCommandHandler,
@@ -28,6 +30,7 @@ public class CampingsController : ControllerBase {
         _logger = logger;
         _getCampingsQueryHandler = getCampingsQueryHandler;
         _getCampingByIdQueryHandler = getCampingByIdQueryHandler;
+        _searchCampingsQueryHandler = searchCampingsQueryHandler;
         _createCampingCommandHandler = createCampingCommandHandler;
         _updateCampingCommandHandler = updateCampingCommandHandler;
         _deleteCampingCommandHandler = deleteCampingCommandHandler;
@@ -47,6 +50,34 @@ public class CampingsController : ControllerBase {
             result.TotalCount,
             page,
             pageSize);
+
+        return Ok(response);
+    }
+
+    [HttpGet("search")]
+    [ProducesResponseType(typeof(DTO.PagedCampingsResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Shared.ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(Shared.ErrorResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(Shared.ErrorResponse), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> SearchCampings([FromQuery] DTO.SearchCampingsRequest request) {
+        var query = new Application.Queries.Camping.SearchCampings.SearchCampingsQuery(
+            request.Name,
+            request.ProvinciaId,
+            request.ProvinciaCode,
+            request.CategoryId,
+            request.MinPrice,
+            request.MaxPrice,
+            request.FacilityIds,
+            request.Page,
+            request.PageSize);
+
+        var result = await _searchCampingsQueryHandler.HandleAsync(query);
+
+        var response = new DTO.PagedCampingsResponse(
+            result.Items.Select(_campingResponseMapper.Map),
+            result.TotalCount,
+            request.Page,
+            request.PageSize);
 
         return Ok(response);
     }
@@ -77,6 +108,7 @@ public class CampingsController : ControllerBase {
             request.PricePerNight,
             request.OwnerId,
             request.CategoryId,
+            request.ProvinciaId,
             request.FacilityIds);
 
         var camping = await _createCampingCommandHandler.HandleAsync(command);
@@ -101,6 +133,7 @@ public class CampingsController : ControllerBase {
             request.Longitude,
             request.PricePerNight,
             request.CategoryId,
+            request.ProvinciaId,
             request.FacilityIds);
 
         var camping = await _updateCampingCommandHandler.HandleAsync(command);

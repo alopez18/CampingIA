@@ -13,6 +13,7 @@ public class CampingsMapper : Domain.Abstractions.Mappers.CompleteMapper<Models.
             src.CMP_PricePerNight,
             src.CMP_OwnerId,
             src.CMP_CategoryId,
+            src.CMP_ProvinciaId,
             src.CMP_CreatedOn,
             src.CMP_UpdatedOn,
             src.CMP_DeletedOn);
@@ -30,6 +31,7 @@ public class CampingsMapper : Domain.Abstractions.Mappers.CompleteMapper<Models.
             CMP_PricePerNight = src.PricePerNight.Value,
             CMP_OwnerId      = src.OwnerId,
             CMP_CategoryId   = src.CategoryId,
+            CMP_ProvinciaId  = src.ProvinciaId,
             CMP_CreatedOn    = src.CreatedOn.Value,
             CMP_UpdatedOn    = src.UpdatedOn.Value,
             CMP_DeletedOn    = src.DeletedOn

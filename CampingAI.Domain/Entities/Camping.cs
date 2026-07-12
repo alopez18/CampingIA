@@ -8,6 +8,7 @@ public class Camping : Abstractions.Entities.Deleteable, Abstractions.Entities.I
     public ValueObjects.PriceVO PricePerNight { get; private set; }
     public Guid OwnerId { get; private set; }
     public int CategoryId { get; private set; }
+    public Guid? ProvinciaId { get; private set; }
 
     public ValueObjects.DateFromPastVO CreatedOn { get; set; }
     public ValueObjects.DateFromPastVO UpdatedOn { get; set; }
@@ -23,6 +24,7 @@ public class Camping : Abstractions.Entities.Deleteable, Abstractions.Entities.I
                    decimal pricePerNight,
                    Guid ownerId,
                    int categoryId,
+                   Guid? provinciaId,
                    DateTime createdOn,
                    DateTime updatedOn,
                    DateTime? deletedOn) : base(idCamping, deletedOn) {
@@ -36,6 +38,7 @@ public class Camping : Abstractions.Entities.Deleteable, Abstractions.Entities.I
         PricePerNight = new ValueObjects.PriceVO(pricePerNight);
         OwnerId = ownerId;
         CategoryId = categoryId;
+        ProvinciaId = provinciaId;
         CreatedOn = new(createdOn);
         UpdatedOn = new(updatedOn);
     }
@@ -46,7 +49,8 @@ public class Camping : Abstractions.Entities.Deleteable, Abstractions.Entities.I
                                     decimal longitude,
                                     decimal pricePerNight,
                                     Guid ownerId,
-                                    int categoryId) {
+                                    int categoryId,
+                                    Guid? provinciaId = null) {
         return new Camping(Guid.NewGuid(),
                            name,
                            description,
@@ -55,16 +59,19 @@ public class Camping : Abstractions.Entities.Deleteable, Abstractions.Entities.I
                            pricePerNight,
                            ownerId,
                            categoryId,
+                           provinciaId,
                            DateTime.Now,
                            DateTime.Now,
                            null);
     }
 
-    public void UpdateDetails(string name, string description, decimal pricePerNight, int categoryId) {
+    public void UpdateDetails(string name, string description, decimal pricePerNight, int categoryId,
+                              Guid? provinciaId = null) {
         Name = new ValueObjects.CampingNameVO(name);
         Description = new ValueObjects.CampingDescriptionVO(description);
         PricePerNight = new ValueObjects.PriceVO(pricePerNight);
         CategoryId = categoryId;
+        ProvinciaId = provinciaId;
     }
 
     public void UpdateLocation(decimal latitude, decimal longitude) {

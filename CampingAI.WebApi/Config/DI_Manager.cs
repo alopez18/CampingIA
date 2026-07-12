@@ -17,6 +17,10 @@ public static class DI_Manager {
         services.AddScoped<Controllers.api.Auth.Mappers.AuthResponseMapper>();
         services.AddScoped<Controllers.api.Users.Mappers.UserResponseMapper>();
         services.AddScoped<Controllers.api.Campings.Mappers.CampingResponseMapper>();
+        services.AddScoped<Controllers.api.Location.Mappers.CountryResponseMapper>();
+        services.AddScoped<Controllers.api.Location.Mappers.ProvinceResponseMapper>();
+        services.AddScoped<Controllers.api.Favorites.Mappers.FavoriteResponseMapper>();
+        services.AddScoped<Controllers.api.Reservations.Mappers.ReservationResponseMapper>();
     }
 
 

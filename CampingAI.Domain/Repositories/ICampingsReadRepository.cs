@@ -4,4 +4,5 @@ public interface ICampingsReadRepository {
     Task<IEnumerable<Entities.Camping>> GetAllAsync();
     Task<IEnumerable<Entities.Camping>> GetByCategoryAsync(int categoryId);
     Task<(IEnumerable<Entities.Camping> Items, int TotalCount)> GetPagedAsync(int page, int pageSize);
+    Task<(IEnumerable<Entities.Camping> Items, int TotalCount)> SearchAsync(CampingSearchFilters filters);
 }
