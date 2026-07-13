@@ -29,18 +29,37 @@
       - campingai-network
     volumes:
       - ../CampingAI.Infra/0.CreateDatabase.sql:/scripts/0.CreateDatabase.sql:ro
+      - ../CampingAI.Infra/1.CreateCampingAITables.sql:/scripts/1.CreateCampingAITables.sql:ro
+      - ../CampingAI.Infra/2.AlterCampingsAddFilters.sql:/scripts/2.AlterCampingsAddFilters.sql:ro
+      - ../CampingAI.Infra/3.CreateLocationTables.sql:/scripts/3.CreateLocationTables.sql:ro
+      - ../CampingAI.Infra/4.AlterCampingsProvinceId.sql:/scripts/4.AlterCampingsProvinceId.sql:ro
+      - ../CampingAI.Infra/5.SeedFacilities.sql:/scripts/5.SeedFacilities.sql:ro
+      - ../CampingAI.Infra/6.DropCampingsPiscinaColumn.sql:/scripts/6.DropCampingsPiscinaColumn.sql:ro
+      - ../CampingAI.Infra/7.DropCampingsMascotasColumn.sql:/scripts/7.DropCampingsMascotasColumn.sql:ro
+      - ../CampingAI.Infra/8.AddFavoritesUniqueConstraint.sql:/scripts/8.AddFavoritesUniqueConstraint.sql:ro
     command: >
       bash -c "
         echo 'Esperando a que SQL Server esté listo...'
         sleep 15
-        echo 'Ejecutando script de inicialización...'
-        /opt/mssql-tools18/bin/sqlcmd -S sql-campingai -U sa -P 'Pwd_12345!' -C -i /scripts/0.CreateDatabase.sql
-        if [ $? -eq 0 ]; then
-          echo 'Script ejecutado exitosamente'
-        else
-          echo 'Error al ejecutar el script'
-          exit 1
-        fi
+        run_script() {
+          echo \"Ejecutando $1...\"
+          /opt/mssql-tools18/bin/sqlcmd -S sql-campingai -U sa -P 'Pwd_12345!' -C -i \"/scripts/$1\"
+          if [ \$? -ne 0 ]; then
+            echo \"Error al ejecutar $1\"
+            exit 1
+          fi
+          echo \"$1 ejecutado correctamente\"
+        }
+        run_script 0.CreateDatabase.sql
+        run_script 1.CreateCampingAITables.sql
+        run_script 2.AlterCampingsAddFilters.sql
+        run_script 3.CreateLocationTables.sql
+        run_script 4.AlterCampingsProvinceId.sql
+        run_script 5.SeedFacilities.sql
+        run_script 6.DropCampingsPiscinaColumn.sql
+        run_script 7.DropCampingsMascotasColumn.sql
+        run_script 8.AddFavoritesUniqueConstraint.sql
+        echo 'Todos los scripts ejecutados exitosamente'
       "
     restart: "no"
 
