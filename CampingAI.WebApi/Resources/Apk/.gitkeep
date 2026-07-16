@@ -1,0 +1,3 @@
+Coloca aquí el fichero APK de Android (por ejemplo: camping-ai.apk).
+El nombre debe coincidir con la configuración "AndroidApp:ApkRelativePath" en appsettings.json.
+Esta carpeta está fuera de wwwroot para evitar el acceso directo por URL; la descarga se sirve a través del endpoint Home/DownloadApk.

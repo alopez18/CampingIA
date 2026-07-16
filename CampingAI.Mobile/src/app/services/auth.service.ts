@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { from, Observable, switchMap } from 'rxjs';
 import { Preferences } from '@capacitor/preferences';
+import { Capacitor } from '@capacitor/core';
+import { SocialLogin } from '@capgo/capacitor-social-login';
 import { environment } from '../../environments/environment';
 import { AuthResponse, LoginRequest, RegisterRequest, User } from '../models/user.model';
 import { TOKEN_KEY } from '../core/interceptors/jwt.interceptor';
@@ -26,6 +28,7 @@ declare const google: {
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
+  private googleNativeInitialized = false;
 
   register(request: RegisterRequest): Observable<AuthResponse> {
     return this.http
@@ -40,18 +43,43 @@ export class AuthService {
   }
 
   loginWithGoogle(): Promise<void> {
-    return this.tryOneTap()
-      .catch(() => this.loginWithGooglePopup())
-      .then(idToken =>
-        new Promise<void>((resolve, reject) =>
-          this.http
-            .post<AuthResponse>(`${environment.apiUrl}/auth/google`, { idToken })
-            .subscribe({
-              next: res => this.handleAuthSuccess(res).then(() => resolve()).catch(reject),
-              error: reject
-            })
-        )
-      );
+    const idTokenPromise = Capacitor.isNativePlatform()
+      ? this.loginWithGoogleNative()
+      : this.tryOneTap().catch(() => this.loginWithGooglePopup());
+
+    return idTokenPromise.then(idToken =>
+      new Promise<void>((resolve, reject) =>
+        this.http
+          .post<AuthResponse>(`${environment.apiUrl}/auth/google`, { idToken })
+          .subscribe({
+            next: res => this.handleAuthSuccess(res).then(() => resolve()).catch(reject),
+            error: reject
+          })
+      )
+    );
+  }
+
+  private async loginWithGoogleNative(): Promise<string> {
+    if (!this.googleNativeInitialized) {
+      await SocialLogin.initialize({
+        google: { webClientId: environment.googleClientId }
+      });
+      this.googleNativeInitialized = true;
+    }
+
+    const { result } = await SocialLogin.login({
+      provider: 'google',
+      options: {
+        filterByAuthorizedAccounts: false,
+        autoSelectEnabled: false
+      }
+    });
+
+    const idToken = (result as { idToken?: string | null }).idToken;
+    if (!idToken) {
+      throw new Error('Google no devolvió un idToken.');
+    }
+    return idToken;
   }
 
   private tryOneTap(): Promise<string> {

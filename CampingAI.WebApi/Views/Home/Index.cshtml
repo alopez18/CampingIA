@@ -2,6 +2,8 @@
     ViewData["Title"] = "Inicio";
     var isGestor = User.IsInRole("Gestor");
     var isAdmin = User.IsInRole("Admin");
+    var userAgent = Context.Request.Headers.UserAgent.ToString();
+    var isAndroid = userAgent.Contains("Android", StringComparison.OrdinalIgnoreCase);
 }
 
 <section class="py-4 py-md-5 text-center">
@@ -10,6 +12,20 @@
     <p class="lead text-muted mb-0">
         Panel de gestión de campings con inteligencia artificial.
     </p>
+    <div class="mt-4">
+        @if (isAndroid)
+        {
+            <a asp-controller="Home" asp-action="DownloadApk" class="btn btn-success btn-lg">
+                <i class="fa-brands fa-android me-2"></i>Descargar app Android
+            </a>
+        }
+        else
+        {
+            <a href="https://campingai.runasp.net" class="btn btn-success btn-lg" target="_blank" rel="noopener">
+                <i class="fa-solid fa-globe me-2"></i>Ir a la web de Campings AI
+            </a>
+        }
+    </div>
 </section>
 
 @if (User.Identity.IsAuthenticated)

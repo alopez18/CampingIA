@@ -6,7 +6,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UserSecretsId>aa4013aa-ccb6-4e16-8f76-249f9f2c2cfb</UserSecretsId>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-		<Version>1.0.3</Version>
+		<Version>1.0.9</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -31,6 +31,8 @@
 	  <Folder Include="Properties\PublishProfiles\" />
 	</ItemGroup>
 
-	
+	<ItemGroup>
+	  <None Include="Resources\Apk\**\*" CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
 
 </Project>

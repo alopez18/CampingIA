@@ -4,8 +4,10 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'http://campingaibackoffice.runasp.net/api', //'https://localhost:32773/api',
-  googleClientId: '905233226427-8rq2pmm0c7esonldqfuj2e3rdpmkk3hh.apps.googleusercontent.com'
+  platform: 'web',
+  apiUrl: 'https://campingaibackoffice.runasp.net/api', //'https://localhost:32773/api',
+  // Client ID de desarrollo (usa el del proyecto WEB por defecto).
+  googleClientId: 'REPLACE_WITH_WEB_PROJECT_WEB_CLIENT_ID.apps.googleusercontent.com'
 };
 
 /*

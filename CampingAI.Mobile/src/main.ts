@@ -4,6 +4,7 @@ import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular/standalo
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { isDevMode } from '@angular/core';
 import { provideServiceWorker } from '@angular/service-worker';
+import { Capacitor } from '@capacitor/core';
 
 import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
@@ -31,7 +32,7 @@ if (window.opener && _oauthHash && (_oauthHash.has('id_token') || _oauthHash.has
       provideRouter(routes, withPreloading(PreloadAllModules)),
       provideHttpClient(withInterceptors([jwtInterceptor])),
       provideServiceWorker('ngsw-worker.js', {
-        enabled: !isDevMode(),
+        enabled: !isDevMode() && !Capacitor.isNativePlatform(),
         registrationStrategy: 'registerWhenStable:30000'
       })
     ],

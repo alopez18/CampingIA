@@ -1,12 +1,15 @@
 {
   "name": "CampingAI.Mobile",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "Ionic Framework",
   "homepage": "https://ionicframework.com/",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:web": "ng build --configuration web",
+    "build:android": "ng build --configuration android",
+    "sync:android": "ng build --configuration android && npx cap sync android",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint"
@@ -32,6 +35,7 @@
     "@capacitor/keyboard": "8.0.5",
     "@capacitor/preferences": "^8.0.1",
     "@capacitor/status-bar": "8.0.2",
+    "@capgo/capacitor-social-login": "^8.3.37",
     "@ionic/angular": "^8.0.0",
     "ionicons": "^7.0.0",
     "leaflet": "^1.9.4",

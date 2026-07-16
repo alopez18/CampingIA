@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonItem, IonLabel,
@@ -8,6 +9,7 @@ import {
 import { addIcons } from 'ionicons';
 import { logoGoogle } from 'ionicons/icons';
 import { AuthService } from '../../../services/auth.service';
+import { version as appVersion } from '../../../../../package.json';
 
 @Component({
   selector: 'app-login',
@@ -71,6 +73,10 @@ import { AuthService } from '../../../services/auth.service';
       <div class="ion-text-center ion-padding-top">
         <ion-text>¿No tienes cuenta? <a routerLink="/auth/register">Regístrate</a></ion-text>
       </div>
+
+      <footer class="app-version ion-text-center">
+        <ion-text color="medium">v{{ appVersion }}</ion-text>
+      </footer>
     </ion-content>
   `,
   styles: [`
@@ -92,6 +98,7 @@ import { AuthService } from '../../../services/auth.service';
     .error-msg { color: var(--ion-color-danger); font-size: 0.8em; padding: 4px 16px; }
     .separator { color: var(--ion-color-medium); font-size: 0.85em; }
     .separator span { background: var(--ion-background-color); padding: 0 8px; }
+    .app-version { margin-top: 32px; padding-bottom: 8px; font-size: 0.75em; opacity: 0.7; }
   `]
 })
 export class LoginPage {
@@ -99,6 +106,8 @@ export class LoginPage {
   private readonly fb = inject(FormBuilder);
   private readonly toast = inject(ToastController);
   private readonly loading = inject(LoadingController);
+
+  readonly appVersion = appVersion;
 
   constructor() {
     addIcons({ logoGoogle });
@@ -136,8 +145,12 @@ export class LoginPage {
     try {
       await this.auth.loginWithGoogle();
       await loader.dismiss();
-    } catch {
+    } catch (err) {
       await loader.dismiss();
+      const detail = err instanceof HttpErrorResponse
+        ? `HTTP ${err.status} ${err.statusText} - ${err.url} - ${JSON.stringify(err.error)}`
+        : (err instanceof Error ? err.message : JSON.stringify(err));
+      console.error('[GoogleLogin] Falló el inicio de sesión con Google:', detail);
       const t = await this.toast.create({
         message: 'No se pudo iniciar sesión con Google. Inténtalo de nuevo.',
         duration: 3000, color: 'danger', position: 'bottom'
