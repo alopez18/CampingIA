@@ -12,7 +12,8 @@ public class UsersMapper : Domain.Abstractions.Mappers.CompleteMapper<Models.Cam
             src.USR_RoleId,
             src.USR_CreatedOn,
             src.USR_UpdatedOn,
-            src.USR_DeletedOn);
+            src.USR_DeletedOn,
+            (Domain.Enums.ManagerApprovalStatus)src.USR_ManagerStatus);
     }
 
     public override Models.CampingAI_DB.T_USERS ReverseMap(Domain.Entities.User src)
@@ -24,6 +25,7 @@ public class UsersMapper : Domain.Abstractions.Mappers.CompleteMapper<Models.Cam
             USR_PasswordHashed = src.PasswordHashed,
             USR_Name           = src.Name,
             USR_RoleId         = src.RoleId,
+            USR_ManagerStatus  = (int)src.ManagerStatus,
             USR_CreatedOn      = src.CreatedOn.Value,
             USR_UpdatedOn      = src.UpdatedOn.Value,
             USR_DeletedOn      = src.DeletedOn

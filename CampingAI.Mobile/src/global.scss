@@ -35,3 +35,57 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
+
+// ─── Global Design System ───────────────────────────────────────────────────
+
+ion-card {
+  --border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.10) !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+ion-card:active {
+  transform: scale(0.98);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07) !important;
+}
+
+ion-header {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+ion-toolbar {
+  --border-width: 0 !important;
+}
+
+ion-tab-bar {
+  --border: none;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+  height: 62px;
+}
+
+ion-tab-button {
+  --color: var(--ion-color-medium);
+  --color-selected: var(--ion-color-primary);
+}
+
+ion-tab-button ion-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+}
+
+ion-button[expand='block'] {
+  --border-radius: 12px;
+  height: 52px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+}
+
+ion-searchbar {
+  --border-radius: 12px;
+  --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+ion-item {
+  --border-radius: 10px;
+}

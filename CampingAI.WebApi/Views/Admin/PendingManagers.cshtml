@@ -1,0 +1,38 @@
+@model IEnumerable<CampingAI.Domain.Entities.User>
+@{
+    ViewData["Title"] = "Gestores pendientes";
+}
+
+<h1 class="h3 mb-4">Gestores pendientes de aprobación</h1>
+
+@if (!Model.Any()) {
+    <div class="alert alert-info">No hay solicitudes de gestor pendientes.</div>
+} else {
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th class="text-end">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model) {
+                <tr>
+                    <td>@user.Name</td>
+                    <td>@user.Email.ToString()</td>
+                    <td class="text-end">
+                        <form asp-action="Approve" method="post" class="d-inline">
+                            <input type="hidden" name="id" value="@user.Id" />
+                            <button type="submit" class="btn btn-success btn-sm">Aprobar</button>
+                        </form>
+                        <form asp-action="Reject" method="post" class="d-inline">
+                            <input type="hidden" name="id" value="@user.Id" />
+                            <button type="submit" class="btn btn-outline-danger btn-sm">Rechazar</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

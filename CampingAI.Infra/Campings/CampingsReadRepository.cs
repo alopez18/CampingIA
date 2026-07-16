@@ -110,6 +110,33 @@ public class CampingsReadRepository : Domain.Repositories.ICampingsReadRepositor
         return campings;
     }
 
+    public async Task<IEnumerable<Domain.Entities.Camping>> GetByOwnerAsync(Guid ownerId)
+    {
+        using var dbConnection = _sqlConnectionFactory.CreateConnection();
+
+        var sql = new StringBuilder();
+        sql.AppendLine($"SELECT {_modelExtractor.GetFieldNamesForSql()} ");
+        sql.AppendLine($"FROM {_modelExtractor.GetTableNameForSql()} ");
+        sql.AppendLine($"WHERE {nameof(Models.CampingAI_DB.T_CAMPINGS.CMP_OwnerId)} = @OwnerId ");
+        sql.AppendLine($"AND {nameof(Models.CampingAI_DB.T_CAMPINGS.CMP_DeletedOn)} IS NULL");
+        string query = sql.ToString();
+
+        IEnumerable<Models.CampingAI_DB.T_CAMPINGS> rows;
+        try
+        {
+            rows = await dbConnection.QueryAsync<Models.CampingAI_DB.T_CAMPINGS>(query, new { OwnerId = ownerId });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting campings by owner {OwnerId}. Query: {Query}", ownerId, query);
+            throw;
+        }
+
+        var campings = _campingsMapper.Map(rows).ToList();
+        await LoadFacilitiesForCampingsAsync(dbConnection, campings);
+        return campings;
+    }
+
     public async Task<(IEnumerable<Domain.Entities.Camping> Items, int TotalCount)> GetPagedAsync(int page, int pageSize)
     {
         using var dbConnection = _sqlConnectionFactory.CreateConnection();
@@ -218,6 +245,30 @@ public class CampingsReadRepository : Domain.Repositories.ICampingsReadRepositor
             parameters.Add("MaxPrice", filters.MaxPrice.Value);
         }
 
+        if (filters.MinLat.HasValue)
+        {
+            where.AppendLine($"AND {nameof(Models.CampingAI_DB.T_CAMPINGS.CMP_Latitude)} >= @MinLat");
+            parameters.Add("MinLat", filters.MinLat.Value);
+        }
+
+        if (filters.MaxLat.HasValue)
+        {
+            where.AppendLine($"AND {nameof(Models.CampingAI_DB.T_CAMPINGS.CMP_Latitude)} <= @MaxLat");
+            parameters.Add("MaxLat", filters.MaxLat.Value);
+        }
+
+        if (filters.MinLng.HasValue)
+        {
+            where.AppendLine($"AND {nameof(Models.CampingAI_DB.T_CAMPINGS.CMP_Longitude)} >= @MinLng");
+            parameters.Add("MinLng", filters.MinLng.Value);
+        }
+
+        if (filters.MaxLng.HasValue)
+        {
+            where.AppendLine($"AND {nameof(Models.CampingAI_DB.T_CAMPINGS.CMP_Longitude)} <= @MaxLng");
+            parameters.Add("MaxLng", filters.MaxLng.Value);
+        }
+
         var facilityIds = filters.FacilityIds?.ToList();
         if (facilityIds is { Count: > 0 })
         {
@@ -237,15 +288,15 @@ public class CampingsReadRepository : Domain.Repositories.ICampingsReadRepositor
         parameters.Add("PageSize", filters.PageSize);
 
         var countSql = new StringBuilder();
-        countSql.AppendLine($"SELECT COUNT(*) FROM {_modelExtractor.GetTableNameForSql()} ");
+        countSql.AppendLine($" SELECT COUNT(*) FROM {_modelExtractor.GetTableNameForSql()} ");
         countSql.Append(where);
 
         var dataSql = new StringBuilder();
-        dataSql.AppendLine($"SELECT {_modelExtractor.GetFieldNamesForSql()} ");
-        dataSql.AppendLine($"FROM {_modelExtractor.GetTableNameForSql()} ");
+        dataSql.AppendLine($" SELECT {_modelExtractor.GetFieldNamesForSql()} ");
+        dataSql.AppendLine($" FROM {_modelExtractor.GetTableNameForSql()} ");
         dataSql.Append(where);
-        dataSql.AppendLine($"ORDER BY {nameof(Models.CampingAI_DB.T_CAMPINGS.CMP_Name)}");
-        dataSql.AppendLine("OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY");
+        dataSql.AppendLine($" ORDER BY {nameof(Models.CampingAI_DB.T_CAMPINGS.CMP_Name)} ");
+        dataSql.AppendLine(" OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY ");
 
         int totalCount;
         IEnumerable<Models.CampingAI_DB.T_CAMPINGS> rows;

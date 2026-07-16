@@ -1,23 +1,28 @@
+using Microsoft.Extensions.DependencyInjection;
+
 namespace CampingAI.DataImporter;
 
 public class Worker : BackgroundService {
     #region Dependencies
-    readonly Importers.Interfaces.ICampingsImporter _importer;
+    readonly IServiceScopeFactory _scopeFactory;
     readonly IHostApplicationLifetime _lifetime;
     readonly ILogger<Worker> _logger;
     #endregion
 
-    public Worker(Importers.Interfaces.ICampingsImporter importer,
+    public Worker(IServiceScopeFactory scopeFactory,
                   IHostApplicationLifetime lifetime,
                   ILogger<Worker> logger) {
-        _importer = importer;
-        _lifetime = lifetime;
-        _logger   = logger;
+        _scopeFactory = scopeFactory;
+        _lifetime     = lifetime;
+        _logger       = logger;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken) {
         try {
-            await _importer.RunAsync(stoppingToken);
+            using var scope = _scopeFactory.CreateScope();
+            var orchestrator = scope.ServiceProvider
+                .GetRequiredService<Orchestration.Interfaces.IImportOrchestrator>();
+            await orchestrator.RunAllAsync(stoppingToken);
         }
         catch (Exception ex) {
             _logger.LogCritical(ex, "Error fatal durante la importación. El proceso se detendrá.");

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding,
@@ -62,7 +62,7 @@ import { Camping } from '../../models/camping.model';
     </ion-content>
   `
 })
-export class FavoritesPage implements OnInit {
+export class FavoritesPage {
   private readonly favoritesService = inject(FavoritesService);
   private readonly campingsService = inject(CampingsService);
   private readonly toast = inject(ToastController);
@@ -72,7 +72,7 @@ export class FavoritesPage implements OnInit {
 
   constructor() { addIcons({ trashOutline, locationOutline }); }
 
-  ngOnInit(): void { this.loadFavorites(); }
+  ionViewWillEnter(): void { this.loadFavorites(); }
 
   loadFavorites(): void {
     this.loading.set(true);

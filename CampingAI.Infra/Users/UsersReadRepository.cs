@@ -95,4 +95,28 @@ public class UsersReadRepository : Domain.Repositories.IUsersReadRepository
             throw;
         }
     }
+
+    public async Task<IEnumerable<Domain.Entities.User>> GetPendingManagersAsync()
+    {
+        using var dbConnection = _sqlConnectionFactory.CreateConnection();
+
+        var sql = new StringBuilder();
+        sql.AppendLine($"SELECT {_modelExtractor.GetFieldNamesForSql()} ");
+        sql.AppendLine($"FROM {_modelExtractor.GetTableNameForSql()} ");
+        sql.AppendLine($"WHERE {nameof(Models.CampingAI_DB.T_USERS.USR_ManagerStatus)} = @Status ");
+        sql.AppendLine($"AND {nameof(Models.CampingAI_DB.T_USERS.USR_DeletedOn)} IS NULL");
+        string query = sql.ToString();
+
+        try
+        {
+            var rows = await dbConnection.QueryAsync<Models.CampingAI_DB.T_USERS>(
+                query, new { Status = (int)Domain.Enums.ManagerApprovalStatus.Pending });
+            return rows.Select(_usersMapper.Map);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting pending managers. Query: {Query}", query);
+            throw;
+        }
+    }
 }

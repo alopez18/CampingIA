@@ -35,7 +35,7 @@ public class RegisterUserCommandHandler : Abstractions.Command.ICommandHandler<R
         var user = Domain.Entities.User.CreateNew(command.Email,
                                                   passwordHashed!,
                                                   command.Name,
-                                                  command.RoleId);
+                                                  Domain.Enums.UserRole.Comun);
 
         await _usersWriteRepository.AddAsync(user);
         await _unitOfWork.SaveChangesAsync();

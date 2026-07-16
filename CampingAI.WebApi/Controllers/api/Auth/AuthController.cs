@@ -1,3 +1,4 @@
+using Google.Apis.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,17 +12,23 @@ public class AuthController : ControllerBase {
     readonly ILogger<AuthController> _logger;
     readonly Application.Abstractions.Command.ICommandHandler<Application.Commands.User.RegisterUser.RegisterUserCommand, Domain.Entities.User> _registerUserCommandHandler;
     readonly Application.Abstractions.Command.ICommandHandler<Application.Commands.User.LoginUser.LoginUserCommand, string> _loginUserCommandHandler;
+    readonly Application.Abstractions.Command.ICommandHandler<Application.Commands.User.GoogleLoginUser.GoogleLoginUserCommand, string> _googleLoginUserCommandHandler;
     readonly Mappers.AuthResponseMapper _authResponseMapper;
+    readonly IConfiguration _configuration;
     #endregion
 
     public AuthController(ILogger<AuthController> logger,
                           Application.Abstractions.Command.ICommandHandler<Application.Commands.User.RegisterUser.RegisterUserCommand, Domain.Entities.User> registerUserCommandHandler,
                           Application.Abstractions.Command.ICommandHandler<Application.Commands.User.LoginUser.LoginUserCommand, string> loginUserCommandHandler,
-                          Mappers.AuthResponseMapper authResponseMapper) {
+                          Application.Abstractions.Command.ICommandHandler<Application.Commands.User.GoogleLoginUser.GoogleLoginUserCommand, string> googleLoginUserCommandHandler,
+                          Mappers.AuthResponseMapper authResponseMapper,
+                          IConfiguration configuration) {
         _logger = logger;
         _registerUserCommandHandler = registerUserCommandHandler;
         _loginUserCommandHandler = loginUserCommandHandler;
+        _googleLoginUserCommandHandler = googleLoginUserCommandHandler;
         _authResponseMapper = authResponseMapper;
+        _configuration = configuration;
     }
 
     [HttpPost("register")]
@@ -33,8 +40,7 @@ public class AuthController : ControllerBase {
     public async Task<IActionResult> Register([FromBody] DTO.RegisterRequest request) {
         var command = new Application.Commands.User.RegisterUser.RegisterUserCommand(request.Email,
                                                                                     request.Password,
-                                                                                    request.Name,
-                                                                                    request.RoleId);
+                                                                                    request.Name);
         var user = await _registerUserCommandHandler.HandleAsync(command);
 
         var token = await _loginUserCommandHandler.HandleAsync(
@@ -55,5 +61,32 @@ public class AuthController : ControllerBase {
             new Application.Commands.User.LoginUser.LoginUserCommand(request.Email, request.Password));
 
         return Ok(new DTO.AuthResponse { Token = token, Email = request.Email });
+    }
+
+    [HttpPost("google")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(DTO.AuthResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Shared.ErrorResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(Shared.ErrorResponse), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GoogleLogin([FromBody] DTO.GoogleLoginRequest request) {
+        var clientId = _configuration["GoogleAuth:ClientId"];
+
+        var validationSettings = new GoogleJsonWebSignature.ValidationSettings {
+            Audience = clientId is not null ? [clientId] : null
+        };
+
+        GoogleJsonWebSignature.Payload payload;
+        try {
+            payload = await GoogleJsonWebSignature.ValidateAsync(request.IdToken, validationSettings);
+        }
+        catch (InvalidJwtException ex) {
+            _logger.LogWarning(ex, "Google ID token inválido");
+            return Unauthorized(new Shared.ErrorResponse("Token de Google inválido."));
+        }
+
+        var token = await _googleLoginUserCommandHandler.HandleAsync(
+            new Application.Commands.User.GoogleLoginUser.GoogleLoginUserCommand(payload.Email, payload.Name));
+
+        return Ok(new DTO.AuthResponse { Token = token, Email = payload.Email, Name = payload.Name });
     }
 }

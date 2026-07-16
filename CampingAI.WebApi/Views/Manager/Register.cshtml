@@ -1,0 +1,42 @@
+@model CampingAI.WebApi.Controllers.Manager.DTO.RegisterManagerFormRequest
+@{
+    ViewData["Title"] = "Registro de Gestor";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h1 class="h3 mb-4 text-center">Registro de Gestor</h1>
+        <p class="text-muted text-center">
+            Crea tu cuenta de gestor. Un administrador revisará tu solicitud antes de habilitar el acceso al backoffice.
+        </p>
+
+        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+        <form asp-action="Register" method="post">
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label">Nombre</label>
+                <input asp-for="Name" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label">Email</label>
+                <input asp-for="Email" class="form-control" type="email" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label">Contraseña</label>
+                <input asp-for="Password" class="form-control" type="password" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="ConfirmPassword" class="form-label">Confirmar contraseña</label>
+                <input asp-for="ConfirmPassword" class="form-control" type="password" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Registrarme como gestor</button>
+        </form>
+
+        <p class="text-center mt-4">
+            ¿Ya tienes cuenta? <a asp-controller="Account" asp-action="Login">Inicia sesión</a>
+        </p>
+    </div>
+</div>

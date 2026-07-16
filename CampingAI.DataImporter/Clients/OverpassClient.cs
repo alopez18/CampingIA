@@ -34,7 +34,13 @@ public class OverpassClient : Interfaces.IOverpassClient {
             try {
                 var content  = new StringContent($"data={Uri.EscapeDataString(query)}", Encoding.UTF8, "application/x-www-form-urlencoded");
                 var response = await _httpClient.PostAsync(string.Empty, content, ct);
-                response.EnsureSuccessStatusCode();
+
+                if (!response.IsSuccessStatusCode) {
+                    var errorBody = await response.Content.ReadAsStringAsync(ct);
+                    _logger.LogWarning("Overpass respondió {StatusCode} ({Reason}) para '{Region}'. Cuerpo: {Body}",
+                        (int)response.StatusCode, response.ReasonPhrase, regionName, errorBody);
+                    response.EnsureSuccessStatusCode();
+                }
 
                 var json   = await response.Content.ReadAsStringAsync(ct);
                 var result = JsonSerializer.Deserialize<DTOs.OverpassResponse>(json, _jsonOptions)

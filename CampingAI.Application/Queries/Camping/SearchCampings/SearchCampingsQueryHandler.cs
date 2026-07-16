@@ -27,6 +27,10 @@ public class SearchCampingsQueryHandler : Abstractions.Query.IQueryHandler<Searc
             query.MinPrice,
             query.MaxPrice,
             query.FacilityIds,
+            query.MinLat,
+            query.MaxLat,
+            query.MinLng,
+            query.MaxLng,
             query.Page,
             query.PageSize);
 

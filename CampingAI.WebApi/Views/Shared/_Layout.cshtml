@@ -26,6 +26,16 @@
 
                     <ul class="navbar-nav">
                         @if (User.Identity.IsAuthenticated) {
+                            @if (User.IsInRole("Gestor")) {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Backoffice" asp-action="Index">Backoffice</a>
+                                </li>
+                            }
+                            @if (User.IsInRole("Admin")) {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Admin" asp-action="PendingManagers">Gestores pendientes</a>
+                                </li>
+                            }
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-controller="Account" asp-action="Profile">
                                     @User.Identity.Name

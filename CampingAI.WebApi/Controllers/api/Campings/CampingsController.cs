@@ -68,6 +68,10 @@ public class CampingsController : ControllerBase {
             request.MinPrice,
             request.MaxPrice,
             request.FacilityIds,
+            request.MinLat,
+            request.MaxLat,
+            request.MinLng,
+            request.MaxLng,
             request.Page,
             request.PageSize);
 

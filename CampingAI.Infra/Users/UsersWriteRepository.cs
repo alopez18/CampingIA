@@ -36,6 +36,7 @@ public class UsersWriteRepository : Domain.Repositories.IUsersWriteRepository
         sql.AppendLine($"    {nameof(Models.CampingAI_DB.T_USERS.USR_PasswordHashed)},");
         sql.AppendLine($"    {nameof(Models.CampingAI_DB.T_USERS.USR_Name)},");
         sql.AppendLine($"    {nameof(Models.CampingAI_DB.T_USERS.USR_RoleId)},");
+        sql.AppendLine($"    {nameof(Models.CampingAI_DB.T_USERS.USR_ManagerStatus)},");
         sql.AppendLine($"    {nameof(Models.CampingAI_DB.T_USERS.USR_CreatedOn)},");
         sql.AppendLine($"    {nameof(Models.CampingAI_DB.T_USERS.USR_UpdatedOn)}");
         sql.AppendLine($") VALUES (");
@@ -44,6 +45,7 @@ public class UsersWriteRepository : Domain.Repositories.IUsersWriteRepository
         sql.AppendLine($"    @{nameof(Models.CampingAI_DB.T_USERS.USR_PasswordHashed)},");
         sql.AppendLine($"    @{nameof(Models.CampingAI_DB.T_USERS.USR_Name)},");
         sql.AppendLine($"    @{nameof(Models.CampingAI_DB.T_USERS.USR_RoleId)},");
+        sql.AppendLine($"    @{nameof(Models.CampingAI_DB.T_USERS.USR_ManagerStatus)},");
         sql.AppendLine($"    @{nameof(Models.CampingAI_DB.T_USERS.USR_CreatedOn)},");
         sql.AppendLine($"    @{nameof(Models.CampingAI_DB.T_USERS.USR_UpdatedOn)}");
         sql.AppendLine($")");
@@ -71,6 +73,7 @@ public class UsersWriteRepository : Domain.Repositories.IUsersWriteRepository
         sql.AppendLine($"    {nameof(Models.CampingAI_DB.T_USERS.USR_PasswordHashed)} = @{nameof(Models.CampingAI_DB.T_USERS.USR_PasswordHashed)},");
         sql.AppendLine($"    {nameof(Models.CampingAI_DB.T_USERS.USR_Name)} = @{nameof(Models.CampingAI_DB.T_USERS.USR_Name)},");
         sql.AppendLine($"    {nameof(Models.CampingAI_DB.T_USERS.USR_RoleId)} = @{nameof(Models.CampingAI_DB.T_USERS.USR_RoleId)},");
+        sql.AppendLine($"    {nameof(Models.CampingAI_DB.T_USERS.USR_ManagerStatus)} = @{nameof(Models.CampingAI_DB.T_USERS.USR_ManagerStatus)},");
         sql.AppendLine($"    {nameof(Models.CampingAI_DB.T_USERS.USR_UpdatedOn)} = @{nameof(Models.CampingAI_DB.T_USERS.USR_UpdatedOn)}");
         sql.AppendLine($"WHERE {nameof(Models.CampingAI_DB.T_USERS.USR_IdUser)} = @{nameof(Models.CampingAI_DB.T_USERS.USR_IdUser)}");
         string query = sql.ToString();

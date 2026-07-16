@@ -1,15 +1,41 @@
-﻿@{
+﻿@model CampingAI.WebApi.Controllers.Account.DTO.LoginFormRequest
+@{
     ViewData["Title"] = "Iniciar Sesión";
+    var returnUrl = ViewBag.ReturnUrl as string;
 }
 
-<div class="text-center">
-    <h1 class="display-4">Iniciar Sesión</h1>
-    <p>Inicia sesión con tu cuenta de Google para acceder a la aplicación.</p>
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <h1 class="h3 mb-4 text-center">Iniciar Sesión</h1>
 
-    <form asp-action="GoogleLogin" method="post" class="mt-4">
-        <button type="submit" class="btn btn-danger btn-lg">
-            <i class="fab fa-google me-2"></i>
-            Iniciar sesión con Google
-        </button>
-    </form>
+        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+        <form asp-action="Login" method="post">
+            <input type="hidden" asp-for="ReturnUrl" value="@returnUrl" />
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label">Email</label>
+                <input asp-for="Email" class="form-control" type="email" required />
+            </div>
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label">Contraseña</label>
+                <input asp-for="Password" class="form-control" type="password" required />
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Entrar</button>
+        </form>
+
+        <hr class="my-4" />
+
+        <form asp-action="GoogleLogin" method="post" class="text-center">
+            <input type="hidden" name="returnUrl" value="@returnUrl" />
+            <button type="submit" class="btn btn-danger w-100">
+                <i class="fab fa-google me-2"></i>
+                Iniciar sesión con Google
+            </button>
+        </form>
+
+        <p class="text-center mt-4">
+            ¿Quieres gestionar un camping?
+            <a asp-controller="Manager" asp-action="Register">Regístrate como gestor</a>
+        </p>
+    </div>
 </div>

@@ -9,5 +9,9 @@ public record SearchCampingsRequest(
     [FromQuery] decimal? MinPrice,
     [FromQuery] decimal? MaxPrice,
     [FromQuery] IEnumerable<Guid>? FacilityIds,
+    [FromQuery] decimal? MinLat,
+    [FromQuery] decimal? MaxLat,
+    [FromQuery] decimal? MinLng,
+    [FromQuery] decimal? MaxLng,
     [FromQuery] int Page = 1,
     [FromQuery] int PageSize = 10);

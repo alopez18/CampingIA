@@ -6,5 +6,9 @@ public record CampingSearchFilters(
     decimal? MinPrice,
     decimal? MaxPrice,
     IEnumerable<Guid>? FacilityIds,
+    decimal? MinLat,
+    decimal? MaxLat,
+    decimal? MinLng,
+    decimal? MaxLng,
     int Page,
     int PageSize);

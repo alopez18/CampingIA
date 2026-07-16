@@ -12,6 +12,8 @@ public partial class T_USERS
 
     public int USR_RoleId { get; set; }
 
+    public int USR_ManagerStatus { get; set; }
+
     public DateTime USR_CreatedOn { get; set; }
 
     public DateTime USR_UpdatedOn { get; set; }

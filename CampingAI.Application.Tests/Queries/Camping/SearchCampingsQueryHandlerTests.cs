@@ -27,7 +27,7 @@ public class SearchCampingsQueryHandlerTests {
             .Setup(r => r.SearchAsync(It.IsAny<CampingSearchFilters>()))
             .ReturnsAsync((campings, 2));
 
-        var query = new SearchCampingsQuery(null, null, null, null, null, null, null, 1, 10);
+        var query = new SearchCampingsQuery(null, null, null, null, null, null, null, null, null, null, null, 1, 10);
 
         // Act
         var result = await _handler.HandleAsync(query);
@@ -46,7 +46,7 @@ public class SearchCampingsQueryHandlerTests {
             .Setup(r => r.SearchAsync(It.Is<CampingSearchFilters>(f => f.ProvinciaId == provinciaId)))
             .ReturnsAsync((new[] { camping }, 1));
 
-        var query = new SearchCampingsQuery(null, provinciaId, null, null, null, null, null, 1, 10);
+        var query = new SearchCampingsQuery(null, provinciaId, null, null, null, null, null, null, null, null, null, 1, 10);
 
         // Act
         var result = await _handler.HandleAsync(query);
@@ -72,7 +72,7 @@ public class SearchCampingsQueryHandlerTests {
             .Setup(r => r.SearchAsync(It.Is<CampingSearchFilters>(f => f.ProvinciaId == provinciaId)))
             .ReturnsAsync((new[] { camping }, 1));
 
-        var query = new SearchCampingsQuery(null, null, "MAD", null, null, null, null, 1, 10);
+        var query = new SearchCampingsQuery(null, null, "MAD", null, null, null, null, null, null, null, null, 1, 10);
 
         // Act
         var result = await _handler.HandleAsync(query);
@@ -92,7 +92,7 @@ public class SearchCampingsQueryHandlerTests {
             .Setup(r => r.SearchAsync(It.Is<CampingSearchFilters>(f => f.ProvinciaId == provinciaId)))
             .ReturnsAsync((new[] { camping }, 1));
 
-        var query = new SearchCampingsQuery(null, provinciaId, "MAD", null, null, null, null, 1, 10);
+        var query = new SearchCampingsQuery(null, provinciaId, "MAD", null, null, null, null, null, null, null, null, 1, 10);
 
         // Act
         var result = await _handler.HandleAsync(query);
@@ -109,7 +109,7 @@ public class SearchCampingsQueryHandlerTests {
             .Setup(r => r.SearchAsync(It.Is<CampingSearchFilters>(f => f.MinPrice == 10m && f.MaxPrice == 50m)))
             .ReturnsAsync((new[] { BuildCamping() }, 1));
 
-        var query = new SearchCampingsQuery(null, null, null, null, 10m, 50m, null, 1, 10);
+        var query = new SearchCampingsQuery(null, null, null, null, 10m, 50m, null, null, null, null, null, 1, 10);
 
         // Act
         var result = await _handler.HandleAsync(query);
@@ -127,7 +127,7 @@ public class SearchCampingsQueryHandlerTests {
                 f.ProvinciaId == provinciaId && f.MaxPrice == 80m)))
             .ReturnsAsync((new[] { BuildCamping(provinciaId) }, 1));
 
-        var query = new SearchCampingsQuery(null, provinciaId, null, null, null, 80m, null, 1, 10);
+        var query = new SearchCampingsQuery(null, provinciaId, null, null, null, 80m, null, null, null, null, null, 1, 10);
 
         // Act
         var result = await _handler.HandleAsync(query);
@@ -143,7 +143,7 @@ public class SearchCampingsQueryHandlerTests {
             .Setup(r => r.SearchAsync(It.IsAny<CampingSearchFilters>()))
             .ReturnsAsync((Enumerable.Empty<Domain.Entities.Camping>(), 0));
 
-        var query = new SearchCampingsQuery("NoExiste", null, null, null, null, null, null, 1, 10);
+        var query = new SearchCampingsQuery("NoExiste", null, null, null, null, null, null, null, null, null, null, 1, 10);
 
         // Act
         var result = await _handler.HandleAsync(query);
@@ -160,7 +160,7 @@ public class SearchCampingsQueryHandlerTests {
             .Setup(r => r.SearchAsync(It.Is<CampingSearchFilters>(f => f.Page == 2 && f.PageSize == 5)))
             .ReturnsAsync((new[] { BuildCamping() }, 6));
 
-        var query = new SearchCampingsQuery(null, null, null, null, null, null, null, 2, 5);
+        var query = new SearchCampingsQuery(null, null, null, null, null, null, null, null, null, null, null, 2, 5);
 
         // Act
         var result = await _handler.HandleAsync(query);
@@ -178,12 +178,31 @@ public class SearchCampingsQueryHandlerTests {
             .Setup(r => r.SearchAsync(It.Is<CampingSearchFilters>(f => f.FacilityIds != null && f.FacilityIds.Contains(facilityId))))
             .ReturnsAsync((new[] { BuildCamping() }, 1));
 
-        var query = new SearchCampingsQuery(null, null, null, null, null, null, new[] { facilityId }, 1, 10);
+        var query = new SearchCampingsQuery(null, null, null, null, null, null, new[] { facilityId }, null, null, null, null, 1, 10);
 
         // Act
         var result = await _handler.HandleAsync(query);
 
         // Assert
         result.TotalCount.Should().Be(1);
+    }
+
+    [Fact]
+    public async Task HandleAsync_Should_PassBoundingBox_ToRepository() {
+        // Arrange
+        _campingsRepositoryMock
+            .Setup(r => r.SearchAsync(It.Is<CampingSearchFilters>(f =>
+                f.MinLat == 40m && f.MaxLat == 41m && f.MinLng == -4m && f.MaxLng == -3m)))
+            .ReturnsAsync((new[] { BuildCamping() }, 1));
+
+        var query = new SearchCampingsQuery(null, null, null, null, null, null, null, 40m, 41m, -4m, -3m, 1, 10);
+
+        // Act
+        var result = await _handler.HandleAsync(query);
+
+        // Assert
+        result.TotalCount.Should().Be(1);
+        _campingsRepositoryMock.Verify(r => r.SearchAsync(It.Is<CampingSearchFilters>(f =>
+            f.MinLat == 40m && f.MaxLat == 41m && f.MinLng == -4m && f.MaxLng == -3m)), Times.Once);
     }
 }

@@ -8,12 +8,18 @@ GO
 -- ------------------------------------------------------------
 -- T_USERS
 -- ------------------------------------------------------------
+-- USR_RoleId (catálogo de roles, validado en el dominio vía RoleVO):
+--   1  = Sistema
+--   2  = Gestor
+--   3  = Usuario común (rol por defecto)
+--   99 = Admin
 CREATE TABLE [dbo].[T_USERS](
 	[USR_IdUser]         [uniqueidentifier] NOT NULL,
 	[USR_Email]          [nvarchar](255)    NOT NULL,
 	[USR_PasswordHashed] [nvarchar](255)    NOT NULL,
 	[USR_Name]           [nvarchar](255)    NULL,
 	[USR_RoleId]         [int]              NOT NULL,
+	[USR_ManagerStatus]  [int]              NOT NULL CONSTRAINT [DF_T_USERS_ManagerStatus] DEFAULT (0),
 	[USR_CreatedOn]      [datetime2](7)  NOT NULL CONSTRAINT [DF_T_USERS_CreatedOn] DEFAULT (getdate()),
 	[USR_UpdatedOn]      [datetime2](7)  NOT NULL CONSTRAINT [DF_T_USERS_UpdatedOn] DEFAULT (getdate()),
 	[USR_DeletedOn]      [datetime2](7)  NULL,

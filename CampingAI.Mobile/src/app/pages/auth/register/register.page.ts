@@ -22,6 +22,11 @@ import { AuthService } from '../../../services/auth.service';
       </ion-toolbar>
     </ion-header>
     <ion-content class="ion-padding">
+      <div class="auth-hero">
+        <span class="auth-hero-icon">🏕️</span>
+        <h1 class="auth-app-name">CampingAI</h1>
+        <p class="auth-tagline">Crea tu cuenta</p>
+      </div>
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <ion-item>
           <ion-label position="floating">Nombre</ion-label>
@@ -54,7 +59,24 @@ import { AuthService } from '../../../services/auth.service';
       </div>
     </ion-content>
   `,
-  styles: [`.error-msg { color: var(--ion-color-danger); font-size: 0.8em; padding: 4px 16px; }`]
+  styles: [`
+    .auth-hero {
+      background: linear-gradient(145deg, #1b5e20 0%, #2e7d32 60%, #43a047 100%);
+      margin: -16px -16px 28px;
+      width: calc(100% + 32px);
+      padding: 52px 24px 44px;
+      text-align: center;
+      border-radius: 0 0 32px 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .auth-hero-icon { font-size: 3.5em; filter: drop-shadow(0 2px 12px rgba(0,0,0,0.3)); }
+    .auth-app-name { color: white; font-size: 2em; font-weight: 800; margin: 8px 0 4px; letter-spacing: -0.5px; }
+    .auth-tagline { color: rgba(255,255,255,0.8); font-size: 0.9em; margin: 0; }
+    .error-msg { color: var(--ion-color-danger); font-size: 0.8em; padding: 4px 16px; }
+  `]
 })
 export class RegisterPage {
   private readonly auth = inject(AuthService);

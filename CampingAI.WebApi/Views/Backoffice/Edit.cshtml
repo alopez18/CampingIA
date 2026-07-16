@@ -1,0 +1,56 @@
+@model CampingAI.WebApi.Controllers.Backoffice.DTO.CampingFormRequest
+@{
+    var isNew = Model.Id is null || Model.Id == System.Guid.Empty;
+    ViewData["Title"] = isNew ? "Nuevo camping" : "Editar camping";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h1 class="h3 mb-4">@ViewData["Title"]</h1>
+
+        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+        <form asp-action="Save" method="post">
+            <input type="hidden" asp-for="Id" />
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label">Nombre</label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label">Descripción</label>
+                <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Latitude" class="form-label">Latitud</label>
+                    <input asp-for="Latitude" class="form-control" type="number" step="any" />
+                    <span asp-validation-for="Latitude" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Longitude" class="form-label">Longitud</label>
+                    <input asp-for="Longitude" class="form-control" type="number" step="any" />
+                    <span asp-validation-for="Longitude" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="PricePerNight" class="form-label">Precio por noche</label>
+                    <input asp-for="PricePerNight" class="form-control" type="number" step="any" />
+                    <span asp-validation-for="PricePerNight" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="CategoryId" class="form-label">Categoría</label>
+                    <input asp-for="CategoryId" class="form-control" type="number" />
+                </div>
+            </div>
+            <div class="mb-3">
+                <label asp-for="ProvinciaId" class="form-label">Provincia (Id)</label>
+                <input asp-for="ProvinciaId" class="form-control" />
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+</div>

@@ -6,6 +6,7 @@ public class UserResponseMapper : Domain.Abstractions.Mappers.SimpleMapper<Domai
             Email = src.Email.ToString(),
             Name = src.Name,
             RoleId = src.RoleId,
+            RoleName = src.Role.Name,
             CreatedOn = src.CreatedOn.Value
         };
 }

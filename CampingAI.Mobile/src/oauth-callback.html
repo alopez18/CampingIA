@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>Autenticando...</title>
+  <style>
+    body { display: flex; align-items: center; justify-content: center; height: 100vh;
+           margin: 0; font-family: system-ui, sans-serif; background: #f4f6f5; }
+    p { color: #2e7d32; font-size: 1.1em; }
+  </style>
+</head>
+<body>
+  <p>Autenticando con Google…</p>
+  <script>
+    (function () {
+      var hash = window.location.hash.slice(1);
+      var params = new URLSearchParams(hash);
+      var idToken = params.get('id_token');
+      var error   = params.get('error');
+
+      if (window.opener) {
+        if (idToken) {
+          window.opener.postMessage(
+            { google_id_token: idToken },
+            window.location.origin
+          );
+        } else {
+          window.opener.postMessage(
+            { google_error: error || 'unknown_error' },
+            window.location.origin
+          );
+        }
+        window.close();
+      }
+    })();
+  </script>
+</body>
+</html>

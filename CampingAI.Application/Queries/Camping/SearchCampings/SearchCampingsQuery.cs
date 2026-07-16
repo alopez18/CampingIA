@@ -7,6 +7,10 @@ public record SearchCampingsQuery(
     decimal? MinPrice,
     decimal? MaxPrice,
     IEnumerable<Guid>? FacilityIds,
+    decimal? MinLat,
+    decimal? MaxLat,
+    decimal? MinLng,
+    decimal? MaxLng,
     int Page,
     int PageSize) : Abstractions.Query.IQuery<SearchCampingsResult> {
 }

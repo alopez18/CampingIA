@@ -28,6 +28,10 @@ export interface CampingSearchParams {
   minPrice?: number;
   maxPrice?: number;
   facilityIds?: string[];
+  minLat?: number;
+  maxLat?: number;
+  minLng?: number;
+  maxLng?: number;
   page?: number;
   pageSize?: number;
 }
