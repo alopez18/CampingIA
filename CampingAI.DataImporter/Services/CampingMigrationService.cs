@@ -70,7 +70,7 @@ public class CampingMigrationService : Interfaces.ICampingMigrationService
                     CMP_OwnerId = SystemUserId,
                     CMP_CategoryId = DefaultCategoryId,
                     CMP_ProvinciaId = ResolveProvinceId(src.CMI_Latitude.Value, src.CMI_Longitude.Value, src.CMI_Province, provinces),
-                    CMP_UpdatedOn = DateTime.Now
+                    CMP_UpdatedOn = DateTime.UtcNow
                 };
 
                 var exists = await connection.ExecuteScalarAsync<int>(
@@ -84,7 +84,7 @@ public class CampingMigrationService : Interfaces.ICampingMigrationService
                 }
                 else
                 {
-                    model.CMP_CreatedOn = DateTime.Now;
+                    model.CMP_CreatedOn = DateTime.UtcNow;
                     await InsertAsync(connection, model);
                     inserted++;
                 }

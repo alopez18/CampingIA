@@ -6,7 +6,7 @@ public class ReservationDateVO {
     public ReservationDateVO(DateTime checkIn, DateTime checkOut) {
         if (checkIn >= checkOut)
             throw new Exceptions.DomainException("Check-in date must be before check-out date.");
-        if (checkIn < DateTime.Today)
+        if (checkIn < DateTime.UtcNow.Date)
             throw new Exceptions.DomainException("Check-in date must not be in the past.");
         CheckIn = checkIn;
         CheckOut = checkOut;

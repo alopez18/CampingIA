@@ -18,6 +18,6 @@ public class Favorite : Abstractions.Entities.Entity {
     }
 
     public static Favorite CreateNew(Guid userId, Guid campingId) {
-        return new Favorite(Guid.NewGuid(), userId, campingId, DateTime.Now);
+        return new Favorite(Guid.NewGuid(), userId, campingId, DateTime.UtcNow);
     }
 }

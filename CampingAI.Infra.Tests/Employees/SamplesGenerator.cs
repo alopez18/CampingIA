@@ -1,9 +1,9 @@
 ﻿namespace CampingAI.Infra.Tests.Employees;
 public static class SamplesGenerator {
     public static Models.CAMPING_AI_DB.T_EMPLOYEES CreateSampleDbEmployee(Guid employeeId) {
-        var lastLoginBase = DateTime.Now.AddDays(-1);
-        var createdOnBase = DateTime.Now.AddDays(-30);
-        var updatedOnBase = DateTime.Now.AddDays(-1);
+        var lastLoginBase = DateTime.UtcNow.AddDays(-1);
+        var createdOnBase = DateTime.UtcNow.AddDays(-30);
+        var updatedOnBase = DateTime.UtcNow.AddDays(-1);
         return new Models.CAMPING_AI_DB.T_EMPLOYEES {
             EMP_IdEmployee = employeeId,
             EMP_Username = "testuser",
@@ -24,9 +24,9 @@ public static class SamplesGenerator {
     }
 
     public static Domain.Entities.Employee CreateSampleDomainEmployee(Guid employeeId) {
-        var lastLoginBase = DateTime.Now.AddDays(-1);
-        var createdOnBase = DateTime.Now.AddDays(-30);
-        var updatedOnBase = DateTime.Now.AddDays(-1);
+        var lastLoginBase = DateTime.UtcNow.AddDays(-1);
+        var createdOnBase = DateTime.UtcNow.AddDays(-30);
+        var updatedOnBase = DateTime.UtcNow.AddDays(-1);
         return new Domain.Entities.Employee(
             idEmployee: employeeId,
             username: "testuser",

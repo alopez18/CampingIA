@@ -101,7 +101,7 @@ public class UsersWriteRepository : Domain.Repositories.IUsersWriteRepository
 
         try
         {
-            await dbConnection.ExecuteAsync(query, new { Id = id, Now = DateTime.Now });
+            await dbConnection.ExecuteAsync(query, new { Id = id, Now = DateTime.UtcNow });
         }
         catch (Exception ex)
         {

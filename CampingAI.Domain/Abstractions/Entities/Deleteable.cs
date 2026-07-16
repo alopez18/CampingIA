@@ -8,7 +8,7 @@ public abstract class Deleteable : Entity {
 
 
     public void SetDeleted() {
-        DeletedOn = DateTime.Now;
+        DeletedOn = DateTime.UtcNow;
     }
 
     public void SetUndeleted() {

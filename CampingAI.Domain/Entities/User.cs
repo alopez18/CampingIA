@@ -41,8 +41,8 @@ public class User : Abstractions.Entities.Deleteable, Abstractions.Entities.IAud
                         passwordHashed,
                         name,
                         (int)role,
-                        DateTime.Now,
-                        DateTime.Now,
+                        DateTime.UtcNow,
+                        DateTime.UtcNow,
                         null,
                         Enums.ManagerApprovalStatus.None);
     }

@@ -34,8 +34,8 @@ public class CreateReservationCommandHandlerTests {
         var command = new CreateReservationCommand(
             Guid.NewGuid(),
             Guid.NewGuid(),
-            DateTime.Today.AddDays(1),
-            DateTime.Today.AddDays(4),
+            DateTime.UtcNow.Date.AddDays(1),
+            DateTime.UtcNow.Date.AddDays(4),
             120m);
 
         // Act

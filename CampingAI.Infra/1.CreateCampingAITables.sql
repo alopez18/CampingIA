@@ -20,8 +20,8 @@ CREATE TABLE [dbo].[T_USERS](
 	[USR_Name]           [nvarchar](255)    NULL,
 	[USR_RoleId]         [int]              NOT NULL,
 	[USR_ManagerStatus]  [int]              NOT NULL CONSTRAINT [DF_T_USERS_ManagerStatus] DEFAULT (0),
-	[USR_CreatedOn]      [datetime2](7)  NOT NULL CONSTRAINT [DF_T_USERS_CreatedOn] DEFAULT (getdate()),
-	[USR_UpdatedOn]      [datetime2](7)  NOT NULL CONSTRAINT [DF_T_USERS_UpdatedOn] DEFAULT (getdate()),
+	[USR_CreatedOn]      [datetime2](7)  NOT NULL CONSTRAINT [DF_T_USERS_CreatedOn] DEFAULT (getutcdate()),
+	[USR_UpdatedOn]      [datetime2](7)  NOT NULL CONSTRAINT [DF_T_USERS_UpdatedOn] DEFAULT (getutcdate()),
 	[USR_DeletedOn]      [datetime2](7)  NULL,
 	CONSTRAINT [PK_T_USERS] PRIMARY KEY CLUSTERED ([USR_IdUser] ASC)
 ) ON [PRIMARY]
@@ -39,8 +39,8 @@ CREATE TABLE [dbo].[T_CAMPINGS](
 	[CMP_PricePerNight][decimal](10, 2)   NOT NULL,
 	[CMP_OwnerId]      [uniqueidentifier] NOT NULL,
 	[CMP_CategoryId]   [int]            NOT NULL,
-	[CMP_CreatedOn]    [datetime2](7)   NOT NULL CONSTRAINT [DF_T_CAMPINGS_CreatedOn] DEFAULT (getdate()),
-	[CMP_UpdatedOn]    [datetime2](7)   NOT NULL CONSTRAINT [DF_T_CAMPINGS_UpdatedOn] DEFAULT (getdate()),
+	[CMP_CreatedOn]    [datetime2](7)   NOT NULL CONSTRAINT [DF_T_CAMPINGS_CreatedOn] DEFAULT (getutcdate()),
+	[CMP_UpdatedOn]    [datetime2](7)   NOT NULL CONSTRAINT [DF_T_CAMPINGS_UpdatedOn] DEFAULT (getutcdate()),
 	[CMP_DeletedOn]    [datetime2](7)   NULL,
 	CONSTRAINT [PK_T_CAMPINGS] PRIMARY KEY CLUSTERED ([CMP_IdCamping] ASC)
 ) ON [PRIMARY]
@@ -57,8 +57,8 @@ CREATE TABLE [dbo].[T_RESERVATIONS](
 	[RES_CheckOut]      [datetime2](7)   NOT NULL,
 	[RES_TotalPrice]    [decimal](10, 2) NOT NULL,
 	[RES_StatusId]      [int]            NOT NULL,
-	[RES_CreatedOn]     [datetime2](7)   NOT NULL CONSTRAINT [DF_T_RESERVATIONS_CreatedOn] DEFAULT (getdate()),
-	[RES_UpdatedOn]     [datetime2](7)   NOT NULL CONSTRAINT [DF_T_RESERVATIONS_UpdatedOn] DEFAULT (getdate()),
+	[RES_CreatedOn]     [datetime2](7)   NOT NULL CONSTRAINT [DF_T_RESERVATIONS_CreatedOn] DEFAULT (getutcdate()),
+	[RES_UpdatedOn]     [datetime2](7)   NOT NULL CONSTRAINT [DF_T_RESERVATIONS_UpdatedOn] DEFAULT (getutcdate()),
 	[RES_DeletedOn]     [datetime2](7)   NULL,
 	CONSTRAINT [PK_T_RESERVATIONS] PRIMARY KEY CLUSTERED ([RES_IdReservation] ASC)
 ) ON [PRIMARY]
@@ -94,7 +94,7 @@ CREATE TABLE [dbo].[T_FAVORITES](
 	[FAV_IdFavorite] [uniqueidentifier] NOT NULL,
 	[FAV_UserId]     [uniqueidentifier] NOT NULL,
 	[FAV_CampingId]  [uniqueidentifier] NOT NULL,
-	[FAV_CreatedAt]  [datetime2](7) NOT NULL CONSTRAINT [DF_T_FAVORITES_CreatedAt] DEFAULT (getdate()),
+	[FAV_CreatedAt]  [datetime2](7) NOT NULL CONSTRAINT [DF_T_FAVORITES_CreatedAt] DEFAULT (getutcdate()),
 	CONSTRAINT [PK_T_FAVORITES] PRIMARY KEY CLUSTERED ([FAV_IdFavorite] ASC)
 ) ON [PRIMARY]
 GO

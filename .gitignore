@@ -347,3 +347,7 @@ SmartITV_WebApi/ExcelVerificaciones/
 
 # Serilog log files (CampingAI)
 CampingAI.WebApi/Logs/
+
+# Docker secret env files (CampingAI) - no subir secretos reales, solo la plantilla *.example
+*.docker.env
+!*.docker.env.example

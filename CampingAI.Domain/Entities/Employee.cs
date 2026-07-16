@@ -78,8 +78,8 @@ public class Employee : Abstractions.Entities.Deleteable, Abstractions.Entities.
                             statusId,
                             telephone,
                             null,
-                            DateTime.Now,
-                            DateTime.Now,
+                            DateTime.UtcNow,
+                            DateTime.UtcNow,
                             null);
     }
 

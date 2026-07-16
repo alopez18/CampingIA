@@ -18,13 +18,13 @@ public partial class CAMPINGAI_TTContext : DbContext
             entity.HasKey(e => e.EMP_IdEmployee);
 
             entity.Property(e => e.EMP_IdEmployee).ValueGeneratedNever();
-            entity.Property(e => e.EMP_CreatedOn).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.EMP_CreatedOn).HasDefaultValueSql("(getutcdate())");
             entity.Property(e => e.EMP_Email).HasMaxLength(255);
             entity.Property(e => e.EMP_Fax).HasMaxLength(50);
             entity.Property(e => e.EMP_Name).HasMaxLength(255);
             entity.Property(e => e.EMP_Password).HasMaxLength(255);
             entity.Property(e => e.EMP_Telephone).HasMaxLength(50);
-            entity.Property(e => e.EMP_UpdatedOn).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.EMP_UpdatedOn).HasDefaultValueSql("(getutcdate())");
             entity.Property(e => e.EMP_Username).HasMaxLength(255);
         });
 

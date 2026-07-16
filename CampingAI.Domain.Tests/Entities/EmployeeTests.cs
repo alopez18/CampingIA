@@ -17,10 +17,10 @@ public class EmployeeTests {
         var roleId = 3;
         var statusId = 4;
         var telephone = "987654321";
-        var lastLogin = DateTime.Now.AddDays(-1);
-        var createdOn = DateTime.Now.AddDays(-10);
-        var updatedOn = DateTime.Now.AddDays(-5);
-        var deletedOn = DateTime.Now;
+        var lastLogin = DateTime.UtcNow.AddDays(-1);
+        var createdOn = DateTime.UtcNow.AddDays(-10);
+        var updatedOn = DateTime.UtcNow.AddDays(-5);
+        var deletedOn = DateTime.UtcNow;
 
         // Act
         var employee = new Employee(
@@ -88,8 +88,8 @@ public class EmployeeTests {
         employee.StatusId.Should().Be(4);
         employee.Telephone.Should().Be("444555666");
         employee.LastLogin.Should().BeNull();
-        employee.CreatedOn.Value.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
-        employee.UpdatedOn.Value.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
+        employee.CreatedOn.Value.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
+        employee.UpdatedOn.Value.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
         employee.DeletedOn.Should().BeNull();
     }
 
@@ -146,7 +146,7 @@ public class EmployeeTests {
 
         // Assert
         employee.DeletedOn.Should().NotBeNull();
-        employee.DeletedOn.Value.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
+        employee.DeletedOn.Value.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
     }
 
     [Fact]
@@ -184,7 +184,7 @@ public class EmployeeTests {
         employee.Created();
 
         // Assert
-        employee.CreatedOn.Value.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
-        employee.UpdatedOn.Value.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
+        employee.CreatedOn.Value.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
+        employee.UpdatedOn.Value.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
     }
 }

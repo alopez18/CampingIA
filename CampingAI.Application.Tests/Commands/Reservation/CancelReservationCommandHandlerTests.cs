@@ -35,8 +35,8 @@ public class CancelReservationCommandHandlerTests {
     private static Domain.Entities.Reservation BuildReservation(Guid userId, int statusId = (int)Domain.Enums.ReservationStatus.Pending) {
         return new Domain.Entities.Reservation(
             Guid.NewGuid(), userId, Guid.NewGuid(),
-            DateTime.Today.AddDays(2), DateTime.Today.AddDays(5),
-            100m, statusId, DateTime.Now, DateTime.Now, null);
+            DateTime.UtcNow.Date.AddDays(2), DateTime.UtcNow.Date.AddDays(5),
+            100m, statusId, DateTime.UtcNow, DateTime.UtcNow, null);
     }
 
     [Fact]

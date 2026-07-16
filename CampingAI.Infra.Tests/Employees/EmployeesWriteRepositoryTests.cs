@@ -54,7 +54,7 @@ public class EmployeesWriteRepositoryTests {
         // Un empleado borrado
         var idDeleted = Guid.NewGuid();
         var employeeDbDeleted = SamplesGenerator.CreateSampleDbEmployee(idDeleted);
-        employeeDbDeleted.EMP_DeletedOn = DateTime.Now;
+        employeeDbDeleted.EMP_DeletedOn = DateTime.UtcNow;
         ctx.T_EMPLOYEES.Add(employeeDbDeleted);
 
         //Guardamos los cambios.
@@ -73,7 +73,7 @@ public class EmployeesWriteRepositoryTests {
         var (sut, ctx, _, _) = BuildSut(nameof(GetById_IncludesDeleted_WhenOnlyNotDeleted_False));
         var idDeleted = Guid.NewGuid();
         var employeeDbDeleted = SamplesGenerator.CreateSampleDbEmployee(idDeleted);
-        employeeDbDeleted.EMP_DeletedOn = DateTime.Now;
+        employeeDbDeleted.EMP_DeletedOn = DateTime.UtcNow;
 
         ctx.T_EMPLOYEES.Add(employeeDbDeleted);
         await ctx.SaveChangesAsync();

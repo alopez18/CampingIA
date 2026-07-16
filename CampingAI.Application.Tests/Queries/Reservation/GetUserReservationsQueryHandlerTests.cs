@@ -20,9 +20,9 @@ public class GetUserReservationsQueryHandlerTests {
         var userId = Guid.NewGuid();
         var reservations = new List<Domain.Entities.Reservation> {
             new(Guid.NewGuid(), userId, Guid.NewGuid(),
-                DateTime.Today.AddDays(1), DateTime.Today.AddDays(3),
+                DateTime.UtcNow.Date.AddDays(1), DateTime.UtcNow.Date.AddDays(3),
                 80m, (int)Domain.Enums.ReservationStatus.Pending,
-                DateTime.Now, DateTime.Now, null)
+                DateTime.UtcNow, DateTime.UtcNow, null)
         };
 
         _readRepositoryMock.Setup(r => r.GetByUserIdAsync(userId)).ReturnsAsync(reservations);

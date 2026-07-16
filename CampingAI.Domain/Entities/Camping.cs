@@ -63,8 +63,8 @@ public class Camping : Abstractions.Entities.Deleteable, Abstractions.Entities.I
                            ownerId,
                            categoryId,
                            provinciaId,
-                           DateTime.Now,
-                           DateTime.Now,
+                           DateTime.UtcNow,
+                           DateTime.UtcNow,
                            null);
     }
 

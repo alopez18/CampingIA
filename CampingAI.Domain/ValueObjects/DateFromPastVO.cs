@@ -7,12 +7,12 @@ public class DateFromPastVO {
     public DateFromPastVO(DateTime value) {
         Value = value;
 
-        if (value >= DateTime.Now)
+        if (value >= DateTime.UtcNow)
             throw new DomainException("The date must be in the past");
     }
 
     public static DateFromPastVO CreateNow() {
-        return new DateFromPastVO(DateTime.Now);
+        return new DateFromPastVO(DateTime.UtcNow);
     }
 
     public override string ToString() {

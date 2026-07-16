@@ -11,12 +11,12 @@ public class ReservationTests {
             Guid.NewGuid(),
             Guid.NewGuid(),
             Guid.NewGuid(),
-            DateTime.Today.AddDays(2),
-            DateTime.Today.AddDays(5),
+            DateTime.UtcNow.Date.AddDays(2),
+            DateTime.UtcNow.Date.AddDays(5),
             100m,
             statusId,
-            DateTime.Now,
-            DateTime.Now,
+            DateTime.UtcNow,
+            DateTime.UtcNow,
             null);
     }
 
@@ -50,8 +50,8 @@ public class ReservationTests {
         var reservation = Reservation.CreateNew(
             Guid.NewGuid(),
             Guid.NewGuid(),
-            DateTime.Today.AddDays(1),
-            DateTime.Today.AddDays(3),
+            DateTime.UtcNow.Date.AddDays(1),
+            DateTime.UtcNow.Date.AddDays(3),
             80m,
             (int)ReservationStatus.Pending);
 

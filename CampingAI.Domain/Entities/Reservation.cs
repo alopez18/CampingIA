@@ -45,8 +45,8 @@ public class Reservation : Abstractions.Entities.Deleteable, Abstractions.Entiti
                                checkOut,
                                totalPrice,
                                statusId,
-                               DateTime.Now,
-                               DateTime.Now,
+                               DateTime.UtcNow,
+                               DateTime.UtcNow,
                                null);
     }
 

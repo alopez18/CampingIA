@@ -6,7 +6,7 @@ public class DateFromPastVOTests {
     [Fact]
     public void Constructor_Should_CreateInstance_WhenDateIsInThePast() {//Happy path
         // Arrange
-        var pastDate = DateTime.Now.AddDays(-1);
+        var pastDate = DateTime.UtcNow.AddDays(-1);
 
         // Act
         var vo = new DateFromPastVO(pastDate);
@@ -18,7 +18,7 @@ public class DateFromPastVOTests {
     [Fact]
     public void Constructor_Should_ThrowDomainException_WhenDateIsInTheFuture() {
         // Arrange
-        var futureDate = DateTime.Now.AddSeconds(1);
+        var futureDate = DateTime.UtcNow.AddSeconds(1);
 
         // Act
         Action act = () => new DateFromPastVO(futureDate);
@@ -35,6 +35,6 @@ public class DateFromPastVOTests {
 
         // Assert
         result.Should().NotBeNull();
-        result.Value.Should().BeCloseTo(DateTime.Now, TimeSpan.FromMilliseconds(100));
+        result.Value.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMilliseconds(100));
     }
 }
