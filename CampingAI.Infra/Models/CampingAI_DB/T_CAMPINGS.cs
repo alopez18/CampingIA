@@ -16,7 +16,7 @@ public partial class T_CAMPINGS
 
     public Guid CMP_OwnerId { get; set; }
 
-    public int CMP_CategoryId { get; set; }
+    public Guid CMP_CategoryId { get; set; }
 
     public Guid? CMP_ProvinciaId { get; set; }
 

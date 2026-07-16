@@ -6,13 +6,16 @@ public class CreateCampingCommandHandler : Abstractions.Command.ICommandHandler<
     #region Dependencias
     readonly Infra.Abstractions.IUnitOfWork _unitOfWork;
     readonly Domain.Repositories.ICampingsWriteRepository _campingsWriteRepository;
+    readonly Domain.Repositories.ICampingCategoriesWriteRepository _campingCategoriesWriteRepository;
     readonly IValidator<CreateCampingCommand> _validator;
     #endregion
 
     public CreateCampingCommandHandler(Domain.Repositories.ICampingsWriteRepository campingsWriteRepository,
+                                       Domain.Repositories.ICampingCategoriesWriteRepository campingCategoriesWriteRepository,
                                        Infra.Abstractions.IUnitOfWork unitOfWork,
                                        IValidator<CreateCampingCommand> validator) {
         _campingsWriteRepository = campingsWriteRepository;
+        _campingCategoriesWriteRepository = campingCategoriesWriteRepository;
         _unitOfWork = unitOfWork;
         _validator = validator;
     }
@@ -32,7 +35,15 @@ public class CreateCampingCommandHandler : Abstractions.Command.ICommandHandler<
         if (command.FacilityIds is not null)
             camping.SetFacilities(command.FacilityIds);
 
+        if (command.AdditionalCategoryIds is not null)
+            camping.SetAdditionalCategories(command.AdditionalCategoryIds);
+
         await _campingsWriteRepository.AddAsync(camping);
+
+        foreach (var categoryId in camping.AdditionalCategoryIds)
+            await _campingCategoriesWriteRepository.AddAsync(
+                Domain.Entities.CampingCategory.CreateNew(camping.Id, categoryId));
+
         await _unitOfWork.SaveChangesAsync();
 
         return camping;

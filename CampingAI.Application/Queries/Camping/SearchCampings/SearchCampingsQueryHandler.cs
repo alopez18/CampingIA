@@ -23,7 +23,7 @@ public class SearchCampingsQueryHandler : Abstractions.Query.IQueryHandler<Searc
         var filters = new Domain.Repositories.CampingSearchFilters(
             query.Name,
             provinciaId,
-            query.CategoryId,
+            query.CategoryIds,
             query.MinPrice,
             query.MaxPrice,
             query.FacilityIds,

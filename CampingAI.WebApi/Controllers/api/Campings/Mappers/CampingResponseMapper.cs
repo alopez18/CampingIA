@@ -11,6 +11,7 @@ public class CampingResponseMapper : Domain.Abstractions.Mappers.SimpleMapper<Do
             src.CategoryId,
             src.ProvinciaId,
             src.FacilityIds,
+            src.AdditionalCategoryIds,
             src.CreatedOn.Value,
             src.UpdatedOn.Value);
 }

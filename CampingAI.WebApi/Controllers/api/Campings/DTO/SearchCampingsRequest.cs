@@ -5,7 +5,7 @@ public record SearchCampingsRequest(
     [FromQuery] string? Name,
     [FromQuery] Guid? ProvinciaId,
     [FromQuery] string? ProvinciaCode,
-    [FromQuery] int? CategoryId,
+    [FromQuery] IEnumerable<Guid>? CategoryIds,
     [FromQuery] decimal? MinPrice,
     [FromQuery] decimal? MaxPrice,
     [FromQuery] IEnumerable<Guid>? FacilityIds,

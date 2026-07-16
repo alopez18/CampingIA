@@ -8,7 +8,7 @@ public class T_CAMPINGS {
     public decimal  CMP_Longitude     { get; set; }
     public decimal  CMP_PricePerNight { get; set; }
     public Guid     CMP_OwnerId       { get; set; }
-    public int      CMP_CategoryId    { get; set; }
+    public Guid     CMP_CategoryId    { get; set; }
     public Guid?    CMP_ProvinciaId   { get; set; }
     public DateTime CMP_CreatedOn     { get; set; }
     public DateTime CMP_UpdatedOn     { get; set; }

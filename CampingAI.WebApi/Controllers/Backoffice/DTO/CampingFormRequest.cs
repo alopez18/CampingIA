@@ -19,7 +19,7 @@ public class CampingFormRequest {
     [Range(0, double.MaxValue, ErrorMessage = "El precio no puede ser negativo.")]
     public decimal PricePerNight { get; set; }
 
-    public int CategoryId { get; set; }
+    public Guid CategoryId { get; set; }
 
     public Guid? ProvinciaId { get; set; }
 }

@@ -41,7 +41,7 @@ builder.Services.AddScoped<IFacilitySeederService, FacilitySeederService>();
 builder.Services.AddScoped<ICampingMigrationImporter, CampingMigrationImporter>();
 
 // Registro de fuentes de datos para la orquestación
-//builder.Services.AddScoped<IDataSourceImporter>(sp => sp.GetRequiredService<ICampingsImporter>());
+builder.Services.AddScoped<IDataSourceImporter>(sp => sp.GetRequiredService<ICampingsImporter>());
 builder.Services.AddScoped<IDataSourceImporter>(sp => sp.GetRequiredService<ICampingMigrationImporter>());
 builder.Services.AddScoped<IImportOrchestrator, ImportOrchestrator>();
 

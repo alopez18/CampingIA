@@ -26,3 +26,21 @@ BEGIN
 	PRINT 'El usuario Sistema ya existe. No se realizaron cambios.';
 END
 GO
+
+
+DECLARE @AdminUserId uniqueidentifier = N'10000000-0000-0000-0000-000000000002';
+
+IF NOT EXISTS (SELECT 1 FROM [dbo].[T_USERS] WHERE [USR_IdUser] = @AdminUserId)
+BEGIN
+	INSERT INTO [dbo].[T_USERS]
+		([USR_IdUser], [USR_Email], [USR_PasswordHashed], [USR_Name], [USR_RoleId])
+	VALUES
+		(@AdminUserId, N'admin@campingai.local', N'$2a$12$aCaIFh85X/TWnsGzeUhuPOjJZ2YiM1SXzQFl4X/y/px/HL5aBITg.', N'Administrador', 99);
+
+	PRINT 'Usuario Administrador creado correctamente.';
+END
+ELSE
+BEGIN
+	PRINT 'El usuario Administrador ya existe. No se realizaron cambios.';
+END
+GO

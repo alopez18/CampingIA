@@ -16,8 +16,8 @@ public class CampingMigrationService : Interfaces.ICampingMigrationService
     // Usuario Sistema con GUID fijo y controlable (ver 9.SeedSystemUser.sql).
     static readonly Guid SystemUserId = new("10000000-0000-0000-0000-000000000001");
 
-    // Categoría por defecto para los campings importados.
-    private const int DefaultCategoryId = 1;
+    // Categoría por defecto (Familiar) para los campings importados.
+    private static readonly Guid DefaultCategoryId = new("B1000001-0000-0000-0000-000000000001");
 
     // Rango de precio aleatorio por noche.
     private const decimal MinPrice = 25m;

@@ -1,10 +1,13 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonItem, IonLabel, IonInput,
-  IonButton, IonAvatar, IonText, IonSpinner, ToastController, LoadingController,
-  AlertController
+  IonButton, IonAvatar, IonText, IonSpinner, IonList, IonIcon, ToastController,
+  LoadingController, AlertController
 } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { calendarOutline, chevronForwardOutline } from 'ionicons/icons';
 import { UsersService } from '../../services/users.service';
 import { AuthService } from '../../services/auth.service';
 import { User } from '../../models/user.model';
@@ -15,7 +18,7 @@ import { User } from '../../models/user.model';
   imports: [
     ReactiveFormsModule,
     IonHeader, IonToolbar, IonTitle, IonContent, IonItem, IonLabel, IonInput,
-    IonButton, IonAvatar, IonText, IonSpinner
+    IonButton, IonAvatar, IonText, IonSpinner, IonList, IonIcon
   ],
   template: `
     <ion-header>
@@ -48,6 +51,14 @@ import { User } from '../../models/user.model';
           </ion-button>
         </form>
 
+        <ion-list class="ion-margin-top">
+          <ion-item button detail="false" (click)="goToReservations()">
+            <ion-icon name="calendar-outline" slot="start" color="primary"></ion-icon>
+            <ion-label>Mis reservas</ion-label>
+            <ion-icon name="chevron-forward-outline" slot="end" color="medium"></ion-icon>
+          </ion-item>
+        </ion-list>
+
         <ion-button expand="block" fill="outline" color="danger" class="ion-margin-top" (click)="logout()">
           Cerrar sesión
         </ion-button>
@@ -61,6 +72,7 @@ export class ProfilePage implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly toast = inject(ToastController);
   private readonly loading2 = inject(LoadingController);
+  private readonly router = inject(Router);
 
   readonly user = signal<User | null>(null);
   readonly loading = signal(true);
@@ -69,6 +81,8 @@ export class ProfilePage implements OnInit {
     name: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]]
   });
+
+  constructor() { addIcons({ calendarOutline, chevronForwardOutline }); }
 
   ngOnInit(): void {
     this.usersService.getMe().subscribe({
@@ -104,6 +118,8 @@ export class ProfilePage implements OnInit {
       }
     });
   }
+
+  goToReservations(): void { this.router.navigate(['/tabs/reservations']); }
 
   logout(): void { this.authService.logout(); }
 }

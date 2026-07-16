@@ -35,9 +35,14 @@ export class CampingsService {
     if (filters.name) params = params.set('name', filters.name);
     if (filters.provinciaId) params = params.set('provinciaId', filters.provinciaId);
     if (filters.provinciaCode) params = params.set('provinciaCode', filters.provinciaCode);
-    if (filters.categoryId != null) params = params.set('categoryId', filters.categoryId);
+    if (filters.categoryIds?.length) {
+      for (const categoryId of filters.categoryIds) params = params.append('categoryIds', categoryId);
+    }
     if (filters.minPrice != null) params = params.set('minPrice', filters.minPrice);
     if (filters.maxPrice != null) params = params.set('maxPrice', filters.maxPrice);
+    if (filters.facilityIds?.length) {
+      for (const facilityId of filters.facilityIds) params = params.append('facilityIds', facilityId);
+    }
     if (filters.minLat != null) params = params.set('minLat', filters.minLat);
     if (filters.maxLat != null) params = params.set('maxLat', filters.maxLat);
     if (filters.minLng != null) params = params.set('minLng', filters.minLng);

@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://YOUR_PRODUCTION_API_URL/api',
-  googleClientId: 'REPLACE_WITH_GOOGLE_CLIENT_ID'
+  apiUrl: 'http://campingaibackoffice.runasp.net/api',
+  googleClientId: '905233226427-8rq2pmm0c7esonldqfuj2e3rdpmkk3hh.apps.googleusercontent.com'
 };

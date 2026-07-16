@@ -20,6 +20,7 @@ public static class DI_Manager {
         services.AddSingleton<Favorites.Mappers.FavoritesMapper>();
         services.AddSingleton<Countries.Mappers.CountriesMapper>();
         services.AddSingleton<Provinces.Mappers.ProvincesMapper>();
+        services.AddSingleton<Categories.Mappers.CategoriesMapper>();
     }
 
     private static void RegisterExtractors(IServiceCollection services) {
@@ -32,6 +33,8 @@ public static class DI_Manager {
         services.AddSingleton<Abstractions.ModelExtractor<Models.CampingAI_DB.T_FAVORITES>>();
         services.AddSingleton<Abstractions.ModelExtractor<Models.CampingAI_DB.T_COUNTRIES>>();
         services.AddSingleton<Abstractions.ModelExtractor<Models.CampingAI_DB.T_PROVINCES>>();
+        services.AddSingleton<Abstractions.ModelExtractor<Models.CampingAI_DB.T_CATEGORIES>>();
+        services.AddSingleton<Abstractions.ModelExtractor<Models.CampingAI_DB.T_CAMPING_CATEGORIES>>();
     }
 
     private static void RegisterRepositories(IServiceCollection services) {
@@ -56,6 +59,10 @@ public static class DI_Manager {
 
         services.AddScoped<Domain.Repositories.ICountriesReadRepository, Countries.CountriesReadRepository>();
         services.AddScoped<Domain.Repositories.IProvincesReadRepository, Provinces.ProvincesReadRepository>();
+
+        services.AddScoped<Domain.Repositories.ICategoriesReadRepository, Categories.CategoriesReadRepository>();
+        services.AddScoped<Domain.Repositories.ICategoriesWriteRepository, Categories.CategoriesWriteRepository>();
+        services.AddScoped<Domain.Repositories.ICampingCategoriesWriteRepository, Categories.CampingCategoriesWriteRepository>();
     }
 
 }

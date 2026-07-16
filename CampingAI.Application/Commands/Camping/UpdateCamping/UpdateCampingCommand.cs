@@ -5,7 +5,8 @@ public record UpdateCampingCommand(Guid CampingId,
                                    decimal Latitude,
                                    decimal Longitude,
                                    decimal PricePerNight,
-                                   int CategoryId,
+                                   Guid CategoryId,
                                    Guid? ProvinciaId,
-                                   IEnumerable<Guid>? FacilityIds) : Abstractions.Command.ICommand {
+                                   IEnumerable<Guid>? FacilityIds,
+                                   IEnumerable<Guid>? AdditionalCategoryIds) : Abstractions.Command.ICommand {
 }

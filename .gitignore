@@ -344,3 +344,6 @@ SmartITV_WebApi/logs/
 SmartITV_WebApi/ExcelVerificaciones/
 /Common.SmartPurchase.WebApi/Properties/PublishProfiles/SQLAPMDEV - dev.pubxml.user
 /Common.SmartPurchase.WebApi/Properties/PublishProfiles/SQLAPMPRE - pre.pubxml.user
+
+# Serilog log files (CampingAI)
+CampingAI.WebApi/Logs/

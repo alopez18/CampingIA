@@ -7,9 +7,10 @@ import {
   IonRefresher, IonRefresherContent
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { optionsOutline } from 'ionicons/icons';
+import { optionsOutline, sparklesOutline } from 'ionicons/icons';
 import { CampingsService } from '../../services/campings.service';
 import { FavoritesService } from '../../services/favorites.service';
+import { AiService } from '../../services/ai.service';
 import { CampingCardComponent } from '../../shared/components/camping-card/camping-card.component';
 import { Camping } from '../../models/camping.model';
 
@@ -52,9 +53,38 @@ import { Camping } from '../../models/camping.model';
         <span class="hero-art" aria-hidden="true">🏕️</span>
       </div>
 
+      <ion-button class="ai-search-cta" expand="block" (click)="openAiSearch()">
+        <ion-icon name="sparkles-outline" slot="start"></ion-icon>
+        Búsqueda inteligente con IA
+      </ion-button>
+
       @if (loading()) {
         <div class="ion-text-center ion-padding"><ion-spinner></ion-spinner></div>
       } @else {
+        @if (recommendations().length > 0) {
+          <section>
+            <div class="section-header">
+              <h3 class="section-title">✨ Recomendado para ti</h3>
+            </div>
+            @if (reasoning()) {
+              <p class="ai-reasoning">{{ reasoning() }}</p>
+            }
+            <ion-grid>
+              <ion-row>
+                @for (camping of recommendations(); track camping.id) {
+                  <ion-col size="12" size-md="6">
+                    <app-camping-card
+                      [camping]="camping"
+                      [isFavorite]="favoritesService.isFavorite(camping.id)"
+                      (favoriteToggle)="onFavoriteToggle($event)">
+                    </app-camping-card>
+                  </ion-col>
+                }
+              </ion-row>
+            </ion-grid>
+          </section>
+        }
+
         <section>
           <div class="section-header">
             <h3 class="section-title">⭐ Destacados</h3>
@@ -91,26 +121,41 @@ import { Camping } from '../../models/camping.model';
     .hero-art { font-size: 3.8em; opacity: 0.4; line-height: 1; margin-left: 8px; }
     .section-header { padding: 20px 16px 4px; }
     .section-title { font-size: 1.05em; font-weight: 700; color: var(--ion-text-color); margin: 0; }
+    .ai-search-cta { margin: 16px; --border-radius: 12px; }
+    .ai-reasoning { padding: 4px 16px 8px; margin: 0; font-size: 0.85em; font-style: italic; color: var(--ion-color-medium); }
   `]
 })
 export class HomePage implements OnInit {
   private readonly campings = inject(CampingsService);
   readonly favoritesService = inject(FavoritesService);
+  private readonly aiService = inject(AiService);
   private readonly router = inject(Router);
 
   readonly featured = signal<Camping[]>([]);
+  readonly recommendations = signal<Camping[]>([]);
+  readonly reasoning = signal<string>('');
   readonly loading = signal(true);
   searchText = '';
 
-  constructor() { addIcons({ optionsOutline }); }
+  constructor() { addIcons({ optionsOutline, sparklesOutline }); }
 
-  ngOnInit(): void { this.loadFeatured(); }
+  ngOnInit(): void {
+    this.loadFeatured();
+    this.loadRecommendations();
+  }
 
   loadFeatured(): void {
     this.loading.set(true);
     this.campings.getAll(1, 6).subscribe({
       next: res => { this.featured.set(res.items); this.loading.set(false); },
       error: () => this.loading.set(false)
+    });
+  }
+
+  loadRecommendations(): void {
+    this.aiService.getRecommendations(4).subscribe({
+      next: res => { this.recommendations.set(res.items); this.reasoning.set(res.reasoning); },
+      error: () => { this.recommendations.set([]); this.reasoning.set(''); }
     });
   }
 
@@ -124,12 +169,17 @@ export class HomePage implements OnInit {
     this.router.navigate(['/tabs/campings']);
   }
 
+  openAiSearch(): void {
+    this.router.navigate(['/tabs/ai-search']);
+  }
+
   onFavoriteToggle(campingId: string): void {
     this.favoritesService.toggle(campingId).subscribe();
   }
 
   onRefresh(event: CustomEvent): void {
     this.loadFeatured();
+    this.loadRecommendations();
     (event.target as HTMLIonRefresherElement).complete();
   }
 }

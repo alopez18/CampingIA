@@ -3,7 +3,7 @@ public record SearchCampingsQuery(
     string? Name,
     Guid? ProvinciaId,
     string? ProvinciaCode,
-    int? CategoryId,
+    IEnumerable<Guid>? CategoryIds,
     decimal? MinPrice,
     decimal? MaxPrice,
     IEnumerable<Guid>? FacilityIds,

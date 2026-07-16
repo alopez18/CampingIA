@@ -1,22 +1,130 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Inicio";
+    var isGestor = User.IsInRole("Gestor");
+    var isAdmin = User.IsInRole("Admin");
 }
 
-<div class="text-center">
-    <h1 class="display-4">Aplicación con Google OAuth</h1>
-    <p>Ejemplo de integración con Google OAuth2 y Web API</p>
+<section class="py-4 py-md-5 text-center">
+    <i class="fa-solid fa-campground fa-3x text-success mb-3"></i>
+    <h1 class="display-5 fw-bold">Campings AI</h1>
+    <p class="lead text-muted mb-0">
+        Panel de gestión de campings con inteligencia artificial.
+    </p>
+</section>
 
-    @if (User.Identity.IsAuthenticated) {
-        <p>¡Hola @User.Identity.Name!</p>
-        <a asp-controller="Account" asp-action="Profile" class="btn btn-primary">
-            Ver Perfil
-        </a>
-        <a href="~/swagger"  class="btn btn-primary">
-            Llamar a API
-        </a>
-    } else {
-        <a asp-controller="Account" asp-action="Login" class="btn btn-success">
-            Iniciar Sesión
-        </a>
-    }
-</div>
+@if (User.Identity.IsAuthenticated)
+{
+    <p class="text-center text-muted mb-4">¡Hola, <strong>@User.Identity.Name</strong>! ¿Qué quieres hacer hoy?</p>
+
+    <div class="row g-4 justify-content-center">
+        @if (isGestor)
+        {
+            <div class="col-12 col-sm-6 col-lg-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body d-flex flex-column">
+                        <div class="mb-3">
+                            <i class="fa-solid fa-tents fa-2x text-success"></i>
+                        </div>
+                        <h5 class="card-title">Mis campings</h5>
+                        <p class="card-text text-muted flex-grow-1">
+                            Consulta, edita o elimina los campings que gestionas.
+                        </p>
+                        <a asp-controller="Backoffice" asp-action="Index" class="btn btn-success mt-auto">
+                            Ver mis campings
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-sm-6 col-lg-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body d-flex flex-column">
+                        <div class="mb-3">
+                            <i class="fa-solid fa-circle-plus fa-2x text-success"></i>
+                        </div>
+                        <h5 class="card-title">Nuevo camping</h5>
+                        <p class="card-text text-muted flex-grow-1">
+                            Da de alta un nuevo camping en la plataforma.
+                        </p>
+                        <a asp-controller="Backoffice" asp-action="Create" class="btn btn-outline-success mt-auto">
+                            Crear camping
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (isAdmin)
+        {
+            <div class="col-12 col-sm-6 col-lg-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body d-flex flex-column">
+                        <div class="mb-3">
+                            <i class="fa-solid fa-user-clock fa-2x text-primary"></i>
+                        </div>
+                        <h5 class="card-title">Gestores pendientes</h5>
+                        <p class="card-text text-muted flex-grow-1">
+                            Revisa y aprueba las solicitudes de nuevos gestores.
+                        </p>
+                        <a asp-controller="Admin" asp-action="PendingManagers" class="btn btn-primary mt-auto">
+                            Revisar solicitudes
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div class="col-12 col-sm-6 col-lg-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body d-flex flex-column">
+                    <div class="mb-3">
+                        <i class="fa-solid fa-user fa-2x text-secondary"></i>
+                    </div>
+                    <h5 class="card-title">Mi perfil</h5>
+                    <p class="card-text text-muted flex-grow-1">
+                        Consulta los datos de tu cuenta.
+                    </p>
+                    <a asp-controller="Account" asp-action="Profile" class="btn btn-outline-secondary mt-auto">
+                        Ver perfil
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body d-flex flex-column">
+                    <div class="mb-3">
+                        <i class="fa-solid fa-code fa-2x text-secondary"></i>
+                    </div>
+                    <h5 class="card-title">Documentación API</h5>
+                    <p class="card-text text-muted flex-grow-1">
+                        Explora y prueba los endpoints de la API con Swagger.
+                    </p>
+                    <a href="~/swagger" class="btn btn-outline-secondary mt-auto">
+                        Abrir Swagger
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card border-0 shadow-sm text-center">
+                <div class="card-body p-4 p-md-5">
+                    <i class="fa-solid fa-right-to-bracket fa-2x text-success mb-3"></i>
+                    <h5 class="card-title">Accede al backoffice</h5>
+                    <p class="card-text text-muted">
+                        Inicia sesión para gestionar tus campings y administrar la plataforma.
+                    </p>
+                    <a asp-controller="Account" asp-action="Login" class="btn btn-success btn-lg mt-2">
+                        Iniciar sesión
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+}

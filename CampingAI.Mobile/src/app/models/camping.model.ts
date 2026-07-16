@@ -24,7 +24,7 @@ export interface CampingSearchParams {
   name?: string;
   provinciaId?: string;
   provinciaCode?: string;
-  categoryId?: number;
+  categoryIds?: string[];
   minPrice?: number;
   maxPrice?: number;
   facilityIds?: string[];

@@ -17,7 +17,7 @@ public class SearchCampingsQueryHandlerTests {
     }
 
     private static Domain.Entities.Camping BuildCamping(Guid? provinciaId = null) =>
-        Domain.Entities.Camping.CreateNew("Camping Test", "Descripcion", 40m, -3m, 25m, Guid.NewGuid(), 1, provinciaId);
+        Domain.Entities.Camping.CreateNew("Camping Test", "Descripcion", 40m, -3m, 25m, Guid.NewGuid(), Guid.NewGuid(), provinciaId);
 
     [Fact]
     public async Task HandleAsync_Should_ReturnItems_WhenNoFiltersApplied() {

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using System.Reflection;
 using System.Text;
 
@@ -26,6 +27,11 @@ public class Startup
 
     private static void ConfigureServices(WebApplicationBuilder builder)
     {
+        builder.Host.UseSerilog((context, services, configuration) =>
+            configuration
+                .ReadFrom.Configuration(context.Configuration)
+                .ReadFrom.Services(services));
+
         Config.DI_Manager.Configure(builder.Services, builder.Configuration);
 
         var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? ["http://localhost:8100"];
@@ -176,7 +182,10 @@ public class Startup
 
         app.UseMiddleware<Handlers.GlobalExceptionMiddleware>();
 
+        app.UseSerilogRequestLogging();
+
         app.UseHttpsRedirection();
+        app.UseStaticFiles();
         app.UseRouting();
         app.UseCors(MobileCorsPolicy);
         app.UseAuthentication();

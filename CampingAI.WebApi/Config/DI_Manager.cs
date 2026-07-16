@@ -6,6 +6,7 @@ public static class DI_Manager {
         RegisterServices(services, config);
 
         Application.Configuration.DI_Manager.Configure(services, config);
+        AI.Configuration.DI_Manager.Configure(services, config);
     }
 
     private static void RegisterServices(IServiceCollection services, IConfiguration config) {
@@ -21,6 +22,8 @@ public static class DI_Manager {
         services.AddScoped<Controllers.api.Location.Mappers.ProvinceResponseMapper>();
         services.AddScoped<Controllers.api.Favorites.Mappers.FavoriteResponseMapper>();
         services.AddScoped<Controllers.api.Reservations.Mappers.ReservationResponseMapper>();
+        services.AddScoped<Controllers.api.Categories.Mappers.CategoryResponseMapper>();
+        services.AddScoped<Controllers.api.Facilities.Mappers.FacilityResponseMapper>();
     }
 
 

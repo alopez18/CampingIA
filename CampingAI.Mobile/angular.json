@@ -45,6 +45,11 @@
                 "output": "/"
               },
               {
+                "glob": "web.config",
+                "input": "src",
+                "output": "/"
+              },
+              {
                 "glob": "*.png",
                 "input": "node_modules/leaflet/dist/images",
                 "output": "assets/leaflet"

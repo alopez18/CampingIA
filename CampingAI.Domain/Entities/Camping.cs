@@ -7,7 +7,7 @@ public class Camping : Abstractions.Entities.Deleteable, Abstractions.Entities.I
     public ValueObjects.LongitudeVO Longitude { get; private set; }
     public ValueObjects.PriceVO PricePerNight { get; private set; }
     public Guid OwnerId { get; private set; }
-    public int CategoryId { get; private set; }
+    public Guid CategoryId { get; private set; }
     public Guid? ProvinciaId { get; private set; }
 
     public ValueObjects.DateFromPastVO CreatedOn { get; set; }
@@ -16,6 +16,9 @@ public class Camping : Abstractions.Entities.Deleteable, Abstractions.Entities.I
     private readonly List<Guid> _facilityIds = [];
     public IReadOnlyList<Guid> FacilityIds => _facilityIds.AsReadOnly();
 
+    private readonly List<Guid> _additionalCategoryIds = [];
+    public IReadOnlyList<Guid> AdditionalCategoryIds => _additionalCategoryIds.AsReadOnly();
+
     public Camping(Guid idCamping,
                    string name,
                    string description,
@@ -23,7 +26,7 @@ public class Camping : Abstractions.Entities.Deleteable, Abstractions.Entities.I
                    decimal longitude,
                    decimal pricePerNight,
                    Guid ownerId,
-                   int categoryId,
+                   Guid categoryId,
                    Guid? provinciaId,
                    DateTime createdOn,
                    DateTime updatedOn,
@@ -49,7 +52,7 @@ public class Camping : Abstractions.Entities.Deleteable, Abstractions.Entities.I
                                     decimal longitude,
                                     decimal pricePerNight,
                                     Guid ownerId,
-                                    int categoryId,
+                                    Guid categoryId,
                                     Guid? provinciaId = null) {
         return new Camping(Guid.NewGuid(),
                            name,
@@ -65,7 +68,7 @@ public class Camping : Abstractions.Entities.Deleteable, Abstractions.Entities.I
                            null);
     }
 
-    public void UpdateDetails(string name, string description, decimal pricePerNight, int categoryId,
+    public void UpdateDetails(string name, string description, decimal pricePerNight, Guid categoryId,
                               Guid? provinciaId = null) {
         Name = new ValueObjects.CampingNameVO(name);
         Description = new ValueObjects.CampingDescriptionVO(description);
@@ -93,6 +96,22 @@ public class Camping : Abstractions.Entities.Deleteable, Abstractions.Entities.I
 
     public void RemoveFacility(Guid facilityId) {
         _facilityIds.Remove(facilityId);
+    }
+
+    public void SetAdditionalCategories(IEnumerable<Guid> categoryIds) {
+        _additionalCategoryIds.Clear();
+        _additionalCategoryIds.AddRange(categoryIds);
+    }
+
+    public void AddCategory(Guid categoryId) {
+        if (categoryId == Guid.Empty)
+            throw new Exceptions.DomainException("CategoryId cannot be empty.");
+        if (categoryId != CategoryId && !_additionalCategoryIds.Contains(categoryId))
+            _additionalCategoryIds.Add(categoryId);
+    }
+
+    public void RemoveCategory(Guid categoryId) {
+        _additionalCategoryIds.Remove(categoryId);
     }
 
     public void Updated() {

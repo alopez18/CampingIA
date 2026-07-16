@@ -9,6 +9,7 @@ public class CampingsReadRepository : Domain.Repositories.ICampingsReadRepositor
     #region Dependencies
     readonly Abstractions.ModelExtractor<Models.CampingAI_DB.T_CAMPINGS> _modelExtractor;
     readonly Abstractions.ModelExtractor<Models.CampingAI_DB.T_CAMPING_FACILITIES> _campingFacilitiesExtractor;
+    readonly Abstractions.ModelExtractor<Models.CampingAI_DB.T_CAMPING_CATEGORIES> _campingCategoriesExtractor;
     readonly Configuration.Factories.Interfaces.ISqlConnectionFactory _sqlConnectionFactory;
     readonly Mappers.CampingsMapper _campingsMapper;
     readonly ILogger<CampingsReadRepository> _logger;
@@ -16,12 +17,14 @@ public class CampingsReadRepository : Domain.Repositories.ICampingsReadRepositor
 
     public CampingsReadRepository(Abstractions.ModelExtractor<Models.CampingAI_DB.T_CAMPINGS> modelExtractor,
                                   Abstractions.ModelExtractor<Models.CampingAI_DB.T_CAMPING_FACILITIES> campingFacilitiesExtractor,
+                                  Abstractions.ModelExtractor<Models.CampingAI_DB.T_CAMPING_CATEGORIES> campingCategoriesExtractor,
                                   Configuration.Factories.Interfaces.ISqlConnectionFactory sqlConnectionFactory,
                                   Mappers.CampingsMapper campingsMapper,
                                   ILogger<CampingsReadRepository> logger)
     {
         _modelExtractor = modelExtractor;
         _campingFacilitiesExtractor = campingFacilitiesExtractor;
+        _campingCategoriesExtractor = campingCategoriesExtractor;
         _sqlConnectionFactory = sqlConnectionFactory;
         _campingsMapper = campingsMapper;
         _logger = logger;
@@ -54,6 +57,7 @@ public class CampingsReadRepository : Domain.Repositories.ICampingsReadRepositor
         var camping = _campingsMapper.Map(row);
         var facilityIds = await GetFacilityIdsByCampingIdAsync(dbConnection, id);
         camping.SetFacilities(facilityIds);
+        await LoadAdditionalCategoriesForCampingsAsync(dbConnection, [camping]);
         return camping;
     }
 
@@ -83,14 +87,17 @@ public class CampingsReadRepository : Domain.Repositories.ICampingsReadRepositor
         return campings;
     }
 
-    public async Task<IEnumerable<Domain.Entities.Camping>> GetByCategoryAsync(int categoryId)
+    public async Task<IEnumerable<Domain.Entities.Camping>> GetByCategoryAsync(Guid categoryId)
     {
         using var dbConnection = _sqlConnectionFactory.CreateConnection();
 
         var sql = new StringBuilder();
         sql.AppendLine($"SELECT {_modelExtractor.GetFieldNamesForSql()} ");
         sql.AppendLine($"FROM {_modelExtractor.GetTableNameForSql()} ");
-        sql.AppendLine($"WHERE {nameof(Models.CampingAI_DB.T_CAMPINGS.CMP_CategoryId)} = @CategoryId ");
+        sql.AppendLine($"WHERE ({nameof(Models.CampingAI_DB.T_CAMPINGS.CMP_CategoryId)} = @CategoryId ");
+        sql.AppendLine($"OR EXISTS (SELECT 1 FROM {_campingCategoriesExtractor.GetTableNameForSql()} ");
+        sql.AppendLine($"    WHERE {nameof(Models.CampingAI_DB.T_CAMPING_CATEGORIES.CCA_CampingId)} = {_modelExtractor.GetTableNameForSql()}.{nameof(Models.CampingAI_DB.T_CAMPINGS.CMP_IdCamping)} ");
+        sql.AppendLine($"    AND {nameof(Models.CampingAI_DB.T_CAMPING_CATEGORIES.CCA_CategoryId)} = @CategoryId)) ");
         sql.AppendLine($"AND {nameof(Models.CampingAI_DB.T_CAMPINGS.CMP_DeletedOn)} IS NULL");
         string query = sql.ToString();
 
@@ -205,6 +212,30 @@ public class CampingsReadRepository : Domain.Repositories.ICampingsReadRepositor
             var camping = campings.FirstOrDefault(c => c.Id == group.Key);
             camping?.SetFacilities(group.Select(l => l.CFE_FacilityId));
         }
+
+        await LoadAdditionalCategoriesForCampingsAsync(dbConnection, campings);
+    }
+
+    private async Task LoadAdditionalCategoriesForCampingsAsync(System.Data.IDbConnection dbConnection, List<Domain.Entities.Camping> campings)
+    {
+        if (campings.Count == 0) return;
+
+        var ids = campings.Select(c => c.Id).ToList();
+        var sql = new StringBuilder();
+        sql.AppendLine($"SELECT {nameof(Models.CampingAI_DB.T_CAMPING_CATEGORIES.CCA_CampingId)}, ");
+        sql.AppendLine($"       {nameof(Models.CampingAI_DB.T_CAMPING_CATEGORIES.CCA_CategoryId)} ");
+        sql.AppendLine($"FROM {_campingCategoriesExtractor.GetTableNameForSql()} ");
+        sql.AppendLine($"WHERE {nameof(Models.CampingAI_DB.T_CAMPING_CATEGORIES.CCA_CampingId)} IN @Ids");
+        string query = sql.ToString();
+
+        var links = await dbConnection.QueryAsync<Models.CampingAI_DB.T_CAMPING_CATEGORIES>(query, new { Ids = ids });
+        var grouped = links.GroupBy(l => l.CCA_CampingId);
+
+        foreach (var group in grouped)
+        {
+            var camping = campings.FirstOrDefault(c => c.Id == group.Key);
+            camping?.SetAdditionalCategories(group.Select(l => l.CCA_CategoryId));
+        }
     }
 
     public async Task<(IEnumerable<Domain.Entities.Camping> Items, int TotalCount)> SearchAsync(Domain.Repositories.CampingSearchFilters filters)
@@ -227,10 +258,21 @@ public class CampingsReadRepository : Domain.Repositories.ICampingsReadRepositor
             parameters.Add("ProvinciaId", filters.ProvinciaId.Value);
         }
 
-        if (filters.CategoryId.HasValue)
+        var categoryIds = filters.CategoryIds?.ToList();
+        if (categoryIds is { Count: > 0 })
         {
-            where.AppendLine($"AND {nameof(Models.CampingAI_DB.T_CAMPINGS.CMP_CategoryId)} = @CategoryId");
-            parameters.Add("CategoryId", filters.CategoryId.Value);
+            var orConditions = new List<string>();
+            for (int i = 0; i < categoryIds.Count; i++)
+            {
+                var paramName = $"CategoryId{i}";
+                orConditions.Add(
+                    $"{nameof(Models.CampingAI_DB.T_CAMPINGS.CMP_CategoryId)} = @{paramName} " +
+                    $"OR EXISTS (SELECT 1 FROM {_campingCategoriesExtractor.GetTableNameForSql()} " +
+                    $"WHERE {nameof(Models.CampingAI_DB.T_CAMPING_CATEGORIES.CCA_CampingId)} = {_modelExtractor.GetTableNameForSql()}.{nameof(Models.CampingAI_DB.T_CAMPINGS.CMP_IdCamping)} " +
+                    $"AND {nameof(Models.CampingAI_DB.T_CAMPING_CATEGORIES.CCA_CategoryId)} = @{paramName})");
+                parameters.Add(paramName, categoryIds[i]);
+            }
+            where.AppendLine($"AND ({string.Join(" OR ", orConditions)})");
         }
 
         if (filters.MinPrice.HasValue)

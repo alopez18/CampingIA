@@ -17,6 +17,14 @@ export const routes: Routes = [
         loadComponent: () => import('../pages/campings/list/campings-list.page').then(m => m.CampingsListPage)
       },
       {
+        path: 'ai-search',
+        loadComponent: () => import('../pages/campings/ai-search/ai-search.page').then(m => m.AiSearchPage)
+      },
+      {
+        path: 'compare',
+        loadComponent: () => import('../pages/campings/compare/camping-compare.page').then(m => m.CampingComparePage)
+      },
+      {
         path: 'campings/:id',
         loadComponent: () => import('../pages/campings/detail/camping-detail.page').then(m => m.CampingDetailPage)
       },

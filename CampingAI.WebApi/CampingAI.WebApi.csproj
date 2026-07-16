@@ -6,6 +6,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UserSecretsId>aa4013aa-ccb6-4e16-8f76-249f9f2c2cfb</UserSecretsId>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+		<Version>1.0.3</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -14,17 +15,20 @@
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.20" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.20" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
+		<PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.4" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\CampingAI.Application\CampingAI.Application.csproj" />
 		<ProjectReference Include="..\CampingAI.Domain\CampingAI.Domain.csproj" />
+		<ProjectReference Include="..\CampingAI.AI\CampingAI.AI.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <Folder Include="Controllers\api\RedArbor\DTO\" />
 	  <Folder Include="Controllers\api\RedArbor\Mappers\" />
+	  <Folder Include="Properties\PublishProfiles\" />
 	</ItemGroup>
 
 	

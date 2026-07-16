@@ -24,6 +24,6 @@ public class CreateCampingCommandValidator : AbstractValidator<CreateCampingComm
             .NotEqual(Guid.Empty).WithMessage("El OwnerId no puede estar vacío.");
 
         RuleFor(x => x.CategoryId)
-            .GreaterThan(0).WithMessage("El CategoryId debe ser mayor que 0.");
+            .NotEqual(Guid.Empty).WithMessage("El CategoryId no puede estar vacío.");
     }
 }

@@ -2,6 +2,8 @@
 
 > Objetivo: cobertura de Domain, Application, Infra y API con xUnit + FluentAssertions.
 
+> **Nota:** el RAG se traslada a la **Fase Bonus** (`fase-bonus-rag.md`) y solo se implementará si da tiempo. Por tanto, esta fase **no** incluye tests de RAG (retrieval/embeddings/Qdrant); dichos tests quedan documentados en la fase bonus.
+
 ## Convenciones
 - `Method_Should_ExpectedBehavior_WhenCondition`.
 - Arrange / Act / Assert.

@@ -56,6 +56,8 @@ public static class DI_Manager {
         services.AddScoped<IQueryHandler<Queries.Camping.SearchCampings.SearchCampingsQuery, Queries.Camping.SearchCampings.SearchCampingsResult>, Queries.Camping.SearchCampings.SearchCampingsQueryHandler>();
         services.AddScoped<IQueryHandler<Queries.Location.GetCountries.GetCountriesQuery, Queries.Location.GetCountries.GetCountriesResult>, Queries.Location.GetCountries.GetCountriesQueryHandler>();
         services.AddScoped<IQueryHandler<Queries.Location.GetProvinces.GetProvincesQuery, Queries.Location.GetProvinces.GetProvincesResult>, Queries.Location.GetProvinces.GetProvincesQueryHandler>();
+        services.AddScoped<IQueryHandler<Queries.Category.GetCategories.GetCategoriesQuery, Queries.Category.GetCategories.GetCategoriesResult>, Queries.Category.GetCategories.GetCategoriesQueryHandler>();
+        services.AddScoped<IQueryHandler<Queries.Facility.GetFacilities.GetFacilitiesQuery, Queries.Facility.GetFacilities.GetFacilitiesResult>, Queries.Facility.GetFacilities.GetFacilitiesQueryHandler>();
         services.AddScoped<IQueryHandler<Queries.Favorite.GetFavorites.GetFavoritesQuery, IEnumerable<Domain.Entities.Favorite>>, Queries.Favorite.GetFavorites.GetFavoritesQueryHandler>();
         services.AddScoped<IQueryHandler<Queries.Reservation.GetReservationById.GetReservationByIdQuery, Domain.Entities.Reservation>, Queries.Reservation.GetReservationById.GetReservationByIdQueryHandler>();
         services.AddScoped<IQueryHandler<Queries.Reservation.GetUserReservations.GetUserReservationsQuery, IEnumerable<Domain.Entities.Reservation>>, Queries.Reservation.GetUserReservations.GetUserReservationsQueryHandler>();

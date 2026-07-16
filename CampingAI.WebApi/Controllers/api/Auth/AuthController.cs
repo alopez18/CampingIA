@@ -71,8 +71,15 @@ public class AuthController : ControllerBase {
     public async Task<IActionResult> GoogleLogin([FromBody] DTO.GoogleLoginRequest request) {
         var clientId = _configuration["GoogleAuth:ClientId"];
 
+        if (string.IsNullOrWhiteSpace(clientId) || clientId.StartsWith("REPLACE_WITH", StringComparison.OrdinalIgnoreCase)) {
+            _logger.LogError("GoogleAuth:ClientId no está configurado correctamente en el entorno actual (valor actual: '{ClientId}'). " +
+                             "Configúralo con el ClientId real de Google mediante variables de entorno, user-secrets o appsettings.Production.json.", clientId);
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                new Shared.ErrorResponse("La autenticación con Google no está configurada correctamente en el servidor."));
+        }
+
         var validationSettings = new GoogleJsonWebSignature.ValidationSettings {
-            Audience = clientId is not null ? [clientId] : null
+            Audience = [clientId]
         };
 
         GoogleJsonWebSignature.Payload payload;
@@ -80,7 +87,7 @@ public class AuthController : ControllerBase {
             payload = await GoogleJsonWebSignature.ValidateAsync(request.IdToken, validationSettings);
         }
         catch (InvalidJwtException ex) {
-            _logger.LogWarning(ex, "Google ID token inválido");
+            _logger.LogWarning(ex, "Google ID token inválido. Verifica que el aud del token coincide con GoogleAuth:ClientId ('{ClientId}') y que el token no ha expirado.", clientId);
             return Unauthorized(new Shared.ErrorResponse("Token de Google inválido."));
         }
 

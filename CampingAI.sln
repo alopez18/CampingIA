@@ -27,11 +27,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CampingAI.Infra.Tests", "Ca
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "0. Solution Files", "0. Solution Files", "{03AF9EE6-F15E-42F8-99B5-E6538EDBAE84}"
 	ProjectSection(SolutionItems) = preProject
-		..\0. CampingAI_MasterPlan.md = ..\0. CampingAI_MasterPlan.md
 		.github\copilot-instructions.md = .github\copilot-instructions.md
 		docs\plans\fase-01-configuracion-inicial.md = docs\plans\fase-01-configuracion-inicial.md
 		docs\plans\fase-02-dominio.md = docs\plans\fase-02-dominio.md
 		docs\plans\fase-03-persistencia.md = docs\plans\fase-03-persistencia.md
+		docs\plans\fase-04-b-gestion-usuarios-gestores.md = docs\plans\fase-04-b-gestion-usuarios-gestores.md
 		docs\plans\fase-04-gestion-usuarios.md = docs\plans\fase-04-gestion-usuarios.md
 		docs\plans\fase-05-gestion-campings.md = docs\plans\fase-05-gestion-campings.md
 		docs\plans\fase-06-busqueda-avanzada.md = docs\plans\fase-06-busqueda-avanzada.md
@@ -40,16 +40,20 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "0. Solution Files", "0. Sol
 		docs\plans\fase-09-app-ionic.md = docs\plans\fase-09-app-ionic.md
 		docs\plans\fase-10-mapa-interactivo.md = docs\plans\fase-10-mapa-interactivo.md
 		docs\plans\fase-11-inteligencia-artificial.md = docs\plans\fase-11-inteligencia-artificial.md
-		docs\plans\fase-12-rag.md = docs\plans\fase-12-rag.md
 		docs\plans\fase-13-testing.md = docs\plans\fase-13-testing.md
 		docs\plans\fase-14-dockerizacion.md = docs\plans\fase-14-dockerizacion.md
 		docs\plans\fase-15-documentacion-tfm.md = docs\plans\fase-15-documentacion-tfm.md
-		plan-Importar-campings.md = plan-Importar-campings.md
+		docs\plans\fase-bonus-rag.md = docs\plans\fase-bonus-rag.md
+		docs\plans\fase-extra-categorias.md = docs\plans\fase-extra-categorias.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CampingAI.DataImporter", "CampingAI.DataImporter\CampingAI.DataImporter.csproj", "{85D06FCC-0F65-4AEE-A5F6-C1EF0D8CB627}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CampingAI.DataImporter.Tests", "CampingAI.DataImporter.Tests\CampingAI.DataImporter.Tests.csproj", "{683117C5-835F-48D3-9FA4-72577E99673A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CampingAI.AI", "CampingAI.AI\CampingAI.AI.csproj", "{B4D58011-7E6C-47DB-A1CB-17E957BFFAA9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CampingAI.AI.Tests", "CampingAI.AI.Tests\CampingAI.AI.Tests.csproj", "{C691751A-1665-42BE-9C65-51DFF2A8349E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -169,6 +173,30 @@ Global
 		{683117C5-835F-48D3-9FA4-72577E99673A}.Release|x64.Build.0 = Release|Any CPU
 		{683117C5-835F-48D3-9FA4-72577E99673A}.Release|x86.ActiveCfg = Release|Any CPU
 		{683117C5-835F-48D3-9FA4-72577E99673A}.Release|x86.Build.0 = Release|Any CPU
+		{B4D58011-7E6C-47DB-A1CB-17E957BFFAA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4D58011-7E6C-47DB-A1CB-17E957BFFAA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4D58011-7E6C-47DB-A1CB-17E957BFFAA9}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B4D58011-7E6C-47DB-A1CB-17E957BFFAA9}.Debug|x64.Build.0 = Debug|Any CPU
+		{B4D58011-7E6C-47DB-A1CB-17E957BFFAA9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B4D58011-7E6C-47DB-A1CB-17E957BFFAA9}.Debug|x86.Build.0 = Debug|Any CPU
+		{B4D58011-7E6C-47DB-A1CB-17E957BFFAA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4D58011-7E6C-47DB-A1CB-17E957BFFAA9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4D58011-7E6C-47DB-A1CB-17E957BFFAA9}.Release|x64.ActiveCfg = Release|Any CPU
+		{B4D58011-7E6C-47DB-A1CB-17E957BFFAA9}.Release|x64.Build.0 = Release|Any CPU
+		{B4D58011-7E6C-47DB-A1CB-17E957BFFAA9}.Release|x86.ActiveCfg = Release|Any CPU
+		{B4D58011-7E6C-47DB-A1CB-17E957BFFAA9}.Release|x86.Build.0 = Release|Any CPU
+		{C691751A-1665-42BE-9C65-51DFF2A8349E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C691751A-1665-42BE-9C65-51DFF2A8349E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C691751A-1665-42BE-9C65-51DFF2A8349E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C691751A-1665-42BE-9C65-51DFF2A8349E}.Debug|x64.Build.0 = Debug|Any CPU
+		{C691751A-1665-42BE-9C65-51DFF2A8349E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C691751A-1665-42BE-9C65-51DFF2A8349E}.Debug|x86.Build.0 = Debug|Any CPU
+		{C691751A-1665-42BE-9C65-51DFF2A8349E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C691751A-1665-42BE-9C65-51DFF2A8349E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C691751A-1665-42BE-9C65-51DFF2A8349E}.Release|x64.ActiveCfg = Release|Any CPU
+		{C691751A-1665-42BE-9C65-51DFF2A8349E}.Release|x64.Build.0 = Release|Any CPU
+		{C691751A-1665-42BE-9C65-51DFF2A8349E}.Release|x86.ActiveCfg = Release|Any CPU
+		{C691751A-1665-42BE-9C65-51DFF2A8349E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -181,6 +209,8 @@ Global
 		{A5FE3296-8E0E-4B28-89E1-8177E927EFC5} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{DC72D733-AC7E-4099-AA50-9AC1AA1762B0} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{683117C5-835F-48D3-9FA4-72577E99673A} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{B4D58011-7E6C-47DB-A1CB-17E957BFFAA9} = {6B137A6E-13EA-4C11-B6FB-AB7224ED1B7D}
+		{C691751A-1665-42BE-9C65-51DFF2A8349E} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3FD119BA-E6FB-4D65-9418-BFEEF6B19D4E}

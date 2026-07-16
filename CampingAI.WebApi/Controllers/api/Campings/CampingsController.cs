@@ -64,7 +64,7 @@ public class CampingsController : ControllerBase {
             request.Name,
             request.ProvinciaId,
             request.ProvinciaCode,
-            request.CategoryId,
+            request.CategoryIds,
             request.MinPrice,
             request.MaxPrice,
             request.FacilityIds,
@@ -113,7 +113,8 @@ public class CampingsController : ControllerBase {
             request.OwnerId,
             request.CategoryId,
             request.ProvinciaId,
-            request.FacilityIds);
+            request.FacilityIds,
+            request.AdditionalCategoryIds);
 
         var camping = await _createCampingCommandHandler.HandleAsync(command);
 
@@ -138,7 +139,8 @@ public class CampingsController : ControllerBase {
             request.PricePerNight,
             request.CategoryId,
             request.ProvinciaId,
-            request.FacilityIds);
+            request.FacilityIds,
+            request.AdditionalCategoryIds);
 
         var camping = await _updateCampingCommandHandler.HandleAsync(command);
 

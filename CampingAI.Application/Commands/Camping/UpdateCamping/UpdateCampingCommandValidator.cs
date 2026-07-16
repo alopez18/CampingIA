@@ -24,6 +24,6 @@ public class UpdateCampingCommandValidator : AbstractValidator<UpdateCampingComm
             .GreaterThan(0m).WithMessage("El precio por noche debe ser mayor que 0.");
 
         RuleFor(x => x.CategoryId)
-            .GreaterThan(0).WithMessage("El CategoryId debe ser mayor que 0.");
+            .NotEqual(Guid.Empty).WithMessage("El CategoryId no puede estar vacío.");
     }
 }

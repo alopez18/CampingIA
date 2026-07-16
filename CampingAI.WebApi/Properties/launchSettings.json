@@ -36,7 +36,8 @@
         "ASPNETCORE_HTTPS_PORTS": "8081",
         "ASPNETCORE_HTTP_PORTS": "8080",
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ConnectionStrings__CAMPING_AI_SqlServer": "Data Source=host.docker.internal,14333;Initial Catalog=CAMPING_AI_DB;Persist Security Info=True;User ID=sa;Password=Pwd_12345!;Pooling=False;MultipleActiveResultSets=False;Connect Timeout=30;Encrypt=False;TrustServerCertificate=True;Command Timeout=30"
+        //"ConnectionStrings__CAMPING_AI_SqlServer": "Data Source=host.docker.internal,14333;Initial Catalog=CAMPING_AI_DB;Persist Security Info=True;User ID=sa;Password=Pwd_12345!;Pooling=False;MultipleActiveResultSets=False;Connect Timeout=30;Encrypt=False;TrustServerCertificate=True;Command Timeout=30"
+        "ConnectionStrings__CAMPING_AI_SqlServer": "Data Source=REPLACE_SERVER;Initial Catalog=REPLACE_DB;User ID=REPLACE_USER;Password=REPLACE_PASSWORD;Encrypt=False;TrustServerCertificate=True;Command Timeout=30"
       },
       "publishAllPorts": true,
       "useSSL": true,

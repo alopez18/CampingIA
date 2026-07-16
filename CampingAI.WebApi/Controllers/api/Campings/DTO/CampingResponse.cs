@@ -6,9 +6,10 @@ public record CampingResponse(Guid Id,
                                decimal Longitude,
                                decimal PricePerNight,
                                Guid OwnerId,
-                               int CategoryId,
+                               Guid CategoryId,
                                Guid? ProvinciaId,
                                IReadOnlyList<Guid> FacilityIds,
+                               IReadOnlyList<Guid> AdditionalCategoryIds,
                                DateTime CreatedOn,
                                DateTime UpdatedOn) {
 }

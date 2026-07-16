@@ -3,11 +3,12 @@ import { CurrencyPipe } from '@angular/common';
 import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding,
   IonItem, IonLabel, IonItemOptions, IonItemOption, IonIcon,
-  IonSpinner, IonText, IonRefresher, IonRefresherContent, ToastController
+  IonSpinner, IonText, IonRefresher, IonRefresherContent, ToastController,
+  IonButtons, IonButton, IonCheckbox, IonFab, IonFabButton
 } from '@ionic/angular/standalone';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { addIcons } from 'ionicons';
-import { trashOutline, locationOutline } from 'ionicons/icons';
+import { trashOutline, locationOutline, gitCompareOutline, closeOutline } from 'ionicons/icons';
 import { FavoritesService } from '../../services/favorites.service';
 import { CampingsService } from '../../services/campings.service';
 import { Camping } from '../../models/camping.model';
@@ -19,12 +20,20 @@ import { Camping } from '../../models/camping.model';
     RouterLink, CurrencyPipe,
     IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding,
     IonItem, IonLabel, IonItemOptions, IonItemOption, IonIcon,
-    IonSpinner, IonText, IonRefresher, IonRefresherContent
+    IonSpinner, IonText, IonRefresher, IonRefresherContent,
+    IonButtons, IonButton, IonCheckbox, IonFab, IonFabButton
   ],
   template: `
     <ion-header>
       <ion-toolbar color="primary">
         <ion-title>Favoritos</ion-title>
+        @if (favCampings().length >= 2) {
+          <ion-buttons slot="end">
+            <ion-button (click)="toggleCompareMode()">
+              <ion-icon slot="icon-only" [name]="compareMode() ? 'close-outline' : 'git-compare-outline'"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        }
       </ion-toolbar>
     </ion-header>
     <ion-content>
@@ -42,22 +51,44 @@ import { Camping } from '../../models/camping.model';
       } @else {
         <ion-list>
           @for (camping of favCampings(); track camping.id) {
-            <ion-item-sliding>
-              <ion-item [routerLink]="['/tabs/campings', camping.id]">
-                <ion-icon name="location-outline" slot="start" color="primary"></ion-icon>
+            @if (compareMode()) {
+              <ion-item>
+                <ion-checkbox
+                  slot="start"
+                  [checked]="selected().has(camping.id)"
+                  (ionChange)="toggleSelection(camping.id)">
+                </ion-checkbox>
                 <ion-label>
                   <h2>{{ camping.name }}</h2>
                   <p>{{ camping.pricePerNight | currency:'EUR' }} / noche</p>
                 </ion-label>
               </ion-item>
-              <ion-item-options side="end">
-                <ion-item-option color="danger" (click)="removeFavorite(camping.id)">
-                  <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
-                </ion-item-option>
-              </ion-item-options>
-            </ion-item-sliding>
+            } @else {
+              <ion-item-sliding>
+                <ion-item [routerLink]="['/tabs/campings', camping.id]">
+                  <ion-icon name="location-outline" slot="start" color="primary"></ion-icon>
+                  <ion-label>
+                    <h2>{{ camping.name }}</h2>
+                    <p>{{ camping.pricePerNight | currency:'EUR' }} / noche</p>
+                  </ion-label>
+                </ion-item>
+                <ion-item-options side="end">
+                  <ion-item-option color="danger" (click)="removeFavorite(camping.id)">
+                    <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+                  </ion-item-option>
+                </ion-item-options>
+              </ion-item-sliding>
+            }
           }
         </ion-list>
+
+        @if (compareMode()) {
+          <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+            <ion-fab-button [disabled]="selected().size < 2" (click)="compareSelected()">
+              <ion-icon name="git-compare-outline"></ion-icon>
+            </ion-fab-button>
+          </ion-fab>
+        }
       }
     </ion-content>
   `
@@ -66,13 +97,36 @@ export class FavoritesPage {
   private readonly favoritesService = inject(FavoritesService);
   private readonly campingsService = inject(CampingsService);
   private readonly toast = inject(ToastController);
+  private readonly router = inject(Router);
 
   readonly loading = signal(true);
   readonly favCampings = signal<Camping[]>([]);
+  readonly compareMode = signal(false);
+  readonly selected = signal<Set<string>>(new Set());
 
-  constructor() { addIcons({ trashOutline, locationOutline }); }
+  constructor() { addIcons({ trashOutline, locationOutline, gitCompareOutline, closeOutline }); }
 
   ionViewWillEnter(): void { this.loadFavorites(); }
+
+  toggleCompareMode(): void {
+    this.compareMode.update(v => !v);
+    this.selected.set(new Set());
+  }
+
+  toggleSelection(campingId: string): void {
+    this.selected.update(set => {
+      const next = new Set(set);
+      if (next.has(campingId)) next.delete(campingId);
+      else next.add(campingId);
+      return next;
+    });
+  }
+
+  compareSelected(): void {
+    const ids = [...this.selected()];
+    if (ids.length < 2) return;
+    this.router.navigate(['/tabs/compare'], { queryParams: { ids: ids.join(',') } });
+  }
 
   loadFavorites(): void {
     this.loading.set(true);

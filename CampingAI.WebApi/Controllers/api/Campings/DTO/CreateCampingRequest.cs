@@ -5,7 +5,8 @@ public record CreateCampingRequest(string Name,
                                    decimal Longitude,
                                    decimal PricePerNight,
                                    Guid OwnerId,
-                                   int CategoryId,
+                                   Guid CategoryId,
                                    Guid? ProvinciaId,
-                                   IEnumerable<Guid>? FacilityIds) {
+                                   IEnumerable<Guid>? FacilityIds,
+                                   IEnumerable<Guid>? AdditionalCategoryIds) {
 }

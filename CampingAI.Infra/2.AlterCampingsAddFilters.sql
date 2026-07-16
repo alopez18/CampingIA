@@ -6,9 +6,7 @@ GO
 -- ============================================================
 
 ALTER TABLE [dbo].[T_CAMPINGS]
-	ADD [CMP_Provincia]          NVARCHAR(100) NULL,
-		[CMP_MascotasPermitidas] BIT NOT NULL CONSTRAINT [DF_T_CAMPINGS_Mascotas] DEFAULT (0),
-		[CMP_Piscina]            BIT NOT NULL CONSTRAINT [DF_T_CAMPINGS_Piscina]  DEFAULT (0);
+	ADD [CMP_Provincia]          NVARCHAR(100) NULL;
 GO
 
 -- ============================================================

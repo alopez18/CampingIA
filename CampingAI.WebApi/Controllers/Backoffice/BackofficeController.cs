@@ -74,7 +74,7 @@ public class BackofficeController : Controller {
             if (request.Id is null || request.Id == Guid.Empty) {
                 var createCommand = new Application.Commands.Camping.CreateCamping.CreateCampingCommand(
                     request.Name, request.Description, request.Latitude, request.Longitude,
-                    request.PricePerNight, ownerId, request.CategoryId, request.ProvinciaId, null);
+                    request.PricePerNight, ownerId, request.CategoryId, request.ProvinciaId, null, null);
                 await _createCampingCommandHandler.HandleAsync(createCommand);
             } else {
                 var existing = await _getCampingByIdQueryHandler.HandleAsync(new Application.Queries.Camping.GetCampingById.GetCampingByIdQuery(request.Id.Value));
@@ -83,7 +83,7 @@ public class BackofficeController : Controller {
 
                 var updateCommand = new Application.Commands.Camping.UpdateCamping.UpdateCampingCommand(
                     request.Id.Value, request.Name, request.Description, request.Latitude, request.Longitude,
-                    request.PricePerNight, request.CategoryId, request.ProvinciaId, null);
+                    request.PricePerNight, request.CategoryId, request.ProvinciaId, null, null);
                 await _updateCampingCommandHandler.HandleAsync(updateCommand);
             }
         } catch (Domain.Exceptions.DomainException ex) {
