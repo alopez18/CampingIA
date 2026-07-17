@@ -31,7 +31,7 @@ public class GlobalExceptionMiddleware {
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-        var response = new Controllers.api.Shared.ErrorResponse($"Se produjo un error inesperado en el servidor: {exception.Message}", exception.StackTrace);
+        var response = new Controllers.api.Shared.ErrorResponse("Se produjo un error inesperado en el servidor.");
 
         return context.Response.WriteAsJsonAsync(response);
     }

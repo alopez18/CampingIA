@@ -26,57 +26,63 @@ import { version as appVersion } from '../../../../../package.json';
       </ion-toolbar>
     </ion-header>
     <ion-content class="ion-padding">
-      <div class="auth-hero">
-        <span class="auth-hero-icon">🏕️</span>
-        <h1 class="auth-app-name">CampingAI</h1>
-        <p class="auth-tagline">Tu aventura al aire libre comienza aquí</p>
+      <div class="auth-shell">
+        <div class="auth-card">
+          <div class="auth-hero">
+            <span class="auth-hero-icon">🏕️</span>
+            <h1 class="auth-app-name">CampingAI</h1>
+            <p class="auth-tagline">Tu aventura al aire libre comienza aquí</p>
+          </div>
+          <div class="auth-body">
+            <form [formGroup]="form" (ngSubmit)="onSubmit()">
+              <ion-item>
+                <ion-label position="floating">Email</ion-label>
+                <ion-input type="email" formControlName="email" autocomplete="email"></ion-input>
+              </ion-item>
+              @if (form.get('email')?.invalid && form.get('email')?.touched) {
+                <p class="error-msg">Email requerido y válido.</p>
+              }
+
+              <ion-item class="ion-margin-top">
+                <ion-label position="floating">Contraseña</ion-label>
+                <ion-input type="password" formControlName="password" autocomplete="current-password"></ion-input>
+              </ion-item>
+              @if (form.get('password')?.invalid && form.get('password')?.touched) {
+                <p class="error-msg">Contraseña requerida (mín. 6 caracteres).</p>
+              }
+
+              <ion-button
+                expand="block"
+                class="ion-margin-top"
+                type="submit"
+                [disabled]="form.invalid">
+                Entrar
+              </ion-button>
+            </form>
+
+            <div class="separator ion-text-center ion-padding-vertical">
+              <span>o continúa con</span>
+            </div>
+
+            <ion-button
+              expand="block"
+              fill="outline"
+              color="medium"
+              (click)="onGoogleLogin()">
+              <ion-icon slot="start" name="logo-google"></ion-icon>
+              Iniciar sesión con Google
+            </ion-button>
+
+            <div class="ion-text-center ion-padding-top">
+              <ion-text>¿No tienes cuenta? <a routerLink="/auth/register">Regístrate</a></ion-text>
+            </div>
+
+            <footer class="app-version ion-text-center">
+              <ion-text color="medium">v{{ appVersion }}</ion-text>
+            </footer>
+          </div>
+        </div>
       </div>
-      <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <ion-item>
-          <ion-label position="floating">Email</ion-label>
-          <ion-input type="email" formControlName="email" autocomplete="email"></ion-input>
-        </ion-item>
-        @if (form.get('email')?.invalid && form.get('email')?.touched) {
-          <p class="error-msg">Email requerido y válido.</p>
-        }
-
-        <ion-item class="ion-margin-top">
-          <ion-label position="floating">Contraseña</ion-label>
-          <ion-input type="password" formControlName="password" autocomplete="current-password"></ion-input>
-        </ion-item>
-        @if (form.get('password')?.invalid && form.get('password')?.touched) {
-          <p class="error-msg">Contraseña requerida (mín. 6 caracteres).</p>
-        }
-
-        <ion-button
-          expand="block"
-          class="ion-margin-top"
-          type="submit"
-          [disabled]="form.invalid">
-          Entrar
-        </ion-button>
-      </form>
-
-      <div class="separator ion-text-center ion-padding-vertical">
-        <span>o continúa con</span>
-      </div>
-
-      <ion-button
-        expand="block"
-        fill="outline"
-        color="medium"
-        (click)="onGoogleLogin()">
-        <ion-icon slot="start" name="logo-google"></ion-icon>
-        Iniciar sesión con Google
-      </ion-button>
-
-      <div class="ion-text-center ion-padding-top">
-        <ion-text>¿No tienes cuenta? <a routerLink="/auth/register">Regístrate</a></ion-text>
-      </div>
-
-      <footer class="app-version ion-text-center">
-        <ion-text color="medium">v{{ appVersion }}</ion-text>
-      </footer>
     </ion-content>
   `,
   styles: [`
@@ -99,6 +105,71 @@ import { version as appVersion } from '../../../../../package.json';
     .separator { color: var(--ion-color-medium); font-size: 0.85em; }
     .separator span { background: var(--ion-background-color); padding: 0 8px; }
     .app-version { margin-top: 32px; padding-bottom: 8px; font-size: 0.75em; opacity: 0.7; }
+
+    /* ── Apariencia Web / Escritorio ─────────────────────────────────────────
+       Solo se aplica cuando la app corre en navegador (body.platform-web).
+       En app nativa el layout móvil original permanece intacto. */
+    :host-context(body.platform-web) ion-header {
+      display: none;
+    }
+
+    :host-context(body.platform-web) .auth-shell {
+      min-height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    :host-context(body.platform-web) .auth-card {
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      background: var(--ion-background-color, #fff);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+    }
+
+    :host-context(body.platform-web) .auth-hero {
+      /* Reinicia el sangrado móvil (márgenes negativos) y ocupa la columna izquierda. */
+      margin: 0;
+      width: 42%;
+      border-radius: 0;
+      justify-content: center;
+      padding: 48px 32px;
+    }
+
+    :host-context(body.platform-web) .auth-hero-icon { font-size: 4.5em; }
+    :host-context(body.platform-web) .auth-app-name { font-size: 2.4em; }
+    :host-context(body.platform-web) .auth-tagline { font-size: 1em; }
+
+    :host-context(body.platform-web) .auth-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 48px 40px;
+    }
+
+    :host-context(body.platform-web) .auth-body .app-version {
+      margin-top: 24px;
+    }
+
+    /* En pantallas estrechas (web en móvil o ventana pequeña) apila en una columna. */
+    @media (max-width: 720px) {
+      :host-context(body.platform-web) .auth-card {
+        flex-direction: column;
+        max-width: 440px;
+      }
+      :host-context(body.platform-web) .auth-hero {
+        width: 100%;
+        padding: 40px 24px 32px;
+      }
+      :host-context(body.platform-web) .auth-body {
+        padding: 32px 28px;
+      }
+    }
   `]
 })
 export class LoginPage {

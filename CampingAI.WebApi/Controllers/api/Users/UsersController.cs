@@ -49,6 +49,12 @@ public class UsersController : ControllerBase {
     [ProducesResponseType(typeof(Shared.ErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(Shared.ErrorResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> UpdateUser([FromRoute] Guid id, [FromBody] DTO.UpdateUserRequest request) {
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier)
+            ?? throw new KeyNotFoundException("El token no contiene el identificador de usuario.");
+
+        if (Guid.Parse(userIdClaim) != id)
+            return Forbid();
+
         var command = new Application.Commands.User.UpdateUser.UpdateUserCommand(id,
                                                                                 request.Name,
                                                                                 request.Email,

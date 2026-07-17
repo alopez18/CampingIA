@@ -24,7 +24,7 @@ public class EmployeeUserNameVOTests {
     [InlineData("   ")]
     public void Constructor_Should_ThrowDomainException_WhenValueIsNullOrWhitespace(string invalidUserName) {
         // Act
-        Action act = () => new EmployeeUserNameVO(invalidUserName);
+        Action act = () => { var _ = new EmployeeUserNameVO(invalidUserName); };
 
         // Assert
         act.Should().Throw<DomainException>()

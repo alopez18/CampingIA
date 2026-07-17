@@ -2,8 +2,11 @@
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CampingAI.Infra.Configuration;
-public static class DI_Manager {
-    public static void Configure(IServiceCollection services, IConfiguration config) {
+
+public static class DI_Manager
+{
+    public static void Configure(IServiceCollection services, IConfiguration config)
+    {
         ContextConfiguration.ConfigureInfra(services, config);
         services.AddScoped<Abstractions.IUnitOfWork, UnitOfWork>();
         RegisterExtractors(services);
@@ -11,8 +14,8 @@ public static class DI_Manager {
         RegisterRepositories(services);
     }
 
-    private static void RegisterMappers(IServiceCollection services) {
-        services.AddScoped<Employees.Mappers.EmployeesMapper>();
+    private static void RegisterMappers(IServiceCollection services)
+    {
         services.AddSingleton<Users.Mappers.UsersMapper>();
         services.AddSingleton<Campings.Mappers.CampingsMapper>();
         services.AddSingleton<Reservations.Mappers.ReservationsMapper>();
@@ -23,7 +26,8 @@ public static class DI_Manager {
         services.AddSingleton<Categories.Mappers.CategoriesMapper>();
     }
 
-    private static void RegisterExtractors(IServiceCollection services) {
+    private static void RegisterExtractors(IServiceCollection services)
+    {
         services.AddSingleton<Abstractions.ModelExtractor<Models.CAMPING_AI_DB.T_EMPLOYEES>>();
         services.AddSingleton<Abstractions.ModelExtractor<Models.CampingAI_DB.T_USERS>>();
         services.AddSingleton<Abstractions.ModelExtractor<Models.CampingAI_DB.T_CAMPINGS>>();
@@ -37,10 +41,8 @@ public static class DI_Manager {
         services.AddSingleton<Abstractions.ModelExtractor<Models.CampingAI_DB.T_CAMPING_CATEGORIES>>();
     }
 
-    private static void RegisterRepositories(IServiceCollection services) {
-        services.AddScoped<Domain.Repositories.Employees.IEmployeesWriteRepository, Employees.EmployeesWriteRepository>();
-        services.AddScoped<Domain.Repositories.Employees.IEmpoyeesReadRepository, Employees.EmployeesReadRepository>();
-
+    private static void RegisterRepositories(IServiceCollection services)
+    {
         services.AddScoped<Domain.Repositories.IUsersReadRepository, Users.UsersReadRepository>();
         services.AddScoped<Domain.Repositories.IUsersWriteRepository, Users.UsersWriteRepository>();
 

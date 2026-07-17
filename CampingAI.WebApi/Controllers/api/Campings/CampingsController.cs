@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace CampingAI.WebApi.Controllers.api.Campings;
 [Route("api/campings")]
@@ -104,6 +105,13 @@ public class CampingsController : ControllerBase {
     [ProducesResponseType(typeof(Shared.ErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(Shared.ErrorResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> CreateCamping([FromBody] DTO.CreateCampingRequest request) {
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier)
+            ?? throw new KeyNotFoundException("El token no contiene el identificador de usuario.");
+
+        var authenticatedUserId = Guid.Parse(userIdClaim);
+        if (request.OwnerId != authenticatedUserId)
+            return Forbid();
+
         var command = new Application.Commands.Camping.CreateCamping.CreateCampingCommand(
             request.Name,
             request.Description,

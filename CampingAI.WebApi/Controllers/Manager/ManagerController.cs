@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CampingAI.WebApi.Controllers.Manager;
+[Authorize(Roles = "Admin")]
 public class ManagerController : Controller {
 
     #region Dependencias

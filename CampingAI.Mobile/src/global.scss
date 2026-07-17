@@ -89,3 +89,65 @@ ion-searchbar {
 ion-item {
   --border-radius: 10px;
 }
+
+// ─── Apariencia Web / Escritorio ─────────────────────────────────────────────
+// Estas reglas SOLO se aplican cuando la app corre en un navegador (build web),
+// no cuando se ejecuta como app nativa (Android/iOS). La clase `platform-web`
+// la añade AppComponent en tiempo de ejecución según Capacitor.isNativePlatform().
+
+body.platform-web {
+  // Barra de pestañas colocada arriba como una barra de navegación de escritorio.
+  ion-tab-bar.web-tab-bar {
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    height: 60px;
+    padding: 0 8px;
+    justify-content: center;
+    gap: 8px;
+
+    ion-tab-button {
+      flex-direction: row;
+      max-width: 180px;
+      border-radius: 10px;
+      --padding-start: 16px;
+      --padding-end: 16px;
+
+      ion-icon {
+        font-size: 18px;
+        margin: 0 8px 0 0;
+      }
+
+      ion-label {
+        font-size: 14px;
+        margin: 0;
+      }
+    }
+  }
+
+  // Contenido centrado y con ancho máximo para no estirarse en pantallas grandes.
+  ion-tabs ion-router-outlet {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  // Da un poco de aire a los laterales del contenido en pantallas anchas.
+  @media (min-width: 992px) {
+    ion-content {
+      --padding-start: 24px;
+      --padding-end: 24px;
+    }
+  }
+
+  // Interacciones tipo escritorio: hover en tarjetas en lugar de "active" táctil.
+  ion-card {
+    cursor: pointer;
+  }
+
+  ion-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.14) !important;
+  }
+
+  ion-card:active {
+    transform: none;
+  }
+}

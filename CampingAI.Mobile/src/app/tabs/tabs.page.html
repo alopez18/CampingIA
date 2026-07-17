@@ -1,5 +1,5 @@
 <ion-tabs>
-  <ion-tab-bar slot="bottom">
+  <ion-tab-bar [slot]="tabBarSlot" [class.web-tab-bar]="isWeb">
     <ion-tab-button tab="home" href="/tabs/home">
       <ion-icon name="home-outline"></ion-icon>
       <ion-label>Inicio</ion-label>
