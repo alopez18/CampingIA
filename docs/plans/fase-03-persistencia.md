@@ -3,8 +3,8 @@
 > Objetivo del MasterPlan: implementar SqlConnectionFactory, Dapper, Unit Of Work y repositorios.
 
 ## Referencia
-`EmployeesReadRepository` / `EmployeesWriteRepository`, `SqlConnectionFactory`,
-`UnitOfWork`, `Models/REDARBOR_DB`, `ModelExtractor<T>` y `EmployeesMapper`.
+`SqlConnectionFactory`,
+`UnitOfWork`, `Models/REDARBOR_DB` y `ModelExtractor<T>`.
 
 > **Nota:** Los `Guid` se almacenan como `uniqueidentifier` en SQL Server y como `Guid` en los POCOs.
 > Dapper convierte de forma nativa; no se usa `id.ToString()` ni `Guid.Parse()`.

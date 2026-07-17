@@ -8,7 +8,6 @@ public static class DI_Manager
     public static void Configure(IServiceCollection services, IConfiguration config)
     {
         ContextConfiguration.ConfigureInfra(services, config);
-        services.AddScoped<Abstractions.IUnitOfWork, UnitOfWork>();
         RegisterExtractors(services);
         RegisterMappers(services);
         RegisterRepositories(services);
@@ -28,7 +27,6 @@ public static class DI_Manager
 
     private static void RegisterExtractors(IServiceCollection services)
     {
-        services.AddSingleton<Abstractions.ModelExtractor<Models.CAMPING_AI_DB.T_EMPLOYEES>>();
         services.AddSingleton<Abstractions.ModelExtractor<Models.CampingAI_DB.T_USERS>>();
         services.AddSingleton<Abstractions.ModelExtractor<Models.CampingAI_DB.T_CAMPINGS>>();
         services.AddSingleton<Abstractions.ModelExtractor<Models.CampingAI_DB.T_RESERVATIONS>>();

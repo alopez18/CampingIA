@@ -1,7 +1,6 @@
 @model CampingAI.WebApi.Controllers.Backoffice.DTO.CampingFormRequest
 @{
-    var isNew = Model.Id is null || Model.Id == System.Guid.Empty;
-    ViewData["Title"] = isNew ? "Nuevo camping" : "Editar camping";
+    ViewData["Title"] = "Editar camping (Admin)";
 }
 
 <div class="row justify-content-center">
@@ -10,7 +9,7 @@
 
         <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
-        <form asp-action="Save" method="post">
+        <form asp-action="SaveCamping" method="post">
             <input type="hidden" asp-for="Id" />
             <div class="mb-3">
                 <label asp-for="Name" class="form-label">Nombre</label>
@@ -56,7 +55,7 @@
                 <span asp-validation-for="ProvinciaId" class="text-danger"></span>
             </div>
             <button type="submit" class="btn btn-primary">Guardar</button>
-            <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+            <a asp-action="Campings" class="btn btn-secondary">Cancelar</a>
         </form>
     </div>
 </div>

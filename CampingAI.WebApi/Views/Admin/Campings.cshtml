@@ -1,0 +1,64 @@
+@model IEnumerable<CampingAI.Domain.Entities.Camping>
+@{
+    ViewData["Title"] = "Todos los campings";
+    int page = ViewBag.Page;
+    int totalPages = ViewBag.TotalPages;
+    int totalCount = ViewBag.TotalCount;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">Todos los campings <span class="badge bg-secondary fs-6">@totalCount</span></h1>
+</div>
+
+@if (!Model.Any()) {
+    <div class="alert alert-info">No hay campings registrados.</div>
+} else {
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Precio/noche</th>
+                <th class="text-end">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var camping in Model) {
+                <tr>
+                    <td>@camping.Name.ToString()</td>
+                    <td class="text-truncate" style="max-width:260px">@camping.Description.ToString()</td>
+                    <td>@camping.PricePerNight.ToString() €</td>
+                    <td class="text-end">
+                        <a asp-action="EditCamping" asp-route-id="@camping.Id" class="btn btn-outline-secondary btn-sm">Editar</a>
+                        <form asp-action="DeleteCamping" asp-route-id="@camping.Id" method="post" class="d-inline"
+                              onsubmit="return confirm('¿Seguro que quieres borrar este camping?');">
+                            <button type="submit" class="btn btn-outline-danger btn-sm">Borrar</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (totalPages > 1) {
+        <nav>
+            <ul class="pagination justify-content-center">
+                @if (page > 1) {
+                    <li class="page-item">
+                        <a class="page-link" asp-action="Campings" asp-route-page="@(page - 1)">Anterior</a>
+                    </li>
+                }
+                @for (int i = 1; i <= totalPages; i++) {
+                    <li class="page-item @(i == page ? "active" : "")">
+                        <a class="page-link" asp-action="Campings" asp-route-page="@i">@i</a>
+                    </li>
+                }
+                @if (page < totalPages) {
+                    <li class="page-item">
+                        <a class="page-link" asp-action="Campings" asp-route-page="@(page + 1)">Siguiente</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
+}

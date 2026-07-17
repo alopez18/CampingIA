@@ -6,8 +6,6 @@
 ## Estado actual
 
 La solución ya existe con las 4 capas + proyectos de test y wiring de DI por capa.
-Esta fase consolida configuración transversal y renombra el dominio de "RedArbor/Employee"
-hacia "CampingAI".
 
 ## Tareas
 
@@ -55,14 +53,11 @@ hacia "CampingAI".
 - `CampingAI.WebApi/Settings/JwtSettings.cs` — POCO para configuración JWT.
 - `CampingAI.WebApi/Services/JwtTokenService.cs` — Implementación `IJwtTokenService` con HmacSha256, token 8h.
 - `CampingAI.Application/Services/JwtTokenService/Interfaces/IJwtTokenService.cs` — Contrato de generación de tokens.
-- `CampingAI.Application/Commands/Employee/CreateEmployee/CreateEmployeeCommandValidator.cs` — Validator FluentValidation de ejemplo.
 
 **Ficheros modificados:**
 - `CampingAI.WebApi/appsettings.json` — Eliminados secretos hardcodeados; placeholders para Google, Jwt:Key y connection string renombrada a `CAMPING_AI_SqlServer`.
 - `CampingAI.WebApi/Startup.cs` — Título Swagger → `CampingAI API`; añadido `AddJwtBearer` con `TokenValidationParameters`; usings para JWT.
 - `CampingAI.WebApi/Config/DI_Manager.cs` — Registro de `JwtSettings` (IOptions) y `JwtTokenService`.
-- `CampingAI.Application/Configuration/DI_Manager.cs` — Using FluentValidation; registro de `CreateEmployeeCommandValidator`.
-- `CampingAI.Application/Commands/Employee/CreateEmployee/CreateEmployeeCommandHandler.cs` — Inyección de `IValidator`; llamada a `ValidateAndThrowAsync` antes de la lógica de negocio.
 - `CampingAI.WebApi/Dockerfile` — Todas las referencias `RedArbor.TT.*` → `CampingAI.*`; usa `CampingAI.sln`.
 - `CampingAI.WebApi/docker-compose.yml` — Container `sql-campingai`, network `campingai-network`, env var `CAMPING_AI_SqlServer`, path script SQL correcto, entrypoint `dotnet CampingAI.WebApi.dll`.
 

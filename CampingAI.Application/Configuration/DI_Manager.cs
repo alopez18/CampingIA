@@ -1,18 +1,17 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using FluentValidation;
-using CampingAI.Application.Abstractions;
+﻿using CampingAI.Application.Abstractions;
 using CampingAI.Application.Abstractions.Command;
 using CampingAI.Application.Abstractions.Query;
-using CampingAI.Application.Queries.Employee.GetEmployeeById;
-using CampingAI.Application.Queries.Employees.GetEmployees;
-using CampingAI.Application.Shared.DTOs;
-using CampingAI.Application.Shared.Mappers;
+using FluentValidation;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CampingAI.Application.Configuration;
-public static class DI_Manager {
 
-    public static void Configure(IServiceCollection services, IConfiguration config) {
+public static class DI_Manager
+{
+
+    public static void Configure(IServiceCollection services, IConfiguration config)
+    {
         services.AddScoped<IMediator, Mediator>();
         RegisterCommands(services);
         RegisterQueries(services);
@@ -23,9 +22,9 @@ public static class DI_Manager {
         Infra.Configuration.DI_Manager.Configure(services, config);
     }
 
-    private static void RegisterServices(IServiceCollection services) {
+    private static void RegisterServices(IServiceCollection services)
+    {
         services.AddScoped<Services.PasswordHashingService.Interfaces.IPasswordHashingService, Services.PasswordHashingService.PasswordHashingService>();
-        services.AddScoped<IValidator<Commands.Employee.CreateEmployee.CreateEmployeeCommand>, Commands.Employee.CreateEmployee.CreateEmployeeCommandValidator>();
         services.AddScoped<IValidator<Commands.User.RegisterUser.RegisterUserCommand>, Commands.User.RegisterUser.RegisterUserCommandValidator>();
         services.AddScoped<IValidator<Commands.User.LoginUser.LoginUserCommand>, Commands.User.LoginUser.LoginUserCommandValidator>();
         services.AddScoped<IValidator<Commands.User.UpdateUser.UpdateUserCommand>, Commands.User.UpdateUser.UpdateUserCommandValidator>();
@@ -40,13 +39,13 @@ public static class DI_Manager {
         services.AddScoped<IValidator<Commands.Reservation.CancelReservation.CancelReservationCommand>, Commands.Reservation.CancelReservation.CancelReservationCommandValidator>();
     }
 
-    private static void RegisterMappers(IServiceCollection services) {
-        services.AddScoped<GetEmployeeByIdItemDtoMapper>();
+    private static void RegisterMappers(IServiceCollection services)
+    {
+
     }
 
-    private static void RegisterQueries(IServiceCollection services) {
-        services.AddScoped<IQueryHandler<GetEmployeeByIdQuery, GetEmployeeByIdItemDto>, GetEmployeeByIdQueryHandler>();
-        services.AddScoped<IQueryHandler<GetEmployeesQuery, IEnumerable<GetEmployeeByIdItemDto>>, GetEmployeesQueryHandler>();
+    private static void RegisterQueries(IServiceCollection services)
+    {
         services.AddScoped<IQueryHandler<Queries.User.GetCurrentUser.GetCurrentUserQuery, Domain.Entities.User>, Queries.User.GetCurrentUser.GetCurrentUserQueryHandler>();
         services.AddScoped<IQueryHandler<Queries.User.GetUserById.GetUserByIdQuery, Domain.Entities.User>, Queries.User.GetUserById.GetUserByIdQueryHandler>();
         services.AddScoped<IQueryHandler<Queries.User.GetPendingManagers.GetPendingManagersQuery, IEnumerable<Domain.Entities.User>>, Queries.User.GetPendingManagers.GetPendingManagersQueryHandler>();
@@ -63,10 +62,8 @@ public static class DI_Manager {
         services.AddScoped<IQueryHandler<Queries.Reservation.GetUserReservations.GetUserReservationsQuery, IEnumerable<Domain.Entities.Reservation>>, Queries.Reservation.GetUserReservations.GetUserReservationsQueryHandler>();
     }
 
-    private static void RegisterCommands(IServiceCollection services) {
-        services.AddScoped<ICommandHandler<Commands.Employee.CreateEmployee.CreateEmployeeCommand, Domain.Entities.Employee>, Commands.Employee.CreateEmployee.CreateEmployeeCommandHandler>();
-        services.AddScoped<ICommandHandler<Commands.Employee.UpdateEmployee.UpdateEmployeeCommand, Domain.Entities.Employee>, Commands.Employee.UpdateEmployee.UpdateEmployeeeCommandHandler>();
-        services.AddScoped<ICommandHandler<Commands.Employee.DeleteEmployee.DeleteEmployeeCommand>, Commands.Employee.DeleteEmployee.DeleteEmployeeCommandHandler>();
+    private static void RegisterCommands(IServiceCollection services)
+    {
         services.AddScoped<ICommandHandler<Commands.User.RegisterUser.RegisterUserCommand, Domain.Entities.User>, Commands.User.RegisterUser.RegisterUserCommandHandler>();
         services.AddScoped<ICommandHandler<Commands.User.LoginUser.LoginUserCommand, string>, Commands.User.LoginUser.LoginUserCommandHandler>();
         services.AddScoped<ICommandHandler<Commands.User.GoogleLoginUser.GoogleLoginUserCommand, string>, Commands.User.GoogleLoginUser.GoogleLoginUserCommandHandler>();

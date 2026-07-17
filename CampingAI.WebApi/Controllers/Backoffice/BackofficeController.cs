@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Claims;
 
 namespace CampingAI.WebApi.Controllers.Backoffice;
@@ -13,23 +14,43 @@ public class BackofficeController : Controller {
     readonly Application.Abstractions.Command.ICommandHandler<Application.Commands.Camping.CreateCamping.CreateCampingCommand, Domain.Entities.Camping> _createCampingCommandHandler;
     readonly Application.Abstractions.Command.ICommandHandler<Application.Commands.Camping.UpdateCamping.UpdateCampingCommand, Domain.Entities.Camping> _updateCampingCommandHandler;
     readonly Application.Abstractions.Command.ICommandHandler<Application.Commands.Camping.DeleteCamping.DeleteCampingCommand> _deleteCampingCommandHandler;
+    readonly Application.Abstractions.Query.IQueryHandler<Application.Queries.Category.GetCategories.GetCategoriesQuery, Application.Queries.Category.GetCategories.GetCategoriesResult> _getCategoriesQueryHandler;
+    readonly Application.Abstractions.Query.IQueryHandler<Application.Queries.Location.GetProvinces.GetProvincesQuery, Application.Queries.Location.GetProvinces.GetProvincesResult> _getProvincesQueryHandler;
     #endregion
 
     public BackofficeController(Application.Abstractions.Query.IQueryHandler<Application.Queries.Camping.GetCampingsByOwner.GetCampingsByOwnerQuery, IEnumerable<Domain.Entities.Camping>> getCampingsByOwnerQueryHandler,
                                 Application.Abstractions.Query.IQueryHandler<Application.Queries.Camping.GetCampingById.GetCampingByIdQuery, Domain.Entities.Camping> getCampingByIdQueryHandler,
                                 Application.Abstractions.Command.ICommandHandler<Application.Commands.Camping.CreateCamping.CreateCampingCommand, Domain.Entities.Camping> createCampingCommandHandler,
                                 Application.Abstractions.Command.ICommandHandler<Application.Commands.Camping.UpdateCamping.UpdateCampingCommand, Domain.Entities.Camping> updateCampingCommandHandler,
-                                Application.Abstractions.Command.ICommandHandler<Application.Commands.Camping.DeleteCamping.DeleteCampingCommand> deleteCampingCommandHandler) {
+                                Application.Abstractions.Command.ICommandHandler<Application.Commands.Camping.DeleteCamping.DeleteCampingCommand> deleteCampingCommandHandler,
+                                Application.Abstractions.Query.IQueryHandler<Application.Queries.Category.GetCategories.GetCategoriesQuery, Application.Queries.Category.GetCategories.GetCategoriesResult> getCategoriesQueryHandler,
+                                Application.Abstractions.Query.IQueryHandler<Application.Queries.Location.GetProvinces.GetProvincesQuery, Application.Queries.Location.GetProvinces.GetProvincesResult> getProvincesQueryHandler) {
         _getCampingsByOwnerQueryHandler = getCampingsByOwnerQueryHandler;
         _getCampingByIdQueryHandler = getCampingByIdQueryHandler;
         _createCampingCommandHandler = createCampingCommandHandler;
         _updateCampingCommandHandler = updateCampingCommandHandler;
         _deleteCampingCommandHandler = deleteCampingCommandHandler;
+        _getCategoriesQueryHandler = getCategoriesQueryHandler;
+        _getProvincesQueryHandler = getProvincesQueryHandler;
     }
 
     Guid GetCurrentUserId() {
         var id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         return Guid.TryParse(id, out var guid) ? guid : Guid.Empty;
+    }
+
+    async Task LoadDropdownsAsync() {
+        var categories = await _getCategoriesQueryHandler.HandleAsync(new Application.Queries.Category.GetCategories.GetCategoriesQuery());
+        var provinces = await _getProvincesQueryHandler.HandleAsync(new Application.Queries.Location.GetProvinces.GetProvincesQuery(null));
+
+        ViewBag.Categories = categories.Items
+            .Select(c => new SelectListItem(c.Name.ToString(), c.Id.ToString()))
+            .ToList();
+
+        ViewBag.Provinces = provinces.Items
+            .OrderBy(p => p.Name.ToString())
+            .Select(p => new SelectListItem(p.Name.ToString(), p.Id.ToString()))
+            .ToList();
     }
 
     [HttpGet]
@@ -39,7 +60,8 @@ public class BackofficeController : Controller {
     }
 
     [HttpGet]
-    public IActionResult Create() {
+    public async Task<IActionResult> Create() {
+        await LoadDropdownsAsync();
         return View("Edit", new DTO.CampingFormRequest());
     }
 
@@ -49,6 +71,7 @@ public class BackofficeController : Controller {
         if (camping is null || camping.OwnerId != GetCurrentUserId())
             return Forbid();
 
+        await LoadDropdownsAsync();
         var model = new DTO.CampingFormRequest {
             Id = camping.Id,
             Name = camping.Name.ToString(),
@@ -65,8 +88,10 @@ public class BackofficeController : Controller {
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Save(DTO.CampingFormRequest request) {
-        if (!ModelState.IsValid)
+        if (!ModelState.IsValid) {
+            await LoadDropdownsAsync();
             return View("Edit", request);
+        }
 
         var ownerId = GetCurrentUserId();
 
@@ -88,6 +113,7 @@ public class BackofficeController : Controller {
             }
         } catch (Domain.Exceptions.DomainException ex) {
             ModelState.AddModelError(string.Empty, ex.Message);
+            await LoadDropdownsAsync();
             return View("Edit", request);
         }
 

@@ -4,10 +4,6 @@
 
 ## Estado: ✅ COMPLETADA
 
-## Referencia
-La entidad `Employee` y los VOs existentes (`EmailVO`, `EmployeeUserNameVO`,
-`PasswordHashedVO`, `DateFromPastVO`) son la plantilla seguida.
-
 ---
 
 ## Entidades (`CampingAI.Domain/Entities`)
