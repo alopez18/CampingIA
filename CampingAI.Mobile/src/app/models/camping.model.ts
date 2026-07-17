@@ -6,9 +6,10 @@ export interface Camping {
   longitude: number;
   pricePerNight: number;
   ownerId: string;
-  categoryId: number;
+  categoryId: string;
   provinciaId?: string;
   facilityIds: string[];
+  additionalCategoryIds: string[];
   createdOn: string;
   updatedOn: string;
 }

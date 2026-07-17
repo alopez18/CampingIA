@@ -3,14 +3,17 @@ import { ActivatedRoute, Router } from '@angular/router';
 import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonBackButton, IonButtons,
   IonButton, IonIcon, IonSpinner, IonCard,
-  IonCardHeader, IonCardTitle, IonCardContent, ToastController
+  IonCardHeader, IonCardTitle, IonCardContent, IonChip, IonLabel, ToastController
 } from '@ionic/angular/standalone';
 import { CurrencyPipe } from '@angular/common';
 import { addIcons } from 'ionicons';
-import { heart, heartOutline, locationOutline, cashOutline, calendarOutline } from 'ionicons/icons';
+import { heart, heartOutline, locationOutline, cashOutline, calendarOutline, pricetagsOutline, checkmarkCircleOutline } from 'ionicons/icons';
 import * as L from 'leaflet';
+import { forkJoin } from 'rxjs';
 import { CampingsService } from '../../../services/campings.service';
 import { FavoritesService } from '../../../services/favorites.service';
+import { CategoriesService } from '../../../services/categories.service';
+import { FacilitiesService } from '../../../services/facilities.service';
 import { Camping } from '../../../models/camping.model';
 
 const DETAIL_ZOOM = 13;
@@ -22,7 +25,7 @@ const DETAIL_ZOOM = 13;
     CurrencyPipe,
     IonHeader, IonToolbar, IonTitle, IonContent, IonBackButton, IonButtons,
     IonButton, IonIcon, IonSpinner, IonCard,
-    IonCardHeader, IonCardTitle, IonCardContent
+    IonCardHeader, IonCardTitle, IonCardContent, IonChip, IonLabel
   ],
   template: `
     <ion-header>
@@ -72,6 +75,45 @@ const DETAIL_ZOOM = 13;
             }
           </ion-card-content>
         </ion-card>
+        @if (categoryNames().length) {
+          <ion-card class="detail-card">
+            <ion-card-header>
+              <ion-card-title>
+                <ion-icon name="pricetags-outline" color="primary"></ion-icon>
+                Categorías
+              </ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <div class="chip-group">
+                @for (name of categoryNames(); track name) {
+                  <ion-chip color="primary" [outline]="true">
+                    <ion-label>{{ name }}</ion-label>
+                  </ion-chip>
+                }
+              </div>
+            </ion-card-content>
+          </ion-card>
+        }
+        @if (facilityNames().length) {
+          <ion-card class="detail-card">
+            <ion-card-header>
+              <ion-card-title>
+                <ion-icon name="checkmark-circle-outline" color="primary"></ion-icon>
+                Instalaciones
+              </ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <div class="chip-group">
+                @for (name of facilityNames(); track name) {
+                  <ion-chip color="success">
+                    <ion-icon name="checkmark-circle-outline"></ion-icon>
+                    <ion-label>{{ name }}</ion-label>
+                  </ion-chip>
+                }
+              </div>
+            </ion-card-content>
+          </ion-card>
+        }
         <div class="ion-padding">
           <ion-button expand="block" (click)="goToReserve()">
             <ion-icon name="calendar-outline" slot="start"></ion-icon>
@@ -83,15 +125,17 @@ const DETAIL_ZOOM = 13;
   `,
   styles: [`
     .detail-hero {
-      height: 220px;
+      height: 120px;
       background: linear-gradient(145deg, #1b5e20 0%, #2e7d32 50%, #0277bd 100%);
       display: flex;
       align-items: center;
       justify-content: center;
     }
-    .detail-hero-icon { font-size: 5em; filter: drop-shadow(0 4px 16px rgba(0,0,0,0.3)); }
+    .detail-hero-icon { font-size: 3em; filter: drop-shadow(0 4px 16px rgba(0,0,0,0.3)); }
     .detail-card { --border-radius: 20px; margin-top: -24px; position: relative; z-index: 2; }
     .detail-row { display: flex; align-items: center; gap: 8px; margin: 8px 0; }
+    .chip-group { display: flex; flex-wrap: wrap; gap: 4px; }
+    ion-card-title { display: flex; align-items: center; gap: 8px; }
     .map-placeholder { background: var(--ion-color-light); border-radius: 8px; padding: 40px; }
     .detail-map { height: 220px; border-radius: 8px; overflow: hidden; z-index: 0; }
   `]
@@ -99,17 +143,21 @@ const DETAIL_ZOOM = 13;
 export class CampingDetailPage implements OnInit, OnDestroy {
   private readonly campingsService = inject(CampingsService);
   readonly favoritesService = inject(FavoritesService);
+  private readonly categoriesService = inject(CategoriesService);
+  private readonly facilitiesService = inject(FacilitiesService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly toast = inject(ToastController);
 
   readonly camping = signal<Camping | null>(null);
   readonly loading = signal(true);
+  readonly categoryNames = signal<string[]>([]);
+  readonly facilityNames = signal<string[]>([]);
 
   private map?: L.Map;
 
   constructor() {
-    addIcons({ heart, heartOutline, locationOutline, cashOutline, calendarOutline });
+    addIcons({ heart, heartOutline, locationOutline, cashOutline, calendarOutline, pricetagsOutline, checkmarkCircleOutline });
     this.configureDefaultIcon();
   }
 
@@ -119,12 +167,29 @@ export class CampingDetailPage implements OnInit, OnDestroy {
       next: c => {
         this.camping.set(c);
         this.loading.set(false);
+        this.loadCategoriesAndFacilities(c);
         if (this.hasValidCoordinates()) {
           // Espera a que Angular renderice el contenedor del mapa.
           setTimeout(() => this.initMap(), 0);
         }
       },
       error: () => this.loading.set(false)
+    });
+  }
+
+  private loadCategoriesAndFacilities(camping: Camping): void {
+    forkJoin({
+      categories: this.categoriesService.getCategories(),
+      facilities: this.facilitiesService.getFacilities()
+    }).subscribe(({ categories, facilities }) => {
+      const categoryIds = [camping.categoryId, ...(camping.additionalCategoryIds ?? [])];
+      this.categoryNames.set(
+        categories.filter(c => categoryIds.includes(c.id)).map(c => c.name)
+      );
+      const facilityIds = camping.facilityIds ?? [];
+      this.facilityNames.set(
+        facilities.filter(f => facilityIds.includes(f.id)).map(f => f.name)
+      );
     });
   }
 

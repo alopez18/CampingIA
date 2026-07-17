@@ -14,6 +14,9 @@ import { Camping } from '../../../models/camping.model';
     <ion-card class="camping-card" [routerLink]="['/tabs/campings', camping().id]">
       <div class="card-hero">
         <span class="hero-emoji" aria-hidden="true">🏕️</span>
+        @if (categoryName()) {
+          <span class="hero-category">{{ categoryName() }}</span>
+        }
         <ion-button fill="clear" class="hero-fav" size="small" (click)="onFavoriteToggle($event)">
           <ion-icon
             slot="icon-only"
@@ -25,7 +28,7 @@ import { Camping } from '../../../models/camping.model';
       <ion-card-content class="card-body">
         <p class="card-location">
           <ion-icon name="location-outline"></ion-icon>
-          {{ camping().provinciaId ?? 'Sin ubicación' }}
+          {{ provinceName() || 'Sin ubicación' }}
         </p>
         <h3 class="card-title">{{ camping().name }}</h3>
         <p class="card-desc">{{ camping().description | slice:0:80 }}...</p>
@@ -40,7 +43,7 @@ import { Camping } from '../../../models/camping.model';
     :host { display: block; }
     .camping-card { margin: 8px 16px; overflow: hidden; }
     .card-hero {
-      height: 160px;
+      height: 90px;
       background: linear-gradient(135deg, #2e7d32 0%, #0277bd 100%);
       position: relative;
       display: flex;
@@ -48,7 +51,22 @@ import { Camping } from '../../../models/camping.model';
       justify-content: center;
       overflow: hidden;
     }
-    .hero-emoji { font-size: 3.5em; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.25)); pointer-events: none; }
+    .hero-emoji { font-size: 2.5em; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.25)); pointer-events: none; }
+    .hero-category {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: rgba(0,0,0,0.35);
+      color: white;
+      font-size: 0.72em;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 3px 10px;
+      border-radius: 12px;
+      backdrop-filter: blur(4px);
+      pointer-events: none;
+    }
     .hero-fav {
       position: absolute;
       top: 8px;
@@ -90,6 +108,8 @@ import { Camping } from '../../../models/camping.model';
 export class CampingCardComponent {
   readonly camping = input.required<Camping>();
   readonly isFavorite = input<boolean>(false);
+  readonly categoryName = input<string>('');
+  readonly provinceName = input<string>('');
   readonly favoriteToggle = output<string>();
 
   constructor() {

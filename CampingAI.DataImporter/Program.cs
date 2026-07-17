@@ -16,6 +16,15 @@ var config = builder.Configuration;
 // Configuración tipada
 builder.Services.Configure<AppSettings>(config.GetSection(AppSettings.SECTION));
 
+// HttpClient para Nominatim (geocodificación inversa — requiere User-Agent y máx. 1 req/s)
+builder.Services.AddHttpClient<INominatimClient, NominatimClient>(client =>
+{
+    client.BaseAddress = new Uri("https://nominatim.openstreetmap.org/");
+    client.Timeout = TimeSpan.FromSeconds(10);
+    client.DefaultRequestHeaders.UserAgent.ParseAdd("CampingAI-DataImporter/1.0 (+https://github.com/alopez18/CampingIA)");
+    client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
+});
+
 // HttpClient para Overpass API
 builder.Services.AddHttpClient<IOverpassClient, OverpassClient>(client =>
 {
@@ -38,6 +47,7 @@ builder.Services.AddScoped<ICampingsImporter, CampingsImporter>();
 builder.Services.AddSingleton<IProvinceGeoResolver, ProvinceGeoResolver>();
 builder.Services.AddScoped<ICampingMigrationService, CampingMigrationService>();
 builder.Services.AddScoped<IFacilitySeederService, FacilitySeederService>();
+builder.Services.AddScoped<ICategorySeederService, CategorySeederService>();
 builder.Services.AddScoped<ICampingMigrationImporter, CampingMigrationImporter>();
 
 // Registro de fuentes de datos para la orquestación

@@ -14,8 +14,9 @@ function makeCamping(id: string, latitude: number, longitude: number): Camping {
     longitude,
     pricePerNight: 20,
     ownerId: 'owner',
-    categoryId: 1,
+    categoryId: '00000000-0000-0000-0000-000000000000',
     facilityIds: [],
+    additionalCategoryIds: [],
     createdOn: '',
     updatedOn: ''
   };

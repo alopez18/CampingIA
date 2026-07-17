@@ -112,3 +112,8 @@ IF NOT EXISTS (SELECT 1 FROM [dbo].[T_FACILITIES] WHERE [FAC_Name] = N'Recarga p
 	INSERT INTO [dbo].[T_FACILITIES] ([FAC_IdFacility], [FAC_Name])
 	VALUES (N'A1000001-0000-0000-0000-000000000019', N'Recarga para vehículos eléctricos');
 GO
+
+IF NOT EXISTS (SELECT 1 FROM [dbo].[T_FACILITIES] WHERE [FAC_Name] = N'Toboganes en piscina')
+	INSERT INTO [dbo].[T_FACILITIES] ([FAC_IdFacility], [FAC_Name])
+	VALUES (N'A1000001-0000-0000-0000-000000000020', N'Toboganes en piscina');
+GO

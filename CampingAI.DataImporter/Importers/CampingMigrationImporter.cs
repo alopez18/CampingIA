@@ -6,14 +6,17 @@ public class CampingMigrationImporter : Interfaces.ICampingMigrationImporter {
     #region Dependencies
     readonly Services.Interfaces.ICampingMigrationService _migrationService;
     readonly Services.Interfaces.IFacilitySeederService _facilitySeeder;
+    readonly Services.Interfaces.ICategorySeederService _categorySeeder;
     readonly ILogger<CampingMigrationImporter> _logger;
     #endregion
 
     public CampingMigrationImporter(Services.Interfaces.ICampingMigrationService migrationService,
                                     Services.Interfaces.IFacilitySeederService facilitySeeder,
+                                    Services.Interfaces.ICategorySeederService categorySeeder,
                                     ILogger<CampingMigrationImporter> logger) {
         _migrationService = migrationService;
         _facilitySeeder   = facilitySeeder;
+        _categorySeeder   = categorySeeder;
         _logger           = logger;
     }
 
@@ -34,9 +37,10 @@ public class CampingMigrationImporter : Interfaces.ICampingMigrationImporter {
         result.Skipped  = skipped;
 
         var assigned = await _facilitySeeder.SeedAsync(campingIds, ct);
+        var categoriesAssigned = await _categorySeeder.SeedAsync(campingIds, ct);
 
-        _logger.LogInformation("Migración finalizada — insertados: {Ins}, actualizados: {Upd}, omitidos: {Skip}, facilities asignadas: {Fac}.",
-            inserted, updated, skipped, assigned);
+        _logger.LogInformation("Migración finalizada — insertados: {Ins}, actualizados: {Upd}, omitidos: {Skip}, facilities asignadas: {Fac}, categorías adicionales: {Cat}.",
+            inserted, updated, skipped, assigned, categoriesAssigned);
 
         return result;
     }

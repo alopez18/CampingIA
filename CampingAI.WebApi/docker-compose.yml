@@ -30,13 +30,17 @@
     volumes:
       - ../CampingAI.Infra/0.CreateDatabase.sql:/scripts/0.CreateDatabase.sql:ro
       - ../CampingAI.Infra/1.CreateCampingAITables.sql:/scripts/1.CreateCampingAITables.sql:ro
-      - ../CampingAI.Infra/2.AlterCampingsAddFilters.sql:/scripts/2.AlterCampingsAddFilters.sql:ro
       - ../CampingAI.Infra/3.CreateLocationTables.sql:/scripts/3.CreateLocationTables.sql:ro
       - ../CampingAI.Infra/4.AlterCampingsProvinceId.sql:/scripts/4.AlterCampingsProvinceId.sql:ro
       - ../CampingAI.Infra/5.SeedFacilities.sql:/scripts/5.SeedFacilities.sql:ro
       - ../CampingAI.Infra/6.DropCampingsPiscinaColumn.sql:/scripts/6.DropCampingsPiscinaColumn.sql:ro
       - ../CampingAI.Infra/7.DropCampingsMascotasColumn.sql:/scripts/7.DropCampingsMascotasColumn.sql:ro
       - ../CampingAI.Infra/8.AddFavoritesUniqueConstraint.sql:/scripts/8.AddFavoritesUniqueConstraint.sql:ro
+      - ../CampingAI.Infra/9.SeedSystemUser.sql:/scripts/9.SeedSystemUser.sql:ro
+      - ../CampingAI.Infra/10.AddUserManagerStatus.sql:/scripts/10.AddUserManagerStatus.sql:ro
+      - ../CampingAI.Infra/11.CreateCategoriesTables.sql:/scripts/11.CreateCategoriesTables.sql:ro
+      - ../CampingAI.Infra/12.SeedCategories.sql:/scripts/12.SeedCategories.sql:ro
+      - ../CampingAI.Infra/13.MigrateCampingCategoryToGuid.sql:/scripts/13.MigrateCampingCategoryToGuid.sql:ro
     command: >
       bash -c "
         echo 'Esperando a que SQL Server esté listo...'
@@ -59,6 +63,11 @@
         run_script 6.DropCampingsPiscinaColumn.sql
         run_script 7.DropCampingsMascotasColumn.sql
         run_script 8.AddFavoritesUniqueConstraint.sql
+        run_script 9.SeedSystemUser.sql
+        run_script 10.AddUserManagerStatus.sql
+        run_script 11.CreateCategoriesTables.sql
+        run_script 12.SeedCategories.sql
+        run_script 13.MigrateCampingCategoryToGuid.sql
         echo 'Todos los scripts ejecutados exitosamente'
       "
     restart: "no"
@@ -89,6 +98,26 @@
       - campingai-network
     volumes:
       - ./logs:/app/logs
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  campingai-mobile:
+    build:
+      context: ../CampingAI.Mobile
+      dockerfile: Dockerfile
+    container_name: campingai-mobile
+    ports:
+      - "8102:80"
+    restart: unless-stopped
+    depends_on:
+      webapi:
+        condition: service_healthy
+    networks:
+      - campingai-network
 
 volumes:
   sqlserver_data:

@@ -12,7 +12,7 @@ public class DateFromPastVO {
     }
 
     public static DateFromPastVO CreateNow() {
-        return new DateFromPastVO(DateTime.UtcNow);
+        return new DateFromPastVO(DateTime.UtcNow.AddTicks(-1));
     }
 
     public override string ToString() {

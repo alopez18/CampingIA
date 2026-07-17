@@ -7,7 +7,7 @@ export const environment = {
   platform: 'web',
   apiUrl: 'https://campingaibackoffice.runasp.net/api', //'https://localhost:32773/api',
   // Client ID de desarrollo (usa el del proyecto WEB por defecto).
-  googleClientId: 'REPLACE_WITH_WEB_PROJECT_WEB_CLIENT_ID.apps.googleusercontent.com'
+  googleClientId: '372900543223-9dgig7pl0bhb684vnkqhct1j2u0h71e6.apps.googleusercontent.com'
 };
 
 /*

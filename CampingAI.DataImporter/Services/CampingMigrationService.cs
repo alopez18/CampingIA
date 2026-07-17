@@ -11,13 +11,11 @@ public class CampingMigrationService : Interfaces.ICampingMigrationService
     readonly string _connectionString;
     readonly ILogger<CampingMigrationService> _logger;
     readonly Interfaces.IProvinceGeoResolver _provinceGeoResolver;
+    readonly Clients.Interfaces.INominatimClient _nominatimClient;
     #endregion
 
     // Usuario Sistema con GUID fijo y controlable (ver 9.SeedSystemUser.sql).
     static readonly Guid SystemUserId = new("10000000-0000-0000-0000-000000000001");
-
-    // Categoría por defecto (Familiar) para los campings importados.
-    private static readonly Guid DefaultCategoryId = new("B1000001-0000-0000-0000-000000000001");
 
     // Rango de precio aleatorio por noche.
     private const decimal MinPrice = 25m;
@@ -25,12 +23,14 @@ public class CampingMigrationService : Interfaces.ICampingMigrationService
 
     public CampingMigrationService(IConfiguration config,
                                    ILogger<CampingMigrationService> logger,
-                                   Interfaces.IProvinceGeoResolver provinceGeoResolver)
+                                   Interfaces.IProvinceGeoResolver provinceGeoResolver,
+                                   Clients.Interfaces.INominatimClient nominatimClient)
     {
         _connectionString = config.GetConnectionString("CAMPING_AI_SqlServer")
             ?? throw new InvalidOperationException("No se encontró la cadena de conexión 'CAMPING_AI_SqlServer'.");
         _logger = logger;
         _provinceGeoResolver = provinceGeoResolver;
+        _nominatimClient = nominatimClient;
     }
 
     public async Task<(int inserted, int updated, int skipped, IReadOnlyList<Guid> campingIds)> MigrateAsync(CancellationToken ct = default)
@@ -59,6 +59,9 @@ public class CampingMigrationService : Interfaces.ICampingMigrationService
                     continue;
                 }
 
+                var provinciaId = await ResolveProvinceIdAsync(
+                    src.CMI_Latitude.Value, src.CMI_Longitude.Value, src.CMI_Province, provinces, ct);
+
                 var model = new Models.T_CAMPINGS
                 {
                     CMP_IdCamping = src.CMI_IdCamping,
@@ -68,8 +71,8 @@ public class CampingMigrationService : Interfaces.ICampingMigrationService
                     CMP_Longitude = src.CMI_Longitude.Value,
                     CMP_PricePerNight = BuildPrice(src.CMI_IdCamping),
                     CMP_OwnerId = SystemUserId,
-                    CMP_CategoryId = DefaultCategoryId,
-                    CMP_ProvinciaId = ResolveProvinceId(src.CMI_Latitude.Value, src.CMI_Longitude.Value, src.CMI_Province, provinces),
+                    CMP_CategoryId = CategoryInferrer.InferAll(src.CMI_IdCamping, src.CMI_Name, src.CMI_City, src.CMI_Province, src.CMI_Address)[0],
+                    CMP_ProvinciaId = provinciaId,
                     CMP_UpdatedOn = DateTime.UtcNow
                 };
 
@@ -172,9 +175,11 @@ public class CampingMigrationService : Interfaces.ICampingMigrationService
 
     // ── Lógica de derivación ────────────────────────────────────────────────
 
-    private Guid? ResolveProvinceId(decimal latitude, decimal longitude, string? provinceName, List<Models.T_PROVINCES> provinces)
+    private async Task<Guid?> ResolveProvinceIdAsync(
+        decimal latitude, decimal longitude, string? provinceName,
+        List<Models.T_PROVINCES> provinces, CancellationToken ct)
     {
-        // 1) Derivación geográfica a partir de las coordenadas (point-in-polygon).
+        // 1) Derivación geográfica offline (point-in-polygon sobre GeoJSON embebido).
         var provinceCode = _provinceGeoResolver.ResolveProvinceCode((double)latitude, (double)longitude);
         if (!string.IsNullOrEmpty(provinceCode))
         {
@@ -187,14 +192,41 @@ public class CampingMigrationService : Interfaces.ICampingMigrationService
                 provinceCode, latitude, longitude);
         }
 
-        // 2) Fallback: match por nombre (CMI_Province) como red de seguridad.
+        // 2) Fallback online: geocodificación inversa con Nominatim (OpenStreetMap).
+        //    Nominatim devuelve state_district = provincia española; state = comunidad autónoma
+        //    (útil para comunidades uniprovinciales). Respeta el límite de 1 req/s.
+        await Task.Delay(1_000, ct);
+        var nominatim = await _nominatimClient.ReverseGeocodeAsync((double)latitude, (double)longitude, ct);
+        if (nominatim?.Address is { } addr)
+        {
+            // Candidatos en orden de prioridad para España.
+            var candidates = new[] { addr.StateDistrict, addr.State, addr.County };
+            foreach (var candidate in candidates)
+            {
+                if (string.IsNullOrWhiteSpace(candidate)) continue;
+                var normalized = Normalize(candidate);
+                var nominatimMatch = provinces.FirstOrDefault(p => Normalize(p.PRV_Name) == normalized);
+                if (nominatimMatch is not null)
+                {
+                    _logger.LogDebug(
+                        "Provincia resuelta por Nominatim '{Field}' para coordenadas ({Lat}, {Lon}).",
+                        candidate, latitude, longitude);
+                    return nominatimMatch.PRV_IdProvince;
+                }
+            }
+            _logger.LogWarning(
+                "Nominatim respondió (state_district='{SD}', state='{St}') pero no coincide con ninguna provincia conocida.",
+                addr.StateDistrict, addr.State);
+        }
+
+        // 3) Último recurso: match por nombre del campo CMI_Province.
         if (!string.IsNullOrWhiteSpace(provinceName))
         {
             var normalized = Normalize(provinceName);
             var nameMatch = provinces.FirstOrDefault(p => Normalize(p.PRV_Name) == normalized);
             if (nameMatch is not null)
             {
-                _logger.LogDebug("Provincia resuelta por nombre '{Name}' (fallback) para coordenadas ({Lat}, {Lon}).",
+                _logger.LogDebug("Provincia resuelta por nombre CMI_Province '{Name}' para coordenadas ({Lat}, {Lon}).",
                     provinceName, latitude, longitude);
                 return nameMatch.PRV_IdProvince;
             }
@@ -237,20 +269,9 @@ public class CampingMigrationService : Interfaces.ICampingMigrationService
         return Math.Round(value, 2);
     }
 
-    // ── Utilidades ──────────────────────────────────────────────────────────
+    // ── Utilidades ────────────────────────────────────────────────────────────
 
-    private static string Normalize(string value)
-    {
-        var trimmed = value.Trim().ToLowerInvariant();
-        var decomposed = trimmed.Normalize(NormalizationForm.FormD);
-        var sb = new StringBuilder(decomposed.Length);
-        foreach (var c in decomposed)
-        {
-            if (CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
-                sb.Append(c);
-        }
-        return sb.ToString().Normalize(NormalizationForm.FormC);
-    }
+    private static string Normalize(string value) => CategoryInferrer.Normalize(value);
 
     private static string Truncate(string value, int maxLength)
         => value.Length <= maxLength ? value : value[..maxLength];

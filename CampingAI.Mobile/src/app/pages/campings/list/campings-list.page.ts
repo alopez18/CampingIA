@@ -64,6 +64,8 @@ import { Facility } from '../../../models/facility.model';
         @for (camping of campings(); track camping.id) {
           <app-camping-card
             [camping]="camping"
+            [categoryName]="categoryName(camping.categoryId)"
+            [provinceName]="provinceName(camping.provinciaId)"
             [isFavorite]="favoritesService.isFavorite(camping.id)"
             (favoriteToggle)="onFavoriteToggle($event)">
           </app-camping-card>
@@ -181,23 +183,30 @@ export class CampingsListPage implements OnInit {
   constructor() { addIcons({ filterOutline }); }
 
   ngOnInit(): void {
+    this.categoriesService.getCategories().subscribe(c => this.categories.set(c));
+    this.locationService.getProvinces().subscribe(p => this.provinces.set(p));
     this.route.queryParams.subscribe(params => {
       if (params['name']) this.filters.name = params['name'];
       this.resetAndLoad();
     });
   }
 
+  categoryName(categoryId: string): string {
+    return this.categories().find(c => c.id === categoryId)?.name ?? '';
+  }
+
+  provinceName(provinciaId?: string): string {
+    if (!provinciaId) return '';
+    return this.provinces().find(p => p.id === provinciaId)?.name ?? '';
+  }
+
   openFilters(): void {
     if (this.provinces().length === 0) {
       this.locationService.getProvinces().subscribe(p => this.provinces.set(p));
     }
-    if (this.categories().length === 0) {
-      this.categoriesService.getCategories().subscribe(c => this.categories.set(c));
-    }
     if (this.facilities().length === 0) {
       this.facilitiesService.getFacilities().subscribe(f => this.facilities.set(f));
-    }
-    this.draft = {
+    }    this.draft = {
       provinciaId: this.filters.provinciaId,
       categoryId: this.filters.categoryIds?.[0],
       minPrice: this.filters.minPrice,
