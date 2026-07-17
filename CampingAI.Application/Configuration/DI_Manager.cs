@@ -48,6 +48,7 @@ public static class DI_Manager
     {
         services.AddScoped<IQueryHandler<Queries.User.GetCurrentUser.GetCurrentUserQuery, Domain.Entities.User>, Queries.User.GetCurrentUser.GetCurrentUserQueryHandler>();
         services.AddScoped<IQueryHandler<Queries.User.GetUserById.GetUserByIdQuery, Domain.Entities.User>, Queries.User.GetUserById.GetUserByIdQueryHandler>();
+        services.AddScoped<IQueryHandler<Queries.User.GetAllUsers.GetAllUsersQuery, Queries.User.GetAllUsers.GetAllUsersResult>, Queries.User.GetAllUsers.GetAllUsersQueryHandler>();
         services.AddScoped<IQueryHandler<Queries.User.GetPendingManagers.GetPendingManagersQuery, IEnumerable<Domain.Entities.User>>, Queries.User.GetPendingManagers.GetPendingManagersQueryHandler>();
         services.AddScoped<IQueryHandler<Queries.Camping.GetCampings.GetCampingsQuery, Queries.Camping.GetCampings.GetCampingsResult>, Queries.Camping.GetCampings.GetCampingsQueryHandler>();
         services.AddScoped<IQueryHandler<Queries.Camping.GetCampingsByOwner.GetCampingsByOwnerQuery, IEnumerable<Domain.Entities.Camping>>, Queries.Camping.GetCampingsByOwner.GetCampingsByOwnerQueryHandler>();
@@ -64,6 +65,9 @@ public static class DI_Manager
 
     private static void RegisterCommands(IServiceCollection services)
     {
+        services.AddScoped<ICommandHandler<Commands.User.AdminCreateUser.AdminCreateUserCommand, Domain.Entities.User>, Commands.User.AdminCreateUser.AdminCreateUserCommandHandler>();
+        services.AddScoped<ICommandHandler<Commands.User.AdminUpdateUser.AdminUpdateUserCommand, Domain.Entities.User>, Commands.User.AdminUpdateUser.AdminUpdateUserCommandHandler>();
+        services.AddScoped<ICommandHandler<Commands.User.DeleteUser.DeleteUserCommand>, Commands.User.DeleteUser.DeleteUserCommandHandler>();
         services.AddScoped<ICommandHandler<Commands.User.RegisterUser.RegisterUserCommand, Domain.Entities.User>, Commands.User.RegisterUser.RegisterUserCommandHandler>();
         services.AddScoped<ICommandHandler<Commands.User.LoginUser.LoginUserCommand, string>, Commands.User.LoginUser.LoginUserCommandHandler>();
         services.AddScoped<ICommandHandler<Commands.User.GoogleLoginUser.GoogleLoginUserCommand, string>, Commands.User.GoogleLoginUser.GoogleLoginUserCommandHandler>();

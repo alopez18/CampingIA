@@ -1,13 +1,19 @@
 @model CampingAI.WebApi.Controllers.Backoffice.DTO.CampingFormRequest
 @{
-    ViewData["Title"] = "Editar camping (Admin)";
+    var isNew = Model.Id is null || Model.Id == System.Guid.Empty;
+    ViewData["Title"] = isNew ? "Nuevo camping (Admin)" : "Editar camping (Admin)";
     var allCategories = ViewBag.Categories as List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem> ?? new();
     var allFacilities = ViewBag.Facilities as List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem> ?? new();
 }
 
 <div class="row justify-content-center">
     <div class="col-md-8">
-        <h1 class="h3 mb-4">@ViewData["Title"]</h1>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 mb-0">@ViewData["Title"]</h1>
+            <a asp-action="Campings" class="btn btn-outline-secondary btn-sm">
+                <i class="fa-solid fa-arrow-left"></i> Volver
+            </a>
+        </div>
 
         <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
@@ -90,7 +96,9 @@
                     }
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary">Guardar</button>
+            <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-floppy-disk"></i> Guardar
+            </button>
             <a asp-action="Campings" class="btn btn-secondary">Cancelar</a>
         </form>
     </div>

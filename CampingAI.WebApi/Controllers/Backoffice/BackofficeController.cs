@@ -5,7 +5,7 @@ using System.Security.Claims;
 
 namespace CampingAI.WebApi.Controllers.Backoffice;
 
-[Authorize(Roles = "Gestor")]
+[Authorize(Roles = "Gestor,Admin")]
 public class BackofficeController : Controller {
 
     #region Dependencias

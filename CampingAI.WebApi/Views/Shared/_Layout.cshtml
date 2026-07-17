@@ -38,6 +38,17 @@
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-controller="Admin" asp-action="Campings">Campings</a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Admin" asp-action="Users">Usuarios</a>
+                                </li>
+                            }
+                            @if (!User.IsInRole("Gestor") && !User.IsInRole("Admin")) {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Gestor" asp-action="BecomeGestor"
+                                       title="Solicita acceso para gestionar campings">
+                                        <i class="fa-solid fa-store"></i> Ser Gestor
+                                    </a>
+                                </li>
                             }
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-controller="Account" asp-action="Profile">

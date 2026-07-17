@@ -96,6 +96,52 @@ public class UsersReadRepository : Domain.Repositories.IUsersReadRepository
         }
     }
 
+    public async Task<(IEnumerable<Domain.Entities.User> Items, int TotalCount)> GetPagedAsync(int page, int pageSize, string? search = null)
+    {
+        using var dbConnection = _sqlConnectionFactory.CreateConnection();
+
+        var whereClause = new StringBuilder();
+        whereClause.Append($"WHERE {nameof(Models.CampingAI_DB.T_USERS.USR_DeletedOn)} IS NULL");
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            whereClause.Append($" AND ({nameof(Models.CampingAI_DB.T_USERS.USR_Email)} LIKE @Search");
+            whereClause.Append($" OR {nameof(Models.CampingAI_DB.T_USERS.USR_Name)} LIKE @Search)");
+        }
+
+        var countSql = new StringBuilder();
+        countSql.AppendLine($"SELECT COUNT(*) ");
+        countSql.AppendLine($"FROM {_modelExtractor.GetTableNameForSql()} ");
+        countSql.AppendLine(whereClause.ToString());
+
+        var dataSql = new StringBuilder();
+        dataSql.AppendLine($"SELECT {_modelExtractor.GetFieldNamesForSql()} ");
+        dataSql.AppendLine($"FROM {_modelExtractor.GetTableNameForSql()} ");
+        dataSql.AppendLine(whereClause.ToString());
+        dataSql.AppendLine($"ORDER BY {nameof(Models.CampingAI_DB.T_USERS.USR_CreatedOn)} DESC ");
+        dataSql.AppendLine($"OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY");
+
+        var parameters = new {
+            Offset = (page - 1) * pageSize,
+            PageSize = pageSize,
+            Search = $"%{search}%"
+        };
+
+        int totalCount;
+        IEnumerable<Models.CampingAI_DB.T_USERS> rows;
+        try
+        {
+            totalCount = await dbConnection.ExecuteScalarAsync<int>(countSql.ToString(), string.IsNullOrWhiteSpace(search) ? null : parameters);
+            rows = await dbConnection.QueryAsync<Models.CampingAI_DB.T_USERS>(dataSql.ToString(), parameters);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting paged users (page={Page}, pageSize={PageSize}, search={Search}).", page, pageSize, search);
+            throw;
+        }
+
+        return (rows.Select(_usersMapper.Map), totalCount);
+    }
+
     public async Task<IEnumerable<Domain.Entities.User>> GetPendingManagersAsync()
     {
         using var dbConnection = _sqlConnectionFactory.CreateConnection();

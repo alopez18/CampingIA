@@ -10,12 +10,15 @@ public class AccountController : Controller {
 
     #region Dependencias
     readonly Domain.Repositories.IUsersReadRepository _usersReadRepository;
+    readonly Domain.Repositories.IUsersWriteRepository _usersWriteRepository;
     readonly Application.Services.PasswordHashingService.Interfaces.IPasswordHashingService _passwordHashingService;
     #endregion
 
     public AccountController(Domain.Repositories.IUsersReadRepository usersReadRepository,
+                             Domain.Repositories.IUsersWriteRepository usersWriteRepository,
                              Application.Services.PasswordHashingService.Interfaces.IPasswordHashingService passwordHashingService) {
         _usersReadRepository = usersReadRepository;
+        _usersWriteRepository = usersWriteRepository;
         _passwordHashingService = passwordHashingService;
     }
 
@@ -54,9 +57,30 @@ public class AccountController : Controller {
     public async Task<IActionResult> GoogleCallback(string? returnUrl = null) {
         var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-        if (!authenticateResult.Succeeded) {
+        if (!authenticateResult.Succeeded)
+            return RedirectToAction("Login");
+
+        // Extraer email del claim de Google
+        var email = authenticateResult.Principal?.FindFirst(ClaimTypes.Email)?.Value;
+        var name = authenticateResult.Principal?.FindFirst(ClaimTypes.Name)?.Value;
+
+        if (string.IsNullOrWhiteSpace(email)) {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            ModelState.AddModelError(string.Empty, "No se pudo obtener el email de la cuenta de Google.");
             return RedirectToAction("Login");
         }
+
+        // Buscar o crear usuario en nuestra BD
+        var user = await _usersReadRepository.GetByEmailAsync(email);
+        if (user is null) {
+            user = Domain.Entities.User.CreateNew(email, "GOOGLE_OAUTH", name, Domain.Enums.UserRole.Comun);
+            await _usersWriteRepository.AddAsync(user);
+        }
+
+        // Cerrar sesión de Google y abrir sesión con nuestros claims (rol incluido)
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        var principal = UserClaimsFactory.Build(user, CookieAuthenticationDefaults.AuthenticationScheme);
+        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
         if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
             return Redirect(returnUrl);

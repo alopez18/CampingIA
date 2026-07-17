@@ -1,0 +1,99 @@
+@model IEnumerable<CampingAI.Domain.Entities.User>
+@{
+    ViewData["Title"] = "Gestión de usuarios";
+    int page = ViewBag.Page;
+    int totalPages = ViewBag.TotalPages;
+    int totalCount = ViewBag.TotalCount;
+    string search = ViewBag.Search ?? string.Empty;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">Usuarios <span class="badge bg-secondary fs-6">@totalCount</span></h1>
+    <a asp-action="CreateUser" class="btn btn-primary">
+        <i class="fa-solid fa-user-plus"></i> Nuevo usuario
+    </a>
+</div>
+
+<form method="get" asp-action="Users" class="mb-4">
+    <div class="input-group">
+        <input type="search" name="search" value="@search" class="form-control"
+               placeholder="Buscar por nombre o email…" />
+        <button type="submit" class="btn btn-outline-secondary">
+            <i class="fa-solid fa-magnifying-glass"></i> Buscar
+        </button>
+        @if (!string.IsNullOrWhiteSpace(search))
+        {
+            <a asp-action="Users" class="btn btn-outline-danger" title="Limpiar búsqueda">
+                <i class="fa-solid fa-xmark"></i>
+            </a>
+        }
+    </div>
+</form>
+
+@if (!Model.Any()) {
+    <div class="alert alert-info">No hay usuarios registrados@(string.IsNullOrWhiteSpace(search) ? "." : $" que coincidan con \"{search}\".")</div>
+} else {
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Rol</th>
+                <th>Alta</th>
+                <th class="text-end">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model) {
+                <tr>
+                    <td>@(user.Name ?? "—")</td>
+                    <td>@user.Email.ToString()</td>
+                    <td>
+                        <span class="badge @(user.Role.Name == "Admin" ? "bg-danger" : user.Role.Name == "Gestor" ? "bg-warning text-dark" : "bg-secondary")">
+                            @user.Role.Name
+                        </span>
+                    </td>
+                    <td>@user.CreatedOn.Value.ToString("dd/MM/yyyy")</td>
+                    <td class="text-end">
+                        <a asp-action="EditUser" asp-route-id="@user.Id" class="btn btn-outline-secondary btn-sm">
+                            <i class="fa-solid fa-pen"></i> Editar
+                        </a>
+                        <form asp-action="DeleteUser" asp-route-id="@user.Id" method="post" class="d-inline"
+                              onsubmit="return confirm('¿Seguro que quieres eliminar a este usuario?');">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                <i class="fa-solid fa-trash"></i> Eliminar
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (totalPages > 1) {
+        int rangeStart = Math.Max(1, page - 2);
+        int rangeEnd = Math.Min(totalPages, page + 2);
+        <nav>
+            <ul class="pagination justify-content-center flex-wrap">
+                <li class="page-item @(page == 1 ? "disabled" : "")">
+                    <a class="page-link" asp-action="Users" asp-route-page="1" asp-route-search="@search" title="Primera">&laquo;</a>
+                </li>
+                @if (rangeStart > 1) {
+                    <li class="page-item disabled"><span class="page-link">…</span></li>
+                }
+                @for (int i = rangeStart; i <= rangeEnd; i++) {
+                    <li class="page-item @(i == page ? "active" : "")">
+                        <a class="page-link" asp-action="Users" asp-route-page="@i" asp-route-search="@search">@i</a>
+                    </li>
+                }
+                @if (rangeEnd < totalPages) {
+                    <li class="page-item disabled"><span class="page-link">…</span></li>
+                }
+                <li class="page-item @(page == totalPages ? "disabled" : "")">
+                    <a class="page-link" asp-action="Users" asp-route-page="@totalPages" asp-route-search="@search" title="Última">&raquo;</a>
+                </li>
+            </ul>
+        </nav>
+    }
+}

@@ -9,6 +9,9 @@
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="h3 mb-0">Todos los campings <span class="badge bg-secondary fs-6">@totalCount</span></h1>
+    <a asp-action="CreateCamping" class="btn btn-primary">
+        <i class="fa-solid fa-plus"></i> Nuevo camping
+    </a>
 </div>
 
 <form method="get" asp-action="Campings" class="mb-4">

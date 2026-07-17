@@ -86,6 +86,7 @@ public class Startup
             {
                 options.LoginPath = "/Account/Login";
                 options.LogoutPath = "/Account/Logout";
+                options.AccessDeniedPath = "/Gestor/BecomeGestor";
             });
 
         if (googleAuthEnabled)
