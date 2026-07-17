@@ -10,7 +10,7 @@ public class GetCampingsQueryHandler : Abstractions.Query.IQueryHandler<GetCampi
     }
 
     public async Task<GetCampingsResult> HandleAsync(GetCampingsQuery query) {
-        var (items, totalCount) = await _campingsReadRepository.GetPagedAsync(query.Page, query.PageSize);
+        var (items, totalCount) = await _campingsReadRepository.GetPagedAsync(query.Page, query.PageSize, query.Search);
         return new GetCampingsResult(items, totalCount);
     }
 }

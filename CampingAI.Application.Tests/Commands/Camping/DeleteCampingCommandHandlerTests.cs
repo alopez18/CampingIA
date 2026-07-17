@@ -3,19 +3,16 @@ using FluentValidation;
 using Moq;
 using CampingAI.Application.Commands.Camping.DeleteCamping;
 using CampingAI.Domain.Repositories;
-using CampingAI.Infra.Abstractions;
 
 namespace CampingAI.Application.Tests.Commands.Camping;
 public class DeleteCampingCommandHandlerTests {
 
-    private readonly Mock<IUnitOfWork> _unitOfWorkMock;
     private readonly Mock<ICampingsReadRepository> _readRepositoryMock;
     private readonly Mock<ICampingsWriteRepository> _writeRepositoryMock;
     private readonly Mock<IValidator<DeleteCampingCommand>> _validatorMock;
     private readonly DeleteCampingCommandHandler _handler;
 
     public DeleteCampingCommandHandlerTests() {
-        _unitOfWorkMock = new Mock<IUnitOfWork>();
         _readRepositoryMock = new Mock<ICampingsReadRepository>();
         _writeRepositoryMock = new Mock<ICampingsWriteRepository>();
         _validatorMock = new Mock<IValidator<DeleteCampingCommand>>();
@@ -27,7 +24,6 @@ public class DeleteCampingCommandHandlerTests {
         _handler = new DeleteCampingCommandHandler(
             _readRepositoryMock.Object,
             _writeRepositoryMock.Object,
-            _unitOfWorkMock.Object,
             _validatorMock.Object);
     }
 
@@ -49,7 +45,6 @@ public class DeleteCampingCommandHandlerTests {
 
         // Assert
         _writeRepositoryMock.Verify(r => r.DeleteAsync(existingCamping.Id), Times.Once);
-        _unitOfWorkMock.Verify(u => u.SaveChangesAsync(CancellationToken.None), Times.Once);
     }
 
     [Fact]

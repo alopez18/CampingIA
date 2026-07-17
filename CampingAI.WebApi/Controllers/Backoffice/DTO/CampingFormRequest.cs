@@ -22,4 +22,8 @@ public class CampingFormRequest {
     public Guid CategoryId { get; set; }
 
     public Guid? ProvinciaId { get; set; }
+
+    public List<Guid> AdditionalCategoryIds { get; set; } = new();
+
+    public List<Guid> FacilityIds { get; set; } = new();
 }

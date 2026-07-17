@@ -4,17 +4,14 @@ namespace CampingAI.Application.Commands.Favorite.AddFavorite;
 public class AddFavoriteCommandHandler : Abstractions.Command.ICommandHandler<AddFavoriteCommand, Domain.Entities.Favorite> {
 
     #region Dependencias
-    readonly Infra.Abstractions.IUnitOfWork _unitOfWork;
     readonly Domain.Repositories.IFavoritesReadRepository _favoritesReadRepository;
     readonly Domain.Repositories.IFavoritesWriteRepository _favoritesWriteRepository;
     readonly IValidator<AddFavoriteCommand> _validator;
     #endregion
 
-    public AddFavoriteCommandHandler(Infra.Abstractions.IUnitOfWork unitOfWork,
-                                     Domain.Repositories.IFavoritesReadRepository favoritesReadRepository,
+    public AddFavoriteCommandHandler(Domain.Repositories.IFavoritesReadRepository favoritesReadRepository,
                                      Domain.Repositories.IFavoritesWriteRepository favoritesWriteRepository,
                                      IValidator<AddFavoriteCommand> validator) {
-        _unitOfWork = unitOfWork;
         _favoritesReadRepository = favoritesReadRepository;
         _favoritesWriteRepository = favoritesWriteRepository;
         _validator = validator;
@@ -30,7 +27,6 @@ public class AddFavoriteCommandHandler : Abstractions.Command.ICommandHandler<Ad
         var favorite = Domain.Entities.Favorite.CreateNew(command.UserId, command.CampingId);
 
         await _favoritesWriteRepository.AddAsync(favorite);
-        await _unitOfWork.SaveChangesAsync();
 
         return favorite;
     }

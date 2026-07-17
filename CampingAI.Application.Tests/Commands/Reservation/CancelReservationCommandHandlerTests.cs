@@ -4,19 +4,16 @@ using Moq;
 using CampingAI.Application.Commands.Reservation.CancelReservation;
 using CampingAI.Domain.Repositories;
 using CampingAI.Domain.Exceptions;
-using CampingAI.Infra.Abstractions;
 
 namespace CampingAI.Application.Tests.Commands.Reservation;
 public class CancelReservationCommandHandlerTests {
 
-    private readonly Mock<IUnitOfWork> _unitOfWorkMock;
     private readonly Mock<IReservationsReadRepository> _readRepositoryMock;
     private readonly Mock<IReservationsWriteRepository> _writeRepositoryMock;
     private readonly Mock<IValidator<CancelReservationCommand>> _validatorMock;
     private readonly CancelReservationCommandHandler _handler;
 
     public CancelReservationCommandHandlerTests() {
-        _unitOfWorkMock      = new Mock<IUnitOfWork>();
         _readRepositoryMock  = new Mock<IReservationsReadRepository>();
         _writeRepositoryMock = new Mock<IReservationsWriteRepository>();
         _validatorMock       = new Mock<IValidator<CancelReservationCommand>>();
@@ -26,7 +23,6 @@ public class CancelReservationCommandHandlerTests {
             .ReturnsAsync(new FluentValidation.Results.ValidationResult());
 
         _handler = new CancelReservationCommandHandler(
-            _unitOfWorkMock.Object,
             _readRepositoryMock.Object,
             _writeRepositoryMock.Object,
             _validatorMock.Object);
@@ -54,7 +50,6 @@ public class CancelReservationCommandHandlerTests {
         // Assert
         reservation.StatusId.Should().Be((int)Domain.Enums.ReservationStatus.Cancelled);
         _writeRepositoryMock.Verify(r => r.UpdateAsync(reservation), Times.Once);
-        _unitOfWorkMock.Verify(u => u.SaveChangesAsync(CancellationToken.None), Times.Once);
     }
 
     [Fact]

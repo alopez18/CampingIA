@@ -3,19 +3,16 @@ using FluentValidation;
 using Moq;
 using CampingAI.Application.Commands.Favorite.AddFavorite;
 using CampingAI.Domain.Repositories;
-using CampingAI.Infra.Abstractions;
 
 namespace CampingAI.Application.Tests.Commands.Favorite;
 public class AddFavoriteCommandHandlerTests {
 
-    private readonly Mock<IUnitOfWork> _unitOfWorkMock;
     private readonly Mock<IFavoritesReadRepository> _favoritesReadRepositoryMock;
     private readonly Mock<IFavoritesWriteRepository> _favoritesWriteRepositoryMock;
     private readonly Mock<IValidator<AddFavoriteCommand>> _validatorMock;
     private readonly AddFavoriteCommandHandler _handler;
 
     public AddFavoriteCommandHandlerTests() {
-        _unitOfWorkMock = new Mock<IUnitOfWork>();
         _favoritesReadRepositoryMock = new Mock<IFavoritesReadRepository>();
         _favoritesWriteRepositoryMock = new Mock<IFavoritesWriteRepository>();
         _validatorMock = new Mock<IValidator<AddFavoriteCommand>>();
@@ -25,7 +22,6 @@ public class AddFavoriteCommandHandlerTests {
             .ReturnsAsync(new FluentValidation.Results.ValidationResult());
 
         _handler = new AddFavoriteCommandHandler(
-            _unitOfWorkMock.Object,
             _favoritesReadRepositoryMock.Object,
             _favoritesWriteRepositoryMock.Object,
             _validatorMock.Object);
@@ -50,7 +46,6 @@ public class AddFavoriteCommandHandlerTests {
         result.UserId.Should().Be(userId);
         result.CampingId.Should().Be(campingId);
         _favoritesWriteRepositoryMock.Verify(r => r.AddAsync(It.IsAny<Domain.Entities.Favorite>()), Times.Once);
-        _unitOfWorkMock.Verify(u => u.SaveChangesAsync(CancellationToken.None), Times.Once);
     }
 
     [Fact]
@@ -70,6 +65,5 @@ public class AddFavoriteCommandHandlerTests {
         // Assert
         await act.Should().ThrowAsync<Domain.Exceptions.DomainException>();
         _favoritesWriteRepositoryMock.Verify(r => r.AddAsync(It.IsAny<Domain.Entities.Favorite>()), Times.Never);
-        _unitOfWorkMock.Verify(u => u.SaveChangesAsync(CancellationToken.None), Times.Never);
     }
 }

@@ -1,3 +1,3 @@
 namespace CampingAI.Application.Queries.Camping.GetCampings;
-public record GetCampingsQuery(int Page, int PageSize) : Abstractions.Query.IQuery<GetCampingsResult> {
+public record GetCampingsQuery(int Page, int PageSize, string? Search = null) : Abstractions.Query.IQuery<GetCampingsResult> {
 }

@@ -23,7 +23,7 @@ public class GetCampingsQueryHandlerTests {
         };
 
         _repositoryMock
-            .Setup(r => r.GetPagedAsync(1, 10))
+            .Setup(r => r.GetPagedAsync(1, 10, null))
             .ReturnsAsync((campings, 2));
 
         var query = new GetCampingsQuery(1, 10);
@@ -41,7 +41,7 @@ public class GetCampingsQueryHandlerTests {
     public async Task HandleAsync_Should_ReturnEmptyResult_WhenNoCampingsExist() {
         // Arrange
         _repositoryMock
-            .Setup(r => r.GetPagedAsync(1, 10))
+            .Setup(r => r.GetPagedAsync(1, 10, null))
             .ReturnsAsync((Enumerable.Empty<Domain.Entities.Camping>(), 0));
 
         var query = new GetCampingsQuery(1, 10);

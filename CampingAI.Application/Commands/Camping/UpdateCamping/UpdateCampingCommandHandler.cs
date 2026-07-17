@@ -4,22 +4,22 @@ namespace CampingAI.Application.Commands.Camping.UpdateCamping;
 public class UpdateCampingCommandHandler : Abstractions.Command.ICommandHandler<UpdateCampingCommand, Domain.Entities.Camping> {
 
     #region Dependencias
-    readonly Infra.Abstractions.IUnitOfWork _unitOfWork;
     readonly Domain.Repositories.ICampingsReadRepository _campingsReadRepository;
     readonly Domain.Repositories.ICampingsWriteRepository _campingsWriteRepository;
     readonly Domain.Repositories.ICampingCategoriesWriteRepository _campingCategoriesWriteRepository;
+    readonly Domain.Repositories.ICampingFacilitiesWriteRepository _campingFacilitiesWriteRepository;
     readonly IValidator<UpdateCampingCommand> _validator;
     #endregion
 
     public UpdateCampingCommandHandler(Domain.Repositories.ICampingsReadRepository campingsReadRepository,
                                        Domain.Repositories.ICampingsWriteRepository campingsWriteRepository,
                                        Domain.Repositories.ICampingCategoriesWriteRepository campingCategoriesWriteRepository,
-                                       Infra.Abstractions.IUnitOfWork unitOfWork,
+                                       Domain.Repositories.ICampingFacilitiesWriteRepository campingFacilitiesWriteRepository,
                                        IValidator<UpdateCampingCommand> validator) {
         _campingsReadRepository = campingsReadRepository;
         _campingsWriteRepository = campingsWriteRepository;
         _campingCategoriesWriteRepository = campingCategoriesWriteRepository;
-        _unitOfWork = unitOfWork;
+        _campingFacilitiesWriteRepository = campingFacilitiesWriteRepository;
         _validator = validator;
     }
 
@@ -48,7 +48,10 @@ public class UpdateCampingCommandHandler : Abstractions.Command.ICommandHandler<
             await _campingCategoriesWriteRepository.AddAsync(
                 Domain.Entities.CampingCategory.CreateNew(camping.Id, categoryId));
 
-        await _unitOfWork.SaveChangesAsync();
+        await _campingFacilitiesWriteRepository.DeleteByCampingIdAsync(camping.Id);
+        foreach (var facilityId in camping.FacilityIds)
+            await _campingFacilitiesWriteRepository.AddAsync(
+                Domain.Entities.CampingFacility.CreateNew(camping.Id, facilityId));
 
         return camping;
     }

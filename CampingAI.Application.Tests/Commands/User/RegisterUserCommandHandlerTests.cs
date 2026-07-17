@@ -5,12 +5,10 @@ using CampingAI.Application.Commands.User.RegisterUser;
 using CampingAI.Application.Services.PasswordHashingService.Interfaces;
 using CampingAI.Domain.Exceptions;
 using CampingAI.Domain.Repositories;
-using CampingAI.Infra.Abstractions;
 
 namespace CampingAI.Application.Tests.Commands.User;
 public class RegisterUserCommandHandlerTests {
 
-    private readonly Mock<IUnitOfWork> _unitOfWorkMock;
     private readonly Mock<IUsersWriteRepository> _writeRepositoryMock;
     private readonly Mock<IUsersReadRepository> _readRepositoryMock;
     private readonly Mock<IPasswordHashingService> _passwordHashingServiceMock;
@@ -18,7 +16,6 @@ public class RegisterUserCommandHandlerTests {
     private readonly RegisterUserCommandHandler _handler;
 
     public RegisterUserCommandHandlerTests() {
-        _unitOfWorkMock = new Mock<IUnitOfWork>();
         _writeRepositoryMock = new Mock<IUsersWriteRepository>();
         _readRepositoryMock = new Mock<IUsersReadRepository>();
         _passwordHashingServiceMock = new Mock<IPasswordHashingService>();
@@ -35,7 +32,6 @@ public class RegisterUserCommandHandlerTests {
         _handler = new RegisterUserCommandHandler(
             _writeRepositoryMock.Object,
             _readRepositoryMock.Object,
-            _unitOfWorkMock.Object,
             _passwordHashingServiceMock.Object,
             _validatorMock.Object);
     }
@@ -59,7 +55,6 @@ public class RegisterUserCommandHandlerTests {
         result.Name.Should().Be(command.Name);
         result.RoleId.Should().Be((int)Domain.Enums.UserRole.Comun);
         _writeRepositoryMock.Verify(r => r.AddAsync(It.IsAny<Domain.Entities.User>()), Times.Once);
-        _unitOfWorkMock.Verify(u => u.SaveChangesAsync(CancellationToken.None), Times.Once);
     }
 
     [Fact]

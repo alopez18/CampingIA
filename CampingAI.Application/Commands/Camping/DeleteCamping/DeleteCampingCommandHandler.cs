@@ -4,7 +4,6 @@ namespace CampingAI.Application.Commands.Camping.DeleteCamping;
 public class DeleteCampingCommandHandler : Abstractions.Command.ICommandHandler<DeleteCampingCommand> {
 
     #region Dependencias
-    readonly Infra.Abstractions.IUnitOfWork _unitOfWork;
     readonly Domain.Repositories.ICampingsReadRepository _campingsReadRepository;
     readonly Domain.Repositories.ICampingsWriteRepository _campingsWriteRepository;
     readonly IValidator<DeleteCampingCommand> _validator;
@@ -12,11 +11,9 @@ public class DeleteCampingCommandHandler : Abstractions.Command.ICommandHandler<
 
     public DeleteCampingCommandHandler(Domain.Repositories.ICampingsReadRepository campingsReadRepository,
                                        Domain.Repositories.ICampingsWriteRepository campingsWriteRepository,
-                                       Infra.Abstractions.IUnitOfWork unitOfWork,
                                        IValidator<DeleteCampingCommand> validator) {
         _campingsReadRepository = campingsReadRepository;
         _campingsWriteRepository = campingsWriteRepository;
-        _unitOfWork = unitOfWork;
         _validator = validator;
     }
 
@@ -27,6 +24,5 @@ public class DeleteCampingCommandHandler : Abstractions.Command.ICommandHandler<
             ?? throw new KeyNotFoundException($"No existe ningún camping con el id '{command.CampingId}'.");
 
         await _campingsWriteRepository.DeleteAsync(camping.Id);
-        await _unitOfWork.SaveChangesAsync();
     }
 }

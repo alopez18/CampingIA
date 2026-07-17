@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -33,6 +35,18 @@ public class Startup
                 .ReadFrom.Services(services));
 
         Config.DI_Manager.Configure(builder.Services, builder.Configuration);
+
+        builder.Services.AddDataProtection()
+            .PersistKeysToFileSystem(new System.IO.DirectoryInfo(
+                System.IO.Path.Combine(builder.Environment.ContentRootPath, "DataProtectionKeys")))
+            .SetApplicationName("CampingAI");
+
+        builder.Services.Configure<ForwardedHeadersOptions>(options =>
+        {
+            options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            options.KnownNetworks.Clear();
+            options.KnownProxies.Clear();
+        });
 
         var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? ["http://localhost:8100"];
         builder.Services.AddCors(options =>
@@ -179,6 +193,8 @@ public class Startup
         }
 
 
+
+        app.UseForwardedHeaders();
 
         app.UseMiddleware<Handlers.GlobalExceptionMiddleware>();
 

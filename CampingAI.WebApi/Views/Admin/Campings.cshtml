@@ -4,14 +4,32 @@
     int page = ViewBag.Page;
     int totalPages = ViewBag.TotalPages;
     int totalCount = ViewBag.TotalCount;
+    string search = ViewBag.Search ?? string.Empty;
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="h3 mb-0">Todos los campings <span class="badge bg-secondary fs-6">@totalCount</span></h1>
 </div>
 
+<form method="get" asp-action="Campings" class="mb-4">
+    <div class="input-group">
+        <input type="search" name="search" value="@search" class="form-control"
+               placeholder="Buscar por nombre o descripción…" />
+        <button type="submit" class="btn btn-outline-secondary">
+            <i class="fa-solid fa-magnifying-glass"></i> Buscar
+        </button>
+        @if (!string.IsNullOrWhiteSpace(search))
+        {
+            <a asp-action="Campings" class="btn btn-outline-danger" title="Limpiar búsqueda">
+                <i class="fa-solid fa-xmark"></i>
+            </a>
+        }
+    </div>
+</form>
+
 @if (!Model.Any()) {
-    <div class="alert alert-info">No hay campings registrados.</div>
+    <div class="alert alert-info">No hay campings registrados@(string.IsNullOrWhiteSpace(search) ? "." : $" que coincidan con \"{search}\".")
+    </div>
 } else {
     <table class="table table-striped align-middle">
         <thead>
@@ -41,23 +59,27 @@
     </table>
 
     @if (totalPages > 1) {
+        int rangeStart = Math.Max(1, page - 2);
+        int rangeEnd = Math.Min(totalPages, page + 2);
         <nav>
-            <ul class="pagination justify-content-center">
-                @if (page > 1) {
-                    <li class="page-item">
-                        <a class="page-link" asp-action="Campings" asp-route-page="@(page - 1)">Anterior</a>
-                    </li>
+            <ul class="pagination justify-content-center flex-wrap">
+                <li class="page-item @(page == 1 ? "disabled" : "")">
+                    <a class="page-link" asp-action="Campings" asp-route-page="1" asp-route-search="@search" title="Primera">«</a>
+                </li>
+                @if (rangeStart > 1) {
+                    <li class="page-item disabled"><span class="page-link">…</span></li>
                 }
-                @for (int i = 1; i <= totalPages; i++) {
+                @for (int i = rangeStart; i <= rangeEnd; i++) {
                     <li class="page-item @(i == page ? "active" : "")">
-                        <a class="page-link" asp-action="Campings" asp-route-page="@i">@i</a>
+                        <a class="page-link" asp-action="Campings" asp-route-page="@i" asp-route-search="@search">@i</a>
                     </li>
                 }
-                @if (page < totalPages) {
-                    <li class="page-item">
-                        <a class="page-link" asp-action="Campings" asp-route-page="@(page + 1)">Siguiente</a>
-                    </li>
+                @if (rangeEnd < totalPages) {
+                    <li class="page-item disabled"><span class="page-link">…</span></li>
                 }
+                <li class="page-item @(page == totalPages ? "disabled" : "")">
+                    <a class="page-link" asp-action="Campings" asp-route-page="@totalPages" asp-route-search="@search" title="Última">»</a>
+                </li>
             </ul>
         </nav>
     }

@@ -13,7 +13,6 @@ public static class AdminSeeder {
         var logger = services.GetRequiredService<ILogger<Program>>();
         var usersReadRepository = services.GetRequiredService<Domain.Repositories.IUsersReadRepository>();
         var usersWriteRepository = services.GetRequiredService<Domain.Repositories.IUsersWriteRepository>();
-        var unitOfWork = services.GetRequiredService<Infra.Abstractions.IUnitOfWork>();
         var passwordHashingService = services.GetRequiredService<Application.Services.PasswordHashingService.Interfaces.IPasswordHashingService>();
 
         var email = config["AdminSeed:Email"];
@@ -35,7 +34,6 @@ public static class AdminSeeder {
             var admin = Domain.Entities.User.CreateNew(email, passwordHashed!, "Administrador", Domain.Enums.UserRole.Admin);
 
             await usersWriteRepository.AddAsync(admin);
-            await unitOfWork.SaveChangesAsync();
 
             logger.LogInformation("Usuario Admin '{Email}' creado correctamente.", email);
         } catch (Exception ex) {

@@ -3,19 +3,16 @@ using FluentValidation;
 using Moq;
 using CampingAI.Application.Commands.Camping.CreateCamping;
 using CampingAI.Domain.Repositories;
-using CampingAI.Infra.Abstractions;
 
 namespace CampingAI.Application.Tests.Commands.Camping;
 public class CreateCampingCommandHandlerTests {
 
-    private readonly Mock<IUnitOfWork> _unitOfWorkMock;
     private readonly Mock<ICampingsWriteRepository> _writeRepositoryMock;
     private readonly Mock<ICampingCategoriesWriteRepository> _categoriesWriteRepositoryMock;
     private readonly Mock<IValidator<CreateCampingCommand>> _validatorMock;
     private readonly CreateCampingCommandHandler _handler;
 
     public CreateCampingCommandHandlerTests() {
-        _unitOfWorkMock = new Mock<IUnitOfWork>();
         _writeRepositoryMock = new Mock<ICampingsWriteRepository>();
         _categoriesWriteRepositoryMock = new Mock<ICampingCategoriesWriteRepository>();
         _validatorMock = new Mock<IValidator<CreateCampingCommand>>();
@@ -27,7 +24,6 @@ public class CreateCampingCommandHandlerTests {
         _handler = new CreateCampingCommandHandler(
             _writeRepositoryMock.Object,
             _categoriesWriteRepositoryMock.Object,
-            _unitOfWorkMock.Object,
             _validatorMock.Object);
     }
 
@@ -55,7 +51,6 @@ public class CreateCampingCommandHandlerTests {
         result.Name.ToString().Should().Be(command.Name);
         result.PricePerNight.Value.Should().Be(command.PricePerNight);
         _writeRepositoryMock.Verify(r => r.AddAsync(It.IsAny<Domain.Entities.Camping>()), Times.Once);
-        _unitOfWorkMock.Verify(u => u.SaveChangesAsync(CancellationToken.None), Times.Once);
     }
 
     [Fact]

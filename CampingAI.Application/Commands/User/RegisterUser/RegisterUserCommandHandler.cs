@@ -4,7 +4,6 @@ namespace CampingAI.Application.Commands.User.RegisterUser;
 public class RegisterUserCommandHandler : Abstractions.Command.ICommandHandler<RegisterUserCommand, Domain.Entities.User> {
 
     #region Dependencias
-    readonly Infra.Abstractions.IUnitOfWork _unitOfWork;
     readonly Domain.Repositories.IUsersWriteRepository _usersWriteRepository;
     readonly Domain.Repositories.IUsersReadRepository _usersReadRepository;
     readonly Services.PasswordHashingService.Interfaces.IPasswordHashingService _passwordHashingService;
@@ -13,12 +12,10 @@ public class RegisterUserCommandHandler : Abstractions.Command.ICommandHandler<R
 
     public RegisterUserCommandHandler(Domain.Repositories.IUsersWriteRepository usersWriteRepository,
                                       Domain.Repositories.IUsersReadRepository usersReadRepository,
-                                      Infra.Abstractions.IUnitOfWork unitOfWork,
                                       Services.PasswordHashingService.Interfaces.IPasswordHashingService passwordHashingService,
                                       IValidator<RegisterUserCommand> validator) {
         _usersWriteRepository = usersWriteRepository;
         _usersReadRepository = usersReadRepository;
-        _unitOfWork = unitOfWork;
         _passwordHashingService = passwordHashingService;
         _validator = validator;
     }
@@ -38,7 +35,6 @@ public class RegisterUserCommandHandler : Abstractions.Command.ICommandHandler<R
                                                   Domain.Enums.UserRole.Comun);
 
         await _usersWriteRepository.AddAsync(user);
-        await _unitOfWork.SaveChangesAsync();
 
         return user;
     }

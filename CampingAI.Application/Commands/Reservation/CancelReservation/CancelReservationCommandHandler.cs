@@ -4,17 +4,14 @@ namespace CampingAI.Application.Commands.Reservation.CancelReservation;
 public class CancelReservationCommandHandler : Abstractions.Command.ICommandHandler<CancelReservationCommand> {
 
     #region Dependencias
-    readonly Infra.Abstractions.IUnitOfWork _unitOfWork;
     readonly Domain.Repositories.IReservationsReadRepository _reservationsReadRepository;
     readonly Domain.Repositories.IReservationsWriteRepository _reservationsWriteRepository;
     readonly IValidator<CancelReservationCommand> _validator;
     #endregion
 
-    public CancelReservationCommandHandler(Infra.Abstractions.IUnitOfWork unitOfWork,
-                                           Domain.Repositories.IReservationsReadRepository reservationsReadRepository,
+    public CancelReservationCommandHandler(Domain.Repositories.IReservationsReadRepository reservationsReadRepository,
                                            Domain.Repositories.IReservationsWriteRepository reservationsWriteRepository,
                                            IValidator<CancelReservationCommand> validator) {
-        _unitOfWork = unitOfWork;
         _reservationsReadRepository = reservationsReadRepository;
         _reservationsWriteRepository = reservationsWriteRepository;
         _validator = validator;
@@ -32,6 +29,5 @@ public class CancelReservationCommandHandler : Abstractions.Command.ICommandHand
         reservation.Cancel();
 
         await _reservationsWriteRepository.UpdateAsync(reservation);
-        await _unitOfWork.SaveChangesAsync();
     }
 }

@@ -41,7 +41,7 @@ public class AccountController : Controller {
         if (!string.IsNullOrWhiteSpace(request.ReturnUrl) && Url.IsLocalUrl(request.ReturnUrl))
             return Redirect(request.ReturnUrl);
 
-        return RedirectToAction("Profile");
+        return RedirectToAction("Index", "Home");
     }
 
     [HttpPost]
@@ -61,7 +61,7 @@ public class AccountController : Controller {
         if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
             return Redirect(returnUrl);
 
-        return RedirectToAction("Profile");
+        return RedirectToAction("Index", "Home");
     }
 
     [Authorize]

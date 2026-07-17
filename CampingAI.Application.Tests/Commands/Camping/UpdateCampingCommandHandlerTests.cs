@@ -3,23 +3,22 @@ using FluentValidation;
 using Moq;
 using CampingAI.Application.Commands.Camping.UpdateCamping;
 using CampingAI.Domain.Repositories;
-using CampingAI.Infra.Abstractions;
 
 namespace CampingAI.Application.Tests.Commands.Camping;
 public class UpdateCampingCommandHandlerTests {
 
-    private readonly Mock<IUnitOfWork> _unitOfWorkMock;
     private readonly Mock<ICampingsReadRepository> _readRepositoryMock;
     private readonly Mock<ICampingsWriteRepository> _writeRepositoryMock;
     private readonly Mock<ICampingCategoriesWriteRepository> _categoriesWriteRepositoryMock;
+    private readonly Mock<ICampingFacilitiesWriteRepository> _facilitiesWriteRepositoryMock;
     private readonly Mock<IValidator<UpdateCampingCommand>> _validatorMock;
     private readonly UpdateCampingCommandHandler _handler;
 
     public UpdateCampingCommandHandlerTests() {
-        _unitOfWorkMock = new Mock<IUnitOfWork>();
         _readRepositoryMock = new Mock<ICampingsReadRepository>();
         _writeRepositoryMock = new Mock<ICampingsWriteRepository>();
         _categoriesWriteRepositoryMock = new Mock<ICampingCategoriesWriteRepository>();
+        _facilitiesWriteRepositoryMock = new Mock<ICampingFacilitiesWriteRepository>();
         _validatorMock = new Mock<IValidator<UpdateCampingCommand>>();
 
         _validatorMock
@@ -30,7 +29,7 @@ public class UpdateCampingCommandHandlerTests {
             _readRepositoryMock.Object,
             _writeRepositoryMock.Object,
             _categoriesWriteRepositoryMock.Object,
-            _unitOfWorkMock.Object,
+            _facilitiesWriteRepositoryMock.Object,
             _validatorMock.Object);
     }
 
@@ -57,7 +56,6 @@ public class UpdateCampingCommandHandlerTests {
         result.PricePerNight.Value.Should().Be(35m);
         result.Latitude.Value.Should().Be(41m);
         _writeRepositoryMock.Verify(r => r.UpdateAsync(It.IsAny<Domain.Entities.Camping>()), Times.Once);
-        _unitOfWorkMock.Verify(u => u.SaveChangesAsync(CancellationToken.None), Times.Once);
     }
 
     [Fact]
