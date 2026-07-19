@@ -4,7 +4,7 @@ theme: default
 paginate: true
 size: 16:9
 header: 'CampingAI — Trabajo Fin de Máster'
-footer: 'Aitor López Palomares · Máster en IA Aplicada'
+footer: 'Aitor López Palomares · Máster en Desarrollo con IA'
 style: |
   section {
     font-size: 26px;
@@ -79,7 +79,7 @@ style: |
 ## Plataforma de gestión y descubrimiento de campings con IA
 
 **Aitor López Palomares**
-Máster en Inteligencia Artificial Aplicada
+Máster en Desarrollo con IA
 Trabajo Fin de Máster · 2026
 
 ---
