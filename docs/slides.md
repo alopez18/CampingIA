@@ -569,6 +569,25 @@ Accesible desde **Favoritos** en la app móvil: se seleccionan 2+ campings y se 
 
 ---
 
+# Entornos y credenciales de prueba
+
+Para que el revisor pueda probar la plataforma en vivo:
+
+## 🖥️ Backoffice — [campingaibackoffice.runasp.net](https://campingaibackoffice.runasp.net/)
+
+| Rol | Usuario | Contraseña |
+|---|---|---|
+| Administrador | `admin@campingai.local` | `C@mpingsAI!` |
+| Gestor | `gestor@campingai.local` | `123456` |
+
+## 📱 Front (PWA) — [campingai.runasp.net](https://campingai.runasp.net/)
+
+| Rol | Usuario | Contraseña |
+|---|---|---|
+| Cliente | `braism@campingai.local` | `Br@isM0ur€!` |
+
+---
+
 <!-- _class: lead -->
 
 # Conclusiones
@@ -582,8 +601,6 @@ CampingAI demuestra que la **IA generativa (LLMs)** puede integrarse de forma **
 <!-- _class: lead -->
 
 # ¡Gracias!
-
-## ¿Preguntas?
 
 **Aitor López Palomares**
 github.com/alopez18/CampingIA
