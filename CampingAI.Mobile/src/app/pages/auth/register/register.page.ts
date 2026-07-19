@@ -46,7 +46,7 @@ import { AuthService } from '../../../services/auth.service';
                 <ion-input type="password" formControlName="password" autocomplete="new-password"></ion-input>
               </ion-item>
               @if (form.get('password')?.invalid && form.get('password')?.touched) {
-                <p class="error-msg">Mínimo 6 caracteres.</p>
+                <p class="error-msg">Mínimo 8 caracteres.</p>
               }
 
               <ion-item class="ion-margin-top">
@@ -55,6 +55,14 @@ import { AuthService } from '../../../services/auth.service';
               </ion-item>
               @if (form.get('confirmPassword')?.touched && form.hasError('passwordMismatch')) {
                 <p class="error-msg">Las contraseñas no coinciden.</p>
+              }
+
+              @if (serverErrors.length) {
+                <div class="server-errors ion-margin-top">
+                  @for (err of serverErrors; track err) {
+                    <p class="error-msg">{{ err }}</p>
+                  }
+                </div>
               }
 
               <ion-button
@@ -90,6 +98,12 @@ import { AuthService } from '../../../services/auth.service';
     .auth-app-name { color: white; font-size: 2em; font-weight: 800; margin: 8px 0 4px; letter-spacing: -0.5px; }
     .auth-tagline { color: rgba(255,255,255,0.8); font-size: 0.9em; margin: 0; }
     .error-msg { color: var(--ion-color-danger); font-size: 0.8em; padding: 4px 16px; }
+    .server-errors {
+      background: rgba(var(--ion-color-danger-rgb), 0.08);
+      border-radius: 8px;
+      padding: 8px 4px;
+    }
+    .server-errors .error-msg { margin: 2px 0; }
 
     /* ── Apariencia Web / Escritorio ─────────────────────────────────────────
        Solo se aplica cuando la app corre en navegador (body.platform-web).
@@ -162,9 +176,11 @@ export class RegisterPage {
   readonly form = this.fb.group({
     name: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
+    password: ['', [Validators.required, Validators.minLength(8)]],
     confirmPassword: ['', [Validators.required]]
   }, { validators: RegisterPage.passwordsMatchValidator });
+
+  serverErrors: string[] = [];
 
   private static passwordsMatchValidator(group: AbstractControl): ValidationErrors | null {
     const password = group.get('password')?.value;
@@ -174,6 +190,7 @@ export class RegisterPage {
 
   async onSubmit(): Promise<void> {
     if (this.form.invalid) return;
+    this.serverErrors = [];
     const loader = await this.loading.create({ message: 'Creando cuenta...' });
     await loader.present();
 
@@ -182,14 +199,24 @@ export class RegisterPage {
       next: async () => {
         await loader.dismiss();
       },
-      error: async () => {
+      error: async (err: unknown) => {
         await loader.dismiss();
+        this.serverErrors = RegisterPage.extractServerErrors(err);
         const t = await this.toast.create({
-          message: 'Error al registrarse. El email puede estar en uso.',
+          message: this.serverErrors[0] ?? 'Error al registrarse. El email puede estar en uso.',
           duration: 3000, color: 'danger', position: 'bottom'
         });
         await t.present();
       }
     });
+  }
+
+  private static extractServerErrors(err: unknown): string[] {
+    const body = (err as { error?: { errores?: unknown } })?.error;
+    if (body && Array.isArray(body.errores)) {
+      const errores = body.errores.filter((e): e is string => typeof e === 'string');
+      if (errores.length) return errores;
+    }
+    return ['Error al registrarse. El email puede estar en uso.'];
   }
 }

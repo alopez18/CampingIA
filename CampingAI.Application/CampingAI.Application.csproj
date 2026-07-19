@@ -1,23 +1,44 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+
+
   <PropertyGroup>
+
     <TargetFramework>net8.0</TargetFramework>
+
     <ImplicitUsings>enable</ImplicitUsings>
+
     <Nullable>enable</Nullable>
+
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\CampingAI.Domain\CampingAI.Domain.csproj" />
-    <ProjectReference Include="..\CampingAI.Infra\CampingAI.Infra.csproj" />
-  </ItemGroup>
+
 
   <ItemGroup>
-    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
-    <PackageReference Include="FluentValidation" Version="11.11.0" />
+
+    <ProjectReference Include="..\CampingAI.Domain\CampingAI.Domain.csproj" />
+
+    <ProjectReference Include="..\CampingAI.Infra\CampingAI.Infra.csproj" />
+
   </ItemGroup>
+
+
+
+  <ItemGroup>
+
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+
+  </ItemGroup>
+
+
 
   <ItemGroup>
     <Folder Include="Shared\DTOs\" />
   </ItemGroup>
 
+
+
 </Project>
+

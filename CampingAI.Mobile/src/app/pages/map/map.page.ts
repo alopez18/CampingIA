@@ -7,6 +7,10 @@ import {
 import { addIcons } from 'ionicons';
 import { locateOutline, searchOutline } from 'ionicons/icons';
 import * as L from 'leaflet';
+// `leafletGlobal` es el objeto Leaflet vivo (con `window.L` ya expuesto). El
+// import del plugin debe ir DESPUÉS para que aumente ese mismo objeto con
+// `markerClusterGroup`. Usar el namespace `L` (copia) para tipos y API core.
+import leafletGlobal from '../../shared/leaflet';
 import 'leaflet.markercluster';
 import { Geolocation } from '@capacitor/geolocation';
 import { CampingsService, MapBounds } from '../../services/campings.service';
@@ -119,7 +123,7 @@ export class MapPage implements OnDestroy {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(this.map);
 
-    this.markersLayer = L.markerClusterGroup();
+    this.markersLayer = leafletGlobal.markerClusterGroup();
     this.map.addLayer(this.markersLayer);
 
     // Asegura el render correcto cuando el contenedor termina de dimensionarse.
