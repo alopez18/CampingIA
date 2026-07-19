@@ -19,7 +19,7 @@ Cada capa tiene su propio `Configuration/DI_Manager.cs` (o `Config/DI_Manager.cs
   - Despacho a través de `IMediator` (`SendCommandAsync` / `SendQueryAsync`), que resuelve los handlers desde el contenedor de DI. Nota: actualmente los controladores inyectan los handlers directamente además de `IMediator`.
 - **Carpeta por feature** para commands/queries: `Commands/Employee/CreateEmployee/{CreateEmployeeCommand.cs, CreateEmployeeCommandHandler.cs}`.
 - **Repositorios** separados en interfaces de lectura/escritura en `Domain/Repositories/...` (p. ej. `IEmpoyeesReadRepository`, `IEmployeesWriteRepository`), implementados en `Infra`.
-- **Unit of Work** (`Infra.Abstractions.IUnitOfWork`) — los handlers de escritura llaman a `_repo.SaveAsync(...)` y después a `_unitOfWork.SaveChangesAsync()`.
+- **Unit of Work** (`Infra.Abstractions.IUnitOfWork`) — expone una conexión Dapper compartida (`Connection`) y una transacción opcional (`CurrentTransaction`), con `BeginTransactionAsync()` / `CommitAsync()` / `RollbackAsync()`. Los repositorios de escritura ejecutan sobre `_unitOfWork.Connection` pasando `_unitOfWork.CurrentTransaction` a Dapper. Los handlers que escriben en varias tablas envuelven las operaciones en `BeginTransactionAsync()` + `CommitAsync()` (con `RollbackAsync()` en el `catch`); los de una sola escritura no necesitan transacción explícita (Dapper auto-commit).
 - **Mappers** derivan de `Domain.Abstractions.Mappers.SimpleMapper<TSource,TDestination>` / `CompleteMapper` y exponen un `Map(IEnumerable<>)` por lotes. Registra los mappers en DI e inyéctalos; no hagas mapeo manual inline salvo que sigas un patrón ya existente en un controlador.
 
 ## Convenciones de modelado de dominio
@@ -29,7 +29,7 @@ Cada capa tiene su propio `Configuration/DI_Manager.cs` (o `Config/DI_Manager.cs
 - Los errores de validación de dominio siempre usan `Exceptions.DomainException`.
 
 ## Convenciones de acceso a datos
-- Las lecturas/escrituras usan **Dapper** a través de `ISqlConnectionFactory.CreateConnection()` (envuelto en `using`).
+- Los **repositorios de lectura** usan **Dapper** a través de `ISqlConnectionFactory.CreateConnection()` (envuelto en `using`). Los **repositorios de escritura** ejecutan sobre la conexión compartida del Unit of Work (`_unitOfWork.Connection`) pasando `_unitOfWork.CurrentTransaction` a Dapper (sin `using`, la conexión la gestiona el UoW).
 - Construye el SQL con un `StringBuilder` y referencia los nombres de columna mediante `nameof(Models.REDARBOR_DB.T_EMPLOYEES.<Campo>)`; usa `ModelExtractor<TModel>` (`GetFieldNamesForSql()`, `GetTableNameForSql()`) para evitar strings de columna/tabla hardcodeados.
 - Los repositorios mapean los modelos de BD a entidades de dominio mediante un `EmployeesMapper` inyectado.
 - Envuelve las llamadas a BD en try/catch, registra con el `ILogger<T>` inyectado y relanza la excepción.

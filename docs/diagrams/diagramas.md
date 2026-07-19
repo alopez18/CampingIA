@@ -146,10 +146,11 @@ sequenceDiagram
 	Note over C,DB: Flujo de escritura (Command)
 	C->>M: SendCommandAsync(command)
 	M->>CH: HandleAsync(command)
-	CH->>R: SaveAsync(entity)
-	R->>DB: INSERT / UPDATE (Dapper)
+	CH->>UW: BeginTransactionAsync()
+	CH->>R: AddAsync(entity) / UpdateAsync(entity)
+	R->>DB: INSERT / UPDATE (Dapper + transacción)
 	DB-->>R: OK
-	CH->>UW: SaveChangesAsync()
+	CH->>UW: CommitAsync()
 	UW-->>CH: committed
 	CH-->>M: result
 	M-->>C: response

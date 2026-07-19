@@ -8,22 +8,22 @@ public class FavoritesWriteRepository : Domain.Repositories.IFavoritesWriteRepos
 {
     #region Dependencies
     readonly Abstractions.ModelExtractor<Models.CampingAI_DB.T_FAVORITES> _modelExtractor;
-    readonly Configuration.Factories.Interfaces.ISqlConnectionFactory _sqlConnectionFactory;
+    readonly Abstractions.IUnitOfWork _unitOfWork;
     readonly ILogger<FavoritesWriteRepository> _logger;
     #endregion
 
     public FavoritesWriteRepository(Abstractions.ModelExtractor<Models.CampingAI_DB.T_FAVORITES> modelExtractor,
-                                    Configuration.Factories.Interfaces.ISqlConnectionFactory sqlConnectionFactory,
+                                    Abstractions.IUnitOfWork unitOfWork,
                                     ILogger<FavoritesWriteRepository> logger)
     {
         _modelExtractor = modelExtractor;
-        _sqlConnectionFactory = sqlConnectionFactory;
+        _unitOfWork = unitOfWork;
         _logger = logger;
     }
 
     public async Task AddAsync(Domain.Entities.Favorite favorite)
     {
-        using var dbConnection = _sqlConnectionFactory.CreateConnection();
+        var dbConnection = _unitOfWork.Connection;
 
         var sql = new StringBuilder();
         sql.AppendLine($"INSERT INTO {_modelExtractor.GetTableNameForSql()} (");
@@ -49,7 +49,7 @@ public class FavoritesWriteRepository : Domain.Repositories.IFavoritesWriteRepos
 
         try
         {
-            await dbConnection.ExecuteAsync(query, model);
+            await dbConnection.ExecuteAsync(query, model, _unitOfWork.CurrentTransaction);
         }
         catch (Exception ex)
         {
@@ -60,7 +60,7 @@ public class FavoritesWriteRepository : Domain.Repositories.IFavoritesWriteRepos
 
     public async Task DeleteAsync(Guid userId, Guid campingId)
     {
-        using var dbConnection = _sqlConnectionFactory.CreateConnection();
+        var dbConnection = _unitOfWork.Connection;
 
         var sql = new StringBuilder();
         sql.AppendLine($"DELETE FROM {_modelExtractor.GetTableNameForSql()}");
@@ -70,7 +70,7 @@ public class FavoritesWriteRepository : Domain.Repositories.IFavoritesWriteRepos
 
         try
         {
-            await dbConnection.ExecuteAsync(query, new { UserId = userId, CampingId = campingId });
+            await dbConnection.ExecuteAsync(query, new { UserId = userId, CampingId = campingId }, _unitOfWork.CurrentTransaction);
         }
         catch (Exception ex)
         {

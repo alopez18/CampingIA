@@ -10,7 +10,13 @@ public static class DI_Manager
         ContextConfiguration.ConfigureInfra(services, config);
         RegisterExtractors(services);
         RegisterMappers(services);
+        RegisterUnitOfWork(services);
         RegisterRepositories(services);
+    }
+
+    private static void RegisterUnitOfWork(IServiceCollection services)
+    {
+        services.AddScoped<Abstractions.IUnitOfWork, Abstractions.UnitOfWork>();
     }
 
     private static void RegisterMappers(IServiceCollection services)

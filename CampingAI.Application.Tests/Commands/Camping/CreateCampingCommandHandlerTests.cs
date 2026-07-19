@@ -9,12 +9,14 @@ public class CreateCampingCommandHandlerTests {
 
     private readonly Mock<ICampingsWriteRepository> _writeRepositoryMock;
     private readonly Mock<ICampingCategoriesWriteRepository> _categoriesWriteRepositoryMock;
+    private readonly Mock<CampingAI.Infra.Abstractions.IUnitOfWork> _unitOfWorkMock;
     private readonly Mock<IValidator<CreateCampingCommand>> _validatorMock;
     private readonly CreateCampingCommandHandler _handler;
 
     public CreateCampingCommandHandlerTests() {
         _writeRepositoryMock = new Mock<ICampingsWriteRepository>();
         _categoriesWriteRepositoryMock = new Mock<ICampingCategoriesWriteRepository>();
+        _unitOfWorkMock = new Mock<CampingAI.Infra.Abstractions.IUnitOfWork>();
         _validatorMock = new Mock<IValidator<CreateCampingCommand>>();
 
         _validatorMock
@@ -24,6 +26,7 @@ public class CreateCampingCommandHandlerTests {
         _handler = new CreateCampingCommandHandler(
             _writeRepositoryMock.Object,
             _categoriesWriteRepositoryMock.Object,
+            _unitOfWorkMock.Object,
             _validatorMock.Object);
     }
 

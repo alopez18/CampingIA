@@ -8,25 +8,25 @@ public class CampingsWriteRepository : Domain.Repositories.ICampingsWriteReposit
 {
     #region Dependencies
     readonly Abstractions.ModelExtractor<Models.CampingAI_DB.T_CAMPINGS> _modelExtractor;
-    readonly Configuration.Factories.Interfaces.ISqlConnectionFactory _sqlConnectionFactory;
+    readonly Abstractions.IUnitOfWork _unitOfWork;
     readonly Mappers.CampingsMapper _campingsMapper;
     readonly ILogger<CampingsWriteRepository> _logger;
     #endregion
 
     public CampingsWriteRepository(Abstractions.ModelExtractor<Models.CampingAI_DB.T_CAMPINGS> modelExtractor,
-                                   Configuration.Factories.Interfaces.ISqlConnectionFactory sqlConnectionFactory,
+                                   Abstractions.IUnitOfWork unitOfWork,
                                    Mappers.CampingsMapper campingsMapper,
                                    ILogger<CampingsWriteRepository> logger)
     {
         _modelExtractor = modelExtractor;
-        _sqlConnectionFactory = sqlConnectionFactory;
+        _unitOfWork = unitOfWork;
         _campingsMapper = campingsMapper;
         _logger = logger;
     }
 
     public async Task AddAsync(Domain.Entities.Camping camping)
     {
-        using var dbConnection = _sqlConnectionFactory.CreateConnection();
+        var dbConnection = _unitOfWork.Connection;
 
         var model = _campingsMapper.ReverseMap(camping);
         var sql = new StringBuilder();
@@ -57,7 +57,7 @@ public class CampingsWriteRepository : Domain.Repositories.ICampingsWriteReposit
 
         try
         {
-            await dbConnection.ExecuteAsync(query, model);
+            await dbConnection.ExecuteAsync(query, model, _unitOfWork.CurrentTransaction);
         }
         catch (Exception ex)
         {
@@ -68,7 +68,7 @@ public class CampingsWriteRepository : Domain.Repositories.ICampingsWriteReposit
 
     public async Task UpdateAsync(Domain.Entities.Camping camping)
     {
-        using var dbConnection = _sqlConnectionFactory.CreateConnection();
+        var dbConnection = _unitOfWork.Connection;
 
         var model = _campingsMapper.ReverseMap(camping);
         var sql = new StringBuilder();
@@ -85,7 +85,7 @@ public class CampingsWriteRepository : Domain.Repositories.ICampingsWriteReposit
 
         try
         {
-            await dbConnection.ExecuteAsync(query, model);
+            await dbConnection.ExecuteAsync(query, model, _unitOfWork.CurrentTransaction);
         }
         catch (Exception ex)
         {
@@ -96,7 +96,7 @@ public class CampingsWriteRepository : Domain.Repositories.ICampingsWriteReposit
 
     public async Task DeleteAsync(Guid id)
     {
-        using var dbConnection = _sqlConnectionFactory.CreateConnection();
+        var dbConnection = _unitOfWork.Connection;
 
         var sql = new StringBuilder();
         sql.AppendLine($"UPDATE {_modelExtractor.GetTableNameForSql()} SET");
@@ -106,7 +106,7 @@ public class CampingsWriteRepository : Domain.Repositories.ICampingsWriteReposit
 
         try
         {
-            await dbConnection.ExecuteAsync(query, new { Id = id, Now = DateTime.UtcNow });
+            await dbConnection.ExecuteAsync(query, new { Id = id, Now = DateTime.UtcNow }, _unitOfWork.CurrentTransaction);
         }
         catch (Exception ex)
         {

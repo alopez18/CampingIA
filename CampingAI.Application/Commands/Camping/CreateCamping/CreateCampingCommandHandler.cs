@@ -6,14 +6,17 @@ public class CreateCampingCommandHandler : Abstractions.Command.ICommandHandler<
     #region Dependencias
     readonly Domain.Repositories.ICampingsWriteRepository _campingsWriteRepository;
     readonly Domain.Repositories.ICampingCategoriesWriteRepository _campingCategoriesWriteRepository;
+    readonly Infra.Abstractions.IUnitOfWork _unitOfWork;
     readonly IValidator<CreateCampingCommand> _validator;
     #endregion
 
     public CreateCampingCommandHandler(Domain.Repositories.ICampingsWriteRepository campingsWriteRepository,
                                        Domain.Repositories.ICampingCategoriesWriteRepository campingCategoriesWriteRepository,
+                                       Infra.Abstractions.IUnitOfWork unitOfWork,
                                        IValidator<CreateCampingCommand> validator) {
         _campingsWriteRepository = campingsWriteRepository;
         _campingCategoriesWriteRepository = campingCategoriesWriteRepository;
+        _unitOfWork = unitOfWork;
         _validator = validator;
     }
 
@@ -35,12 +38,21 @@ public class CreateCampingCommandHandler : Abstractions.Command.ICommandHandler<
         if (command.AdditionalCategoryIds is not null)
             camping.SetAdditionalCategories(command.AdditionalCategoryIds);
 
-        await _campingsWriteRepository.AddAsync(camping);
+        await _unitOfWork.BeginTransactionAsync();
+        try {
+            await _campingsWriteRepository.AddAsync(camping);
 
-        foreach (var categoryId in camping.AdditionalCategoryIds)
-            await _campingCategoriesWriteRepository.AddAsync(
-                    Domain.Entities.CampingCategory.CreateNew(camping.Id, categoryId));
+            foreach (var categoryId in camping.AdditionalCategoryIds)
+                await _campingCategoriesWriteRepository.AddAsync(
+                        Domain.Entities.CampingCategory.CreateNew(camping.Id, categoryId));
 
-            return camping;
+            await _unitOfWork.CommitAsync();
+        }
+        catch {
+            await _unitOfWork.RollbackAsync();
+            throw;
+        }
+
+        return camping;
     }
 }

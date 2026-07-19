@@ -8,25 +8,25 @@ public class UsersWriteRepository : Domain.Repositories.IUsersWriteRepository
 {
     #region Dependencies
     readonly Abstractions.ModelExtractor<Models.CampingAI_DB.T_USERS> _modelExtractor;
-    readonly Configuration.Factories.Interfaces.ISqlConnectionFactory _sqlConnectionFactory;
+    readonly Abstractions.IUnitOfWork _unitOfWork;
     readonly Mappers.UsersMapper _usersMapper;
     readonly ILogger<UsersWriteRepository> _logger;
     #endregion
 
     public UsersWriteRepository(Abstractions.ModelExtractor<Models.CampingAI_DB.T_USERS> modelExtractor,
-                                Configuration.Factories.Interfaces.ISqlConnectionFactory sqlConnectionFactory,
+                                Abstractions.IUnitOfWork unitOfWork,
                                 Mappers.UsersMapper usersMapper,
                                 ILogger<UsersWriteRepository> logger)
     {
         _modelExtractor = modelExtractor;
-        _sqlConnectionFactory = sqlConnectionFactory;
+        _unitOfWork = unitOfWork;
         _usersMapper = usersMapper;
         _logger = logger;
     }
 
     public async Task AddAsync(Domain.Entities.User user)
     {
-        using var dbConnection = _sqlConnectionFactory.CreateConnection();
+        var dbConnection = _unitOfWork.Connection;
 
         var model = _usersMapper.ReverseMap(user);
         var sql = new StringBuilder();
@@ -53,7 +53,7 @@ public class UsersWriteRepository : Domain.Repositories.IUsersWriteRepository
 
         try
         {
-            await dbConnection.ExecuteAsync(query, model);
+            await dbConnection.ExecuteAsync(query, model, _unitOfWork.CurrentTransaction);
         }
         catch (Exception ex)
         {
@@ -64,7 +64,7 @@ public class UsersWriteRepository : Domain.Repositories.IUsersWriteRepository
 
     public async Task UpdateAsync(Domain.Entities.User user)
     {
-        using var dbConnection = _sqlConnectionFactory.CreateConnection();
+        var dbConnection = _unitOfWork.Connection;
 
         var model = _usersMapper.ReverseMap(user);
         var sql = new StringBuilder();
@@ -80,7 +80,7 @@ public class UsersWriteRepository : Domain.Repositories.IUsersWriteRepository
 
         try
         {
-            await dbConnection.ExecuteAsync(query, model);
+            await dbConnection.ExecuteAsync(query, model, _unitOfWork.CurrentTransaction);
         }
         catch (Exception ex)
         {
@@ -91,7 +91,7 @@ public class UsersWriteRepository : Domain.Repositories.IUsersWriteRepository
 
     public async Task DeleteAsync(Guid id)
     {
-        using var dbConnection = _sqlConnectionFactory.CreateConnection();
+        var dbConnection = _unitOfWork.Connection;
 
         var sql = new StringBuilder();
         sql.AppendLine($"UPDATE {_modelExtractor.GetTableNameForSql()} SET");
@@ -101,7 +101,7 @@ public class UsersWriteRepository : Domain.Repositories.IUsersWriteRepository
 
         try
         {
-            await dbConnection.ExecuteAsync(query, new { Id = id, Now = DateTime.UtcNow });
+            await dbConnection.ExecuteAsync(query, new { Id = id, Now = DateTime.UtcNow }, _unitOfWork.CurrentTransaction);
         }
         catch (Exception ex)
         {

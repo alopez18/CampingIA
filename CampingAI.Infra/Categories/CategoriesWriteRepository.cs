@@ -8,25 +8,25 @@ public class CategoriesWriteRepository : Domain.Repositories.ICategoriesWriteRep
 {
     #region Dependencies
     readonly Abstractions.ModelExtractor<Models.CampingAI_DB.T_CATEGORIES> _modelExtractor;
-    readonly Configuration.Factories.Interfaces.ISqlConnectionFactory _sqlConnectionFactory;
+    readonly Abstractions.IUnitOfWork _unitOfWork;
     readonly Mappers.CategoriesMapper _categoriesMapper;
     readonly ILogger<CategoriesWriteRepository> _logger;
     #endregion
 
     public CategoriesWriteRepository(Abstractions.ModelExtractor<Models.CampingAI_DB.T_CATEGORIES> modelExtractor,
-                                     Configuration.Factories.Interfaces.ISqlConnectionFactory sqlConnectionFactory,
+                                     Abstractions.IUnitOfWork unitOfWork,
                                      Mappers.CategoriesMapper categoriesMapper,
                                      ILogger<CategoriesWriteRepository> logger)
     {
         _modelExtractor = modelExtractor;
-        _sqlConnectionFactory = sqlConnectionFactory;
+        _unitOfWork = unitOfWork;
         _categoriesMapper = categoriesMapper;
         _logger = logger;
     }
 
     public async Task AddAsync(Domain.Entities.Category category)
     {
-        using var dbConnection = _sqlConnectionFactory.CreateConnection();
+        var dbConnection = _unitOfWork.Connection;
 
         var model = _categoriesMapper.ReverseMap(category);
         var sql = new StringBuilder();
@@ -41,7 +41,7 @@ public class CategoriesWriteRepository : Domain.Repositories.ICategoriesWriteRep
 
         try
         {
-            await dbConnection.ExecuteAsync(query, model);
+            await dbConnection.ExecuteAsync(query, model, _unitOfWork.CurrentTransaction);
         }
         catch (Exception ex)
         {
@@ -52,7 +52,7 @@ public class CategoriesWriteRepository : Domain.Repositories.ICategoriesWriteRep
 
     public async Task UpdateAsync(Domain.Entities.Category category)
     {
-        using var dbConnection = _sqlConnectionFactory.CreateConnection();
+        var dbConnection = _unitOfWork.Connection;
 
         var model = _categoriesMapper.ReverseMap(category);
         var sql = new StringBuilder();
@@ -63,7 +63,7 @@ public class CategoriesWriteRepository : Domain.Repositories.ICategoriesWriteRep
 
         try
         {
-            await dbConnection.ExecuteAsync(query, model);
+            await dbConnection.ExecuteAsync(query, model, _unitOfWork.CurrentTransaction);
         }
         catch (Exception ex)
         {

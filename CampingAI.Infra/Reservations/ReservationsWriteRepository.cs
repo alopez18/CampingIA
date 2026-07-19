@@ -8,25 +8,25 @@ public class ReservationsWriteRepository : Domain.Repositories.IReservationsWrit
 {
     #region Dependencies
     readonly Abstractions.ModelExtractor<Models.CampingAI_DB.T_RESERVATIONS> _modelExtractor;
-    readonly Configuration.Factories.Interfaces.ISqlConnectionFactory _sqlConnectionFactory;
+    readonly Abstractions.IUnitOfWork _unitOfWork;
     readonly Mappers.ReservationsMapper _reservationsMapper;
     readonly ILogger<ReservationsWriteRepository> _logger;
     #endregion
 
     public ReservationsWriteRepository(Abstractions.ModelExtractor<Models.CampingAI_DB.T_RESERVATIONS> modelExtractor,
-                                       Configuration.Factories.Interfaces.ISqlConnectionFactory sqlConnectionFactory,
+                                       Abstractions.IUnitOfWork unitOfWork,
                                        Mappers.ReservationsMapper reservationsMapper,
                                        ILogger<ReservationsWriteRepository> logger)
     {
         _modelExtractor = modelExtractor;
-        _sqlConnectionFactory = sqlConnectionFactory;
+        _unitOfWork = unitOfWork;
         _reservationsMapper = reservationsMapper;
         _logger = logger;
     }
 
     public async Task AddAsync(Domain.Entities.Reservation reservation)
     {
-        using var dbConnection = _sqlConnectionFactory.CreateConnection();
+        var dbConnection = _unitOfWork.Connection;
 
         var model = _reservationsMapper.ReverseMap(reservation);
         var sql = new StringBuilder();
@@ -55,7 +55,7 @@ public class ReservationsWriteRepository : Domain.Repositories.IReservationsWrit
 
         try
         {
-            await dbConnection.ExecuteAsync(query, model);
+            await dbConnection.ExecuteAsync(query, model, _unitOfWork.CurrentTransaction);
         }
         catch (Exception ex)
         {
@@ -66,7 +66,7 @@ public class ReservationsWriteRepository : Domain.Repositories.IReservationsWrit
 
     public async Task UpdateAsync(Domain.Entities.Reservation reservation)
     {
-        using var dbConnection = _sqlConnectionFactory.CreateConnection();
+        var dbConnection = _unitOfWork.Connection;
 
         var model = _reservationsMapper.ReverseMap(reservation);
         var sql = new StringBuilder();
@@ -81,7 +81,7 @@ public class ReservationsWriteRepository : Domain.Repositories.IReservationsWrit
 
         try
         {
-            await dbConnection.ExecuteAsync(query, model);
+            await dbConnection.ExecuteAsync(query, model, _unitOfWork.CurrentTransaction);
         }
         catch (Exception ex)
         {
@@ -92,7 +92,7 @@ public class ReservationsWriteRepository : Domain.Repositories.IReservationsWrit
 
     public async Task DeleteAsync(Guid id)
     {
-        using var dbConnection = _sqlConnectionFactory.CreateConnection();
+        var dbConnection = _unitOfWork.Connection;
 
         var sql = new StringBuilder();
         sql.AppendLine($"UPDATE {_modelExtractor.GetTableNameForSql()} SET");
@@ -102,7 +102,7 @@ public class ReservationsWriteRepository : Domain.Repositories.IReservationsWrit
 
         try
         {
-            await dbConnection.ExecuteAsync(query, new { Id = id, Now = DateTime.UtcNow });
+            await dbConnection.ExecuteAsync(query, new { Id = id, Now = DateTime.UtcNow }, _unitOfWork.CurrentTransaction);
         }
         catch (Exception ex)
         {

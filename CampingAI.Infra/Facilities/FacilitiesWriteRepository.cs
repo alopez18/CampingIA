@@ -8,25 +8,25 @@ public class FacilitiesWriteRepository : Domain.Repositories.IFacilitiesWriteRep
 {
     #region Dependencies
     readonly Abstractions.ModelExtractor<Models.CampingAI_DB.T_FACILITIES> _modelExtractor;
-    readonly Configuration.Factories.Interfaces.ISqlConnectionFactory _sqlConnectionFactory;
+    readonly Abstractions.IUnitOfWork _unitOfWork;
     readonly Mappers.FacilitiesMapper _facilitiesMapper;
     readonly ILogger<FacilitiesWriteRepository> _logger;
     #endregion
 
     public FacilitiesWriteRepository(Abstractions.ModelExtractor<Models.CampingAI_DB.T_FACILITIES> modelExtractor,
-                                     Configuration.Factories.Interfaces.ISqlConnectionFactory sqlConnectionFactory,
+                                     Abstractions.IUnitOfWork unitOfWork,
                                      Mappers.FacilitiesMapper facilitiesMapper,
                                      ILogger<FacilitiesWriteRepository> logger)
     {
         _modelExtractor = modelExtractor;
-        _sqlConnectionFactory = sqlConnectionFactory;
+        _unitOfWork = unitOfWork;
         _facilitiesMapper = facilitiesMapper;
         _logger = logger;
     }
 
     public async Task AddAsync(Domain.Entities.Facility facility)
     {
-        using var dbConnection = _sqlConnectionFactory.CreateConnection();
+        var dbConnection = _unitOfWork.Connection;
 
         var model = _facilitiesMapper.ReverseMap(facility);
         var sql = new StringBuilder();
@@ -41,7 +41,7 @@ public class FacilitiesWriteRepository : Domain.Repositories.IFacilitiesWriteRep
 
         try
         {
-            await dbConnection.ExecuteAsync(query, model);
+            await dbConnection.ExecuteAsync(query, model, _unitOfWork.CurrentTransaction);
         }
         catch (Exception ex)
         {
@@ -52,7 +52,7 @@ public class FacilitiesWriteRepository : Domain.Repositories.IFacilitiesWriteRep
 
     public async Task UpdateAsync(Domain.Entities.Facility facility)
     {
-        using var dbConnection = _sqlConnectionFactory.CreateConnection();
+        var dbConnection = _unitOfWork.Connection;
 
         var model = _facilitiesMapper.ReverseMap(facility);
         var sql = new StringBuilder();
@@ -63,7 +63,7 @@ public class FacilitiesWriteRepository : Domain.Repositories.IFacilitiesWriteRep
 
         try
         {
-            await dbConnection.ExecuteAsync(query, model);
+            await dbConnection.ExecuteAsync(query, model, _unitOfWork.CurrentTransaction);
         }
         catch (Exception ex)
         {
@@ -74,7 +74,7 @@ public class FacilitiesWriteRepository : Domain.Repositories.IFacilitiesWriteRep
 
     public async Task DeleteAsync(Guid id)
     {
-        using var dbConnection = _sqlConnectionFactory.CreateConnection();
+        var dbConnection = _unitOfWork.Connection;
 
         var sql = new StringBuilder();
         sql.AppendLine($"DELETE FROM {_modelExtractor.GetTableNameForSql()}");
@@ -83,7 +83,7 @@ public class FacilitiesWriteRepository : Domain.Repositories.IFacilitiesWriteRep
 
         try
         {
-            await dbConnection.ExecuteAsync(query, new { Id = id });
+            await dbConnection.ExecuteAsync(query, new { Id = id }, _unitOfWork.CurrentTransaction);
         }
         catch (Exception ex)
         {

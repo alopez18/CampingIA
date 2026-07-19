@@ -8,22 +8,22 @@ public class CampingCategoriesWriteRepository : Domain.Repositories.ICampingCate
 {
     #region Dependencies
     readonly Abstractions.ModelExtractor<Models.CampingAI_DB.T_CAMPING_CATEGORIES> _modelExtractor;
-    readonly Configuration.Factories.Interfaces.ISqlConnectionFactory _sqlConnectionFactory;
+    readonly Abstractions.IUnitOfWork _unitOfWork;
     readonly ILogger<CampingCategoriesWriteRepository> _logger;
     #endregion
 
     public CampingCategoriesWriteRepository(Abstractions.ModelExtractor<Models.CampingAI_DB.T_CAMPING_CATEGORIES> modelExtractor,
-                                            Configuration.Factories.Interfaces.ISqlConnectionFactory sqlConnectionFactory,
+                                            Abstractions.IUnitOfWork unitOfWork,
                                             ILogger<CampingCategoriesWriteRepository> logger)
     {
         _modelExtractor = modelExtractor;
-        _sqlConnectionFactory = sqlConnectionFactory;
+        _unitOfWork = unitOfWork;
         _logger = logger;
     }
 
     public async Task AddAsync(Domain.Entities.CampingCategory campingCategory)
     {
-        using var dbConnection = _sqlConnectionFactory.CreateConnection();
+        var dbConnection = _unitOfWork.Connection;
 
         var sql = new StringBuilder();
         sql.AppendLine($"INSERT INTO {_modelExtractor.GetTableNameForSql()} (");
@@ -46,7 +46,7 @@ public class CampingCategoriesWriteRepository : Domain.Repositories.ICampingCate
 
         try
         {
-            await dbConnection.ExecuteAsync(query, model);
+            await dbConnection.ExecuteAsync(query, model, _unitOfWork.CurrentTransaction);
         }
         catch (Exception ex)
         {
@@ -57,7 +57,7 @@ public class CampingCategoriesWriteRepository : Domain.Repositories.ICampingCate
 
     public async Task DeleteAsync(Guid campingId, Guid categoryId)
     {
-        using var dbConnection = _sqlConnectionFactory.CreateConnection();
+        var dbConnection = _unitOfWork.Connection;
 
         var sql = new StringBuilder();
         sql.AppendLine($"DELETE FROM {_modelExtractor.GetTableNameForSql()} ");
@@ -67,7 +67,7 @@ public class CampingCategoriesWriteRepository : Domain.Repositories.ICampingCate
 
         try
         {
-            await dbConnection.ExecuteAsync(query, new { CampingId = campingId, CategoryId = categoryId });
+            await dbConnection.ExecuteAsync(query, new { CampingId = campingId, CategoryId = categoryId }, _unitOfWork.CurrentTransaction);
         }
         catch (Exception ex)
         {
@@ -78,7 +78,7 @@ public class CampingCategoriesWriteRepository : Domain.Repositories.ICampingCate
 
     public async Task DeleteByCampingIdAsync(Guid campingId)
     {
-        using var dbConnection = _sqlConnectionFactory.CreateConnection();
+        var dbConnection = _unitOfWork.Connection;
 
         var sql = new StringBuilder();
         sql.AppendLine($"DELETE FROM {_modelExtractor.GetTableNameForSql()} ");
@@ -87,7 +87,7 @@ public class CampingCategoriesWriteRepository : Domain.Repositories.ICampingCate
 
         try
         {
-            await dbConnection.ExecuteAsync(query, new { CampingId = campingId });
+            await dbConnection.ExecuteAsync(query, new { CampingId = campingId }, _unitOfWork.CurrentTransaction);
         }
         catch (Exception ex)
         {

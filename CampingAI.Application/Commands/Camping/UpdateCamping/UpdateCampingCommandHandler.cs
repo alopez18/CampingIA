@@ -8,6 +8,7 @@ public class UpdateCampingCommandHandler : Abstractions.Command.ICommandHandler<
     readonly Domain.Repositories.ICampingsWriteRepository _campingsWriteRepository;
     readonly Domain.Repositories.ICampingCategoriesWriteRepository _campingCategoriesWriteRepository;
     readonly Domain.Repositories.ICampingFacilitiesWriteRepository _campingFacilitiesWriteRepository;
+    readonly Infra.Abstractions.IUnitOfWork _unitOfWork;
     readonly IValidator<UpdateCampingCommand> _validator;
     #endregion
 
@@ -15,11 +16,13 @@ public class UpdateCampingCommandHandler : Abstractions.Command.ICommandHandler<
                                        Domain.Repositories.ICampingsWriteRepository campingsWriteRepository,
                                        Domain.Repositories.ICampingCategoriesWriteRepository campingCategoriesWriteRepository,
                                        Domain.Repositories.ICampingFacilitiesWriteRepository campingFacilitiesWriteRepository,
+                                       Infra.Abstractions.IUnitOfWork unitOfWork,
                                        IValidator<UpdateCampingCommand> validator) {
         _campingsReadRepository = campingsReadRepository;
         _campingsWriteRepository = campingsWriteRepository;
         _campingCategoriesWriteRepository = campingCategoriesWriteRepository;
         _campingFacilitiesWriteRepository = campingFacilitiesWriteRepository;
+        _unitOfWork = unitOfWork;
         _validator = validator;
     }
 
@@ -41,17 +44,26 @@ public class UpdateCampingCommandHandler : Abstractions.Command.ICommandHandler<
 
         camping.Updated();
 
-        await _campingsWriteRepository.UpdateAsync(camping);
+        await _unitOfWork.BeginTransactionAsync();
+        try {
+            await _campingsWriteRepository.UpdateAsync(camping);
 
-        await _campingCategoriesWriteRepository.DeleteByCampingIdAsync(camping.Id);
-        foreach (var categoryId in camping.AdditionalCategoryIds)
-            await _campingCategoriesWriteRepository.AddAsync(
-                Domain.Entities.CampingCategory.CreateNew(camping.Id, categoryId));
+            await _campingCategoriesWriteRepository.DeleteByCampingIdAsync(camping.Id);
+            foreach (var categoryId in camping.AdditionalCategoryIds)
+                await _campingCategoriesWriteRepository.AddAsync(
+                    Domain.Entities.CampingCategory.CreateNew(camping.Id, categoryId));
 
-        await _campingFacilitiesWriteRepository.DeleteByCampingIdAsync(camping.Id);
-        foreach (var facilityId in camping.FacilityIds)
-            await _campingFacilitiesWriteRepository.AddAsync(
-                Domain.Entities.CampingFacility.CreateNew(camping.Id, facilityId));
+            await _campingFacilitiesWriteRepository.DeleteByCampingIdAsync(camping.Id);
+            foreach (var facilityId in camping.FacilityIds)
+                await _campingFacilitiesWriteRepository.AddAsync(
+                    Domain.Entities.CampingFacility.CreateNew(camping.Id, facilityId));
+
+            await _unitOfWork.CommitAsync();
+        }
+        catch {
+            await _unitOfWork.RollbackAsync();
+            throw;
+        }
 
         return camping;
     }
